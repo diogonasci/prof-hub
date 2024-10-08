@@ -1,0 +1,558 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{FAB7B05C-760E-4EEC-83A5-55732D8AB92A}|..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj|d:\\repos\\prof.hub\\prof.hub.infrastructure\\prof.hub.infrastructure.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\prof.hub.application.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\prof.hub.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:prof.hub.webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\behaviors\\validationbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\behaviors\\loggingbehavior.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\resultstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\validationerror.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\errorlist.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\iresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\result.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\result.void.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\controllers\\studentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:controllers\\studentcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:controllers\\basecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\usecases\\student\\createstudent\\createstudent.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\usecases\\student\\createstudent\\createstudentinput.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\usecases\\student\\createstudent\\createstudentvalidator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\extensions\\extensions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\pagedinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\results\\pagedresult.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\globalexceptionhandlermiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:globalexceptionhandlermiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAB7B05C-760E-4EEC-83A5-55732D8AB92A}|..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj|d:\\repos\\prof.hub\\prof.hub.infrastructure\\dependencyinjection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAB7B05C-760E-4EEC-83A5-55732D8AB92A}|..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj|d:\\repos\\prof.hub\\prof.hub.infrastructure\\apiclients\\jokeapiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FAB7B05C-760E-4EEC-83A5-55732D8AB92A}|..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj|d:\\repos\\prof.hub\\prof.hub.infrastructure\\apiclients\\configurations\\externalservicessettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAE62073-C5BD-4FB9-B0FB-5B9833394DFF}|..\\Prof.Hub.Domain\\Prof.Hub.Domain.csproj|d:\\repos\\prof.hub\\prof.hub.domain\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAE62073-C5BD-4FB9-B0FB-5B9833394DFF}|..\\Prof.Hub.Domain\\Prof.Hub.Domain.csproj|d:\\repos\\prof.hub\\prof.hub.domain\\common\\auditableentity.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{97F17C0A-E9F0-43EB-9A4A-3B9427394165}|..\\Prof.Hub.Application\\Prof.Hub.Application.csproj|d:\\repos\\prof.hub\\prof.hub.application\\interfaces\\ijokeapiclient.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\transport\\createstudent\\createstudentresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:transport\\createstudent\\createstudentresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\transport\\createstudent\\createstudentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:transport\\createstudent\\createstudentrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{AAE62073-C5BD-4FB9-B0FB-5B9833394DFF}|..\\Prof.Hub.Domain\\Prof.Hub.Domain.csproj|d:\\repos\\prof.hub\\prof.hub.domain\\dtos\\jokedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|d:\\repos\\prof.hub\\prof.hub.webapi\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{036BA60B-5F44-476E-9B6D-7FCF8A5450C2}|Prof.Hub.WebApi.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Prof.Hub.WebApi.csproj",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Prof.Hub.WebApi.csproj",
+              "RelativeDocumentMoniker": "Prof.Hub.WebApi.csproj",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Prof.Hub.WebApi.csproj",
+              "RelativeToolTip": "Prof.Hub.WebApi.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAvwAkAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-09-27T01:55:41.468Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ErrorList.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ErrorList.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\ErrorList.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ErrorList.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\ErrorList.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:55:24.284Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IResult.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\IResult.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\IResult.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\IResult.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\IResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:49:06.692Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Prof.Hub.Infrastructure",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj",
+              "RelativeToolTip": "..\\Prof.Hub.Infrastructure\\Prof.Hub.Infrastructure.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-10-05T00:15:05.217Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "Result.Void.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\Result.Void.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\Result.Void.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\Result.Void.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\Result.Void.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHkAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T04:00:20.036Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ResultStatus.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ResultStatus.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\ResultStatus.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ResultStatus.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\ResultStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:59:09.904Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Result.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\Result.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\Result.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\Result.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\Result.cs",
+              "ViewState": "AgIAAN0AAAAAAAAAAAAkwKYAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:58:09.227Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ValidationBehavior.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Behaviors\\ValidationBehavior.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Behaviors\\ValidationBehavior.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Behaviors\\ValidationBehavior.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Behaviors\\ValidationBehavior.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-30T02:35:47.618Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Prof.Hub.Application.csproj",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Prof.Hub.Application.csproj",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Prof.Hub.Application.csproj",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Prof.Hub.Application.csproj",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Prof.Hub.Application.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-09-30T11:42:03.484Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LoggingBehavior.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Behaviors\\LoggingBehavior.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Behaviors\\LoggingBehavior.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Behaviors\\LoggingBehavior.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Behaviors\\LoggingBehavior.cs",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAQwAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-30T01:38:34.114Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ValidationError.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ValidationError.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\ValidationError.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\ValidationError.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\ValidationError.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T04:01:05.644Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "StudentController.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Controllers\\StudentController.cs",
+              "RelativeDocumentMoniker": "Controllers\\StudentController.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Controllers\\StudentController.cs",
+              "RelativeToolTip": "Controllers\\StudentController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-26T02:11:52.88Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "BaseController.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Controllers\\BaseController.cs",
+              "RelativeDocumentMoniker": "Controllers\\BaseController.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Controllers\\BaseController.cs",
+              "RelativeToolTip": "Controllers\\BaseController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-27T02:09:28.35Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "CreateStudentInput.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentInput.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentInput.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentInput.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentInput.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-28T04:38:52.422Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "CreateStudentValidator.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentValidator.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentValidator.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentValidator.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudentValidator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-29T01:30:09.786Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Extensions.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Extensions\\Extensions.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Extensions\\Extensions.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Extensions\\Extensions.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Extensions\\Extensions.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAD4vxAAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-28T21:21:29.372Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "CreateStudent.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudent.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudent.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudent.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\UseCases\\Student\\CreateStudent\\CreateStudent.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-28T04:39:33.386Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "PagedInfo.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\PagedInfo.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\PagedInfo.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\PagedInfo.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\PagedInfo.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAIwAoAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:56:24.851Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "PagedResult.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\PagedResult.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Results\\PagedResult.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Results\\PagedResult.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Results\\PagedResult.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T03:56:59.114Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "Student.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\Entities\\Student.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Domain\\Entities\\Student.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\Entities\\Student.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Domain\\Entities\\Student.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAQAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-26T01:45:18.604Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "GlobalExceptionHandlerMiddleware.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\GlobalExceptionHandlerMiddleware.cs",
+              "RelativeDocumentMoniker": "GlobalExceptionHandlerMiddleware.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\GlobalExceptionHandlerMiddleware.cs",
+              "RelativeToolTip": "GlobalExceptionHandlerMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC8AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-07T02:01:26.661Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABBAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-28T03:03:44.561Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAQwB8AAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-26T01:54:05.414Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "JokeApiClient.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\ApiClients\\JokeApiClient.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Infrastructure\\ApiClients\\JokeApiClient.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\ApiClients\\JokeApiClient.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Infrastructure\\ApiClients\\JokeApiClient.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-04T23:42:13.798Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "ExternalServicesSettings.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\ApiClients\\Configurations\\ExternalServicesSettings.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Infrastructure\\ApiClients\\Configurations\\ExternalServicesSettings.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\ApiClients\\Configurations\\ExternalServicesSettings.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Infrastructure\\ApiClients\\Configurations\\ExternalServicesSettings.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-05T04:17:18.707Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "AuditableEntity.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\Common\\AuditableEntity.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Domain\\Common\\AuditableEntity.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\Common\\AuditableEntity.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Domain\\Common\\AuditableEntity.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-05T00:23:25.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "DependencyInjection.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\DependencyInjection.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Infrastructure\\DependencyInjection.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Infrastructure\\DependencyInjection.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Infrastructure\\DependencyInjection.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAgAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-04T23:23:16.824Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-29T03:46:44.091Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "IJokeApiClient.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Interfaces\\IJokeApiClient.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Application\\Interfaces\\IJokeApiClient.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Application\\Interfaces\\IJokeApiClient.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Application\\Interfaces\\IJokeApiClient.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAYAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-04T23:40:29.45Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "CreateStudentResponse.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Transport\\CreateStudent\\CreateStudentResponse.cs",
+              "RelativeDocumentMoniker": "Transport\\CreateStudent\\CreateStudentResponse.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Transport\\CreateStudent\\CreateStudentResponse.cs",
+              "RelativeToolTip": "Transport\\CreateStudent\\CreateStudentResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-26T02:25:15.407Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "CreateStudentRequest.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Transport\\CreateStudent\\CreateStudentRequest.cs",
+              "RelativeDocumentMoniker": "Transport\\CreateStudent\\CreateStudentRequest.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Transport\\CreateStudent\\CreateStudentRequest.cs",
+              "RelativeToolTip": "Transport\\CreateStudent\\CreateStudentRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-26T02:24:21.495Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "JokeDTO.cs",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\DTOs\\JokeDTO.cs",
+              "RelativeDocumentMoniker": "..\\Prof.Hub.Domain\\DTOs\\JokeDTO.cs",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.Domain\\DTOs\\JokeDTO.cs",
+              "RelativeToolTip": "..\\Prof.Hub.Domain\\DTOs\\JokeDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-04T23:31:31.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "D:\\repos\\Prof.Hub\\Prof.Hub.WebApi\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2024-09-28T03:25:48.478Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

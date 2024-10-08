@@ -1,0 +1,18 @@
+[
+  {
+    "ContainingType": "Prof.Hub.WebApi.Controllers.CreateStudentController",
+    "Method": "CreateStudent",
+    "RelativePath": "api/v1/student/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "Prof.Hub.WebApi.Transport.CreateStudent.CreateStudentRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
