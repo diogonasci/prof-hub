@@ -46,13 +46,13 @@ namespace Prof.Hub.Application.Results
         public IEnumerable<ValidationError> ValidationErrors { get; protected set; } = [];
 
         /// <summary>
-        /// Returns the current value.
+        /// Retorna o valor atual.
         /// </summary>
         /// <returns></returns>
         public object GetValue() => this.Value;
 
         /// <summary>
-        /// Converts PagedInfo into a PagedResult<typeparamref name="T"/>
+        /// Converte PagedInfo em um PagedResult<typeparamref name="T"/>.
         /// </summary>
         /// <param name="pagedInfo"></param>
         /// <returns></returns>
@@ -71,52 +71,52 @@ namespace Prof.Hub.Application.Results
         }
 
         /// <summary>
-        /// Represents a successful operation and accepts a values as the result of the operation
+        /// Representa uma operação bem-sucedida e aceita um valor como resultado da operação.
         /// </summary>
-        /// <param name="value">Sets the Value property</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="value">Define a propriedade Value</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Success(T value) => new(value);
 
         /// <summary>
-        /// Represents a successful operation and accepts a values as the result of the operation
-        /// Sets the SuccessMessage property to the provided value
+        /// Representa uma operação bem-sucedida e aceita um valor como resultado da operação.
+        /// Define a propriedade SuccessMessage para o valor fornecido.
         /// </summary>
-        /// <param name="value">Sets the Value property</param>
-        /// <param name="successMessage">Sets the SuccessMessage property</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="value">Define a propriedade Value</param>
+        /// <param name="successMessage">Define a propriedade SuccessMessage</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Success(T value, string successMessage) => new(value, successMessage);
 
         /// <summary>
-        /// Represents a successful operation that resulted in the creation of a new resource.
+        /// Representa uma operação bem-sucedida que resultou na criação de um novo recurso.
         /// </summary>
-        /// <typeparam name="T">The type of the resource created.</typeparam>
-        /// <returns>A Result<typeparamref name="T"/> with status Created.</returns>
+        /// <typeparam name="T">O tipo do recurso criado.</typeparam>
+        /// <returns>Um Result<typeparamref name="T"/> com o status Criado.</returns>
         public static Result<T> Created(T value) => new(ResultStatus.Created) { Value = value };
 
         /// <summary>
-        /// Represents a successful operation that resulted in the creation of a new resource.
-        /// Sets the SuccessMessage property to the provided value.
+        /// Representa uma operação bem-sucedida que resultou na criação de um novo recurso.
+        /// Define a propriedade SuccessMessage para o valor fornecido.
         /// </summary>
-        /// <typeparam name="T">The type of the resource created.</typeparam>
-        /// <param name="value">The value of the resource created.</param>
-        /// <param name="location">The URL indicating where the newly created resource can be accessed.</param>
-        /// <returns>A Result<typeparamref name="T"/> with status Created.</returns>
+        /// <typeparam name="T">O tipo do recurso criado.</typeparam>
+        /// <param name="value">O valor do recurso criado.</param>
+        /// <param name="location">A URL que indica onde o novo recurso criado pode ser acessado.</param>
+        /// <returns>Um Result<typeparamref name="T"/> com o status Criado.</returns>
         public static Result<T> Created(T value, string location) => new(ResultStatus.Created) { Value = value, Location = location };
 
         /// <summary>
-        /// Represents an error that occurred during the execution of the service.
-        /// A single error message may be provided and will be exposed via the Errors property.
+        /// Representa um erro que ocorreu durante a execução do serviço.
+        /// Uma única mensagem de erro pode ser fornecida e será exposta pela propriedade Errors.
         /// </summary>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
+        /// <param name="errorMessage">Mensagem de erro.</param>
+        /// <returns>Retorno do método.</returns>
         public static Result<T> Error(string errorMessage) => new(ResultStatus.Error) { Errors = new[] { errorMessage } };
 
         /// <summary>
-        /// Represents an error that occurred during the execution of the service.
-        /// Error messages may be provided and will be exposed via the Errors property.
+        /// Representa um erro que ocorreu durante a execução do serviço.
+        /// Mensagens de erro podem ser fornecidas e serão expostas pela propriedade Errors.
         /// </summary>
-        /// <param name="error">An optional instance of ErrorList with list of string error messages and CorrelationId.</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="error">Uma instância opcional de ErrorList com uma lista de mensagens de erro em string e CorrelationId.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Error(ErrorList error = null) => new(ResultStatus.Error)
         {
             CorrelationId = error?.CorrelationId ?? string.Empty,
@@ -124,107 +124,107 @@ namespace Prof.Hub.Application.Results
         };
 
         /// <summary>
-        /// Represents a validation error that prevents the underlying service from completing.
+        /// Representa um erro de validação que impede o serviço subjacente de ser concluído.
         /// </summary>
-        /// <param name="validationError">The validation error encountered</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="validationError">O erro de validação encontrado.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Invalid(ValidationError validationError)
             => new(ResultStatus.Invalid) { ValidationErrors = [validationError] };
 
         /// <summary>
-        /// Represents validation errors that prevent the underlying service from completing.
+        /// Representa erros de validação que impedem o serviço subjacente de ser concluído.
         /// </summary>
-        /// <param name="validationErrors">A list of validation errors encountered</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="validationErrors">Uma lista de erros de validação encontrados.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Invalid(params ValidationError[] validationErrors) =>
             new(ResultStatus.Invalid)
             { ValidationErrors = new List<ValidationError>(validationErrors) };
 
         /// <summary>
-        /// Represents validation errors that prevent the underlying service from completing.
+        /// Representa erros de validação que impedem o serviço subjacente de ser concluído.
         /// </summary>
-        /// <param name="validationErrors">A list of validation errors encountered</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="validationErrors">Uma lista de erros de validação encontrados.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Invalid(IEnumerable<ValidationError> validationErrors)
             => new(ResultStatus.Invalid) { ValidationErrors = validationErrors };
 
         /// <summary>
-        /// Represents the situation where a service was unable to find a requested resource.
+        /// Representa a situação em que um serviço não conseguiu encontrar um recurso solicitado.
         /// </summary>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> NotFound() => new(ResultStatus.NotFound);
 
         /// <summary>
-        /// Represents the situation where a service was unable to find a requested resource.
-        /// Error messages may be provided and will be exposed via the Errors property.
+        /// Representa a situação em que um serviço não conseguiu encontrar um recurso solicitado.
+        /// Mensagens de erro podem ser fornecidas e serão expostas pela propriedade Errors.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages.</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> NotFound(params string[] errorMessages) => new(ResultStatus.NotFound) { Errors = errorMessages };
 
         /// <summary>
-        /// The parameters to the call were correct, but the user does not have permission to perform some action.
+        /// Os parâmetros da chamada estavam corretos, mas o usuário não tem permissão para realizar alguma ação.
         /// </summary>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Forbidden() => new(ResultStatus.Forbidden);
 
         /// <summary>
-        /// The parameters to the call were correct, but the user does not have permission to perform some action.
+        /// Os parâmetros da chamada estavam corretos, mas o usuário não tem permissão para realizar alguma ação.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages.</param> 
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param> 
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Forbidden(params string[] errorMessages) => new(ResultStatus.Forbidden) { Errors = errorMessages };
 
         /// <summary>
-        /// This is similar to Forbidden, but should be used when the user has not authenticated or has attempted to authenticate but failed.
+        /// Isso é semelhante a Forbidden, mas deve ser usado quando o usuário não se autenticou ou tentou se autenticar, mas falhou.
         /// </summary>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Unauthorized() => new(ResultStatus.Unauthorized);
 
         /// <summary>
-        /// This is similar to Forbidden, but should be used when the user has not authenticated or has attempted to authenticate but failed.
+        /// Isso é semelhante a Forbidden, mas deve ser usado quando o usuário não se autenticou ou tentou se autenticar, mas falhou.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages.</param>  
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param>  
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Unauthorized(params string[] errorMessages) => new(ResultStatus.Unauthorized) { Errors = errorMessages };
 
         /// <summary>
-        /// Represents a situation where a service is in conflict due to the current state of a resource,
-        /// such as an edit conflict between multiple concurrent updates.
+        /// Representa uma situação em que um serviço está em conflito devido ao estado atual de um recurso,
+        /// como um conflito de edição entre várias atualizações concorrentes.
         /// </summary>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Conflict() => new(ResultStatus.Conflict);
 
         /// <summary>
-        /// Represents a situation where a service is in conflict due to the current state of a resource,
-        /// such as an edit conflict between multiple concurrent updates.
-        /// Error messages may be provided and will be exposed via the Errors property.
+        /// Representa uma situação em que um serviço está em conflito devido ao estado atual de um recurso,
+        /// como um conflito de edição entre várias atualizações concorrentes.
+        /// Mensagens de erro podem ser fornecidas e serão expostas pela propriedade Errors.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages.</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> Conflict(params string[] errorMessages) => new(ResultStatus.Conflict) { Errors = errorMessages };
 
         /// <summary>
-        /// Represents a critical error that occurred during the execution of the service.
-        /// Everything provided by the user was valid, but the service was unable to complete due to an exception.
+        /// Representa um erro crítico que ocorreu durante a execução do serviço.
+        /// Tudo fornecido pelo usuário era válido, mas o serviço não conseguiu concluir devido a uma exceção.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages.</param>
-        /// <returns>A Result<typeparamref name="T"/></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param>
+        /// <returns>Um Result<typeparamref name="T"/></returns>
         public static Result<T> CriticalError(params string[] errorMessages) => new(ResultStatus.CriticalError) { Errors = errorMessages };
 
         /// <summary>
-        /// Represents a situation where a service is unavailable, such as when the underlying data store is unavailable.
-        /// Errors may be transient, so the caller may wish to retry the operation.
+        /// Representa uma situação em que um serviço está indisponível, como quando o armazenamento de dados subjacente está indisponível.
+        /// Os erros podem ser transitórios, então o chamador pode desejar tentar a operação novamente.
         /// </summary>
-        /// <param name="errorMessages">A list of string error messages</param>
-        /// <returns></returns>
+        /// <param name="errorMessages">Uma lista de mensagens de erro em string.</param>
+        /// <returns>Retorno do método.</returns>
         public static Result<T> Unavailable(params string[] errorMessages) => new(ResultStatus.Unavailable) { Errors = errorMessages };
 
         /// <summary>
-        /// Represents a situation where the server has successfully fulfilled the request, but there is no content to send back in the response body.
+        /// Representa uma situação em que o servidor atendeu com sucesso a solicitação, mas não há conteúdo para enviar de volta no corpo da resposta.
         /// </summary>
-        /// <typeparam name="T">The type parameter representing the expected response data.</typeparam>
-        /// <returns>A Result object</returns>
+        /// <typeparam name="T">O parâmetro de tipo que representa os dados esperados da resposta.</typeparam>
+        /// <returns>Um objeto Result.</returns>
         public static Result<T> NoContent() => new(ResultStatus.NoContent);
     }
 }

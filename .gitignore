@@ -479,3 +479,15 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 .azure
+
+# Ignorar arquivos e pastas do PostgreSQL no Docker
+pg_wal/
+pg_xact/
+pg_multixact/
+pg_subtrans/
+pg_stat/
+pg_notify/
+pg_ident.conf
+pg_hba.conf
+postgresql.auto.conf
+postmaster.pid

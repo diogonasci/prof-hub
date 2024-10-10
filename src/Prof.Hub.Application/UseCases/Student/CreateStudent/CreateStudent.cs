@@ -15,12 +15,9 @@ namespace Prof.Hub.Application.UseCases.Student.CreateStudent
 
         public async Task<Result<Domain.Entities.Student>> Handle(CreateStudentInput input, CancellationToken cancellationToken)
         {
-
             if (string.IsNullOrWhiteSpace(input.FirstName))
             {
-                return Result.Invalid(new List<ValidationError> {
-                    new() { ErrorMessage = "FirstName cannot be null or whitespace" }
-                });
+                return Result.Invalid(new ValidationError("Nome deve ser preenchido."));
             }
 
             if (string.IsNullOrEmpty(input.Email))

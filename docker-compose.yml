@@ -1,0 +1,41 @@
+services:
+  prof.hub.webapi:
+    image: ${DOCKER_REGISTRY-}profhubwebapi
+    container_name: prof.hub.webapi
+    build:
+      context: .
+      dockerfile: src/Prof.Hub.WebApi/Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+      
+  prof.hub.database:
+    image: postgres:latest
+    container_name: prof.hub.database
+    environment:
+      POSTGRES_DB: prof.hub
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./.containers/prof-hub-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+      
+  prof.hub.cache:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+
+  pgadmin:
+    image: dpage/pgadmin4:6.21
+    container_name: pgadmin
+    platform: linux/amd64
+    user: "0:0"  # Executa como root
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - prof.hub.database
