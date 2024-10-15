@@ -1,7 +1,7 @@
 ﻿namespace Prof.Hub.Application.Results
 {
     /// <summary>
-    /// A wrapper class for a list of error messages and an optional CorrelationId.
+    /// Uma classe wrapper para uma lista de mensagens de erro e um CorrelationId opcional.
     /// </summary>
     /// <param name="ErrorMessages"></param>
     /// <param name="CorrelationId"></param>

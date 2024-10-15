@@ -73,7 +73,7 @@ namespace Prof.Hub.Application.Behaviors
                 throw new ValidationException(errors.Select(e => new ValidationFailure(e.Identifier, e.ErrorMessage)));
             }
 
-            throw new InvalidOperationException("Unexpected response type");
+            throw new InvalidOperationException("Tipo de resposta inesperado.");
         }
     }
 }

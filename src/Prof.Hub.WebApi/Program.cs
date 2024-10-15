@@ -1,8 +1,12 @@
+using Microsoft.Extensions.Options;
 using Prof.Hub.Application.Extensions;
 using Prof.Hub.Infrastructure;
 using Prof.Hub.Infrastructure.ApiClients.Configurations;
+using Prof.Hub.Infrastructure.PostgresSql;
+using Prof.Hub.Infrastructure.PostgresSql.Configurations;
 using Prof.Hub.WebApi;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +20,28 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 
+builder.Services.Configure<PostgreSqlSettings>(
+    builder.Configuration.GetSection("PostgreSqlSettings"));
+
 builder.Services.Configure<ExternalServicesSettings>(
     builder.Configuration.GetSection("ExternalServices"));
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetSection("RedisSettings")["ConnectionString"];
+});
+
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+{
+    var postgresSettings = serviceProvider.GetRequiredService<IOptions<PostgreSqlSettings>>().Value;
+    options.UseNpgsql(postgresSettings.ConnectionString);
+});
+
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+}
 
 app.UseHsts();
 

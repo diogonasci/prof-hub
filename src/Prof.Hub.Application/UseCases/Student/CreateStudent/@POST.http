@@ -1,4 +1,4 @@
-@LOCALHOST = http://localhost:5078
+@LOCALHOST = http://localhost:5000
 
 
 # Exemplo de criação de estudante

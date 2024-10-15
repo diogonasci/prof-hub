@@ -1,5 +1,5 @@
-﻿using MediatR;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using MediatR;
 using ILogger = Serilog.ILogger;
 
 namespace Prof.Hub.Application.Behaviors
@@ -17,16 +17,20 @@ namespace Prof.Hub.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
-            var stopwatch = Stopwatch.StartNew();
 
-            _logger.Information("Iniciando requisição {RequestName} com dados {@Request}", requestName, request);
+            if (_logger.IsEnabled(Serilog.Events.LogEventLevel.Information))
+            {
+                _logger.Information("Iniciando requisição {RequestName} com dados {@Request}", requestName, request);
+            }
+
+            var stopwatch = Stopwatch.StartNew();
 
             var response = await next();
 
-            stopwatch.Stop();
-
             _logger.Information("Concluída a requisição {RequestName} em {ElapsedMilliseconds}ms com resposta {@Response}",
                 requestName, stopwatch.ElapsedMilliseconds, response);
+
+            stopwatch.Stop();
 
             return response;
         }
