@@ -491,3 +491,5 @@ pg_ident.conf
 pg_hba.conf
 postgresql.auto.conf
 postmaster.pid
+
+.containers/
