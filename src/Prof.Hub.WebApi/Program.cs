@@ -4,7 +4,6 @@ using Prof.Hub.Infrastructure;
 using Prof.Hub.Infrastructure.ApiClients.Configurations;
 using Prof.Hub.Infrastructure.PostgresSql;
 using Prof.Hub.Infrastructure.PostgresSql.Configurations;
-using Prof.Hub.Infrastructure.PostgresSql.Migrations;
 using Prof.Hub.WebApi;
 using Serilog;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +41,6 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.ApplyMigrations();
 }
 
 app.UseHsts();
