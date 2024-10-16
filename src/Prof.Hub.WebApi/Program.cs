@@ -1,12 +1,12 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Prof.Hub.Application.Extensions;
+using Prof.Hub.Application;
 using Prof.Hub.Infrastructure;
 using Prof.Hub.Infrastructure.ApiClients.Configurations;
 using Prof.Hub.Infrastructure.PostgresSql;
 using Prof.Hub.Infrastructure.PostgresSql.Configurations;
 using Prof.Hub.WebApi;
 using Serilog;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

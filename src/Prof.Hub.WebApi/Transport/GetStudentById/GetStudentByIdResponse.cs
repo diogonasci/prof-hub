@@ -1,6 +1,5 @@
-﻿namespace Prof.Hub.WebApi.Transport.CreateStudent;
-
-public record CreateStudentResponse(
+﻿namespace Prof.Hub.WebApi.Transport.GetStudentById;
+public record GetStudentByIdResponse(
         Guid Id,
         string FirstName,
         string LastName,
@@ -14,9 +13,9 @@ public record CreateStudentResponse(
         bool IsActive
     )
 {
-    public static CreateStudentResponse FromEntity(Domain.Entities.Student student)
+    public static GetStudentByIdResponse FromEntity(Domain.Entities.Student student)
     {
-        return new CreateStudentResponse(
+        return new GetStudentByIdResponse(
             student.Id,
             student.FirstName,
             student.LastName,
@@ -31,4 +30,3 @@ public record CreateStudentResponse(
         );
     }
 }
-

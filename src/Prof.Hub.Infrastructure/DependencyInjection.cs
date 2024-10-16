@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Prof.Hub.Application.Interfaces;
 using Prof.Hub.Infrastructure.ApiClients;
 using Prof.Hub.Infrastructure.PostgresSql.Configurations;
 using Prof.Hub.Infrastructure.PostgresSql;
+using Prof.Hub.Application.Interfaces.External;
+using Prof.Hub.Application.Interfaces.Repositories;
+using Prof.Hub.Infrastructure.Repositories;
 
 namespace Prof.Hub.Infrastructure
 {
@@ -19,8 +21,10 @@ namespace Prof.Hub.Infrastructure
                 dbContextOptionsBuilder.UseNpgsql(dataBaseSettings.ConnectionString);
             });
 
-            services.AddScoped<IJokeApiClient, JokeApiClient>();
+            services.AddScoped<IStudentRepository, StudentRepository>();
 
+
+            services.AddScoped<IJokeApiClient, JokeApiClient>();
             services.AddHttpClient<IJokeApiClient, JokeApiClient>();
 
             return services;

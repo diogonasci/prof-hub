@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using Prof.Hub.Application.Interfaces;
+using Prof.Hub.Application.Interfaces.External;
 using Prof.Hub.Domain.DTOs;
 using Prof.Hub.Infrastructure.ApiClients.Configurations;
 using System.Net.Http.Json;
