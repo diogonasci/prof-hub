@@ -19,7 +19,7 @@ namespace Prof.Hub.Application.UseCases.Student.CreateStudent
 
             await _studentRepository.AddAsync(student);
 
-            return Result.Success(student);
+            return Result.Created(student, $"/api/v1/students/{student.Id}");
         }
     }
 }

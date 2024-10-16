@@ -21,7 +21,7 @@ namespace Prof.Hub.WebApi.Controllers
             return result switch
             {
                 { IsSuccess: true } => Created(
-                    $"/api/v1/students/{result.Value.Id}",
+                    result.Location,
                     CreateStudentResponse.FromEntity(result.Value)
                 ),
                 { Status: ResultStatus.Invalid } => BadRequest(result.ValidationErrors),
