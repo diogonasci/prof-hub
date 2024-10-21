@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Prof.Hub.Application.Results
+namespace Prof.Hub.SharedKernel.Results
 {
     public class PagedResult<T>(PagedInfo pagedInfo, T value) : Result<T>(value)
     {

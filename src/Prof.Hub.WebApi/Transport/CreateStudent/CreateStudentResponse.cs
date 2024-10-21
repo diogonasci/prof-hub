@@ -1,34 +1,31 @@
-﻿namespace Prof.Hub.WebApi.Transport.CreateStudent;
+﻿using Prof.Hub.Domain.Aggregates.Student;
+
+namespace Prof.Hub.WebApi.Transport.CreateStudent;
 
 public record CreateStudentResponse(
-        Guid Id,
-        string FirstName,
-        string LastName,
-        DateTime DateOfBirth,
-        string Email,
-        string PhoneNumber,
-        string Address,
-        string City,
-        string State,
-        string PostalCode,
-        bool IsActive
-    )
+    Guid Id,
+    string Name,
+    string Email,
+    string PhoneNumber,
+    string Street,
+    string City,
+    string State,
+    string PostalCode,
+    int ClassHours
+)
 {
-    public static CreateStudentResponse FromEntity(Domain.Entities.Student student)
+    public static CreateStudentResponse FromEntity(Student student)
     {
         return new CreateStudentResponse(
             student.Id,
-            student.FirstName,
-            student.LastName,
-            student.DateOfBirth,
-            student.Email,
-            student.PhoneNumber,
-            student.Address,
-            student.City,
-            student.State,
-            student.PostalCode,
-            student.IsActive
+            student.Name.Value,
+            student.Email.Value,
+            student.PhoneNumber.Value,
+            student.Address.Street,
+            student.Address.City,
+            student.Address.State,
+            student.Address.PostalCode,
+            student.ClassHours.Value
         );
     }
 }
-

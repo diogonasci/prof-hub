@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Prof.Hub.Application.Results;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.Behaviors
 {

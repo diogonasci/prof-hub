@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Prof.Hub.Application.Results;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.UseCases.Student.UpdateStudent;
 public record UpdateStudentInput(
@@ -8,8 +8,9 @@ public record UpdateStudentInput(
         string LastName,
         string Email,
         string PhoneNumber,
-        string Address,
+        string Street,
         string City,
         string State,
-        string PostalCode
+        string PostalCode,
+        int ClassHours
     ) : IRequest<Result>;

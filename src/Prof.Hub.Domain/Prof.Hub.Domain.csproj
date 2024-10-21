@@ -7,8 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Enums\" />
+    <Folder Include="Aggregates\Common\" />
+    <Folder Include="Aggregates\Student\Events\" />
+    <Folder Include="Aggregates\Student\Handlers\" />
     <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>

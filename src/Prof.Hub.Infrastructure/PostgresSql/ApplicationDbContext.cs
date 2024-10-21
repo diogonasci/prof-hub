@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Prof.Hub.Domain.Entities;
+using Prof.Hub.Domain.Aggregates.Student;
 
 namespace Prof.Hub.Infrastructure.PostgresSql;
 public class ApplicationDbContext : DbContext

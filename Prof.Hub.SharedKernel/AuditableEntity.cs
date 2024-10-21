@@ -1,6 +1,6 @@
-﻿namespace Prof.Hub.Domain.Common
+﻿namespace Prof.Hub.SharedKernel
 {
-    public class AuditableEntity
+    public class AuditableEntity : Entity
     {
         public DateTime Created { get; set; }
 

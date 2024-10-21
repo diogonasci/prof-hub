@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Prof.Hub.Application.Results
+namespace Prof.Hub.SharedKernel.Results
 {
     public class Result<T> : IResult
     {
@@ -49,7 +49,7 @@ namespace Prof.Hub.Application.Results
         /// Retorna o valor atual.
         /// </summary>
         /// <returns></returns>
-        public object GetValue() => this.Value;
+        public object GetValue() => Value;
 
         /// <summary>
         /// Converte PagedInfo em um PagedResult<typeparamref name="T"/>.

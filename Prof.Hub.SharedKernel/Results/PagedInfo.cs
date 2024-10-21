@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Prof.Hub.Application.Results
+namespace Prof.Hub.SharedKernel.Results
 {
     public class PagedInfo(long pageNumber, long pageSize, long totalPages, long totalRecords)
     {

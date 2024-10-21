@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Prof.Hub.Application.Results;
 using Prof.Hub.Application.UseCases.Student.DeleteStudent;
 using Prof.Hub.Application.UseCases.Student.GetAllStudents;
 using Prof.Hub.Application.UseCases.Student.GetStudent;
+using Prof.Hub.SharedKernel.Results;
 using Prof.Hub.WebApi.Transport.CreateStudent;
 using Prof.Hub.WebApi.Transport.GetAllStudents;
 using Prof.Hub.WebApi.Transport.GetStudentById;

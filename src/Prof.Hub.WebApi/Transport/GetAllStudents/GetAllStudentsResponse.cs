@@ -1,4 +1,6 @@
-﻿namespace Prof.Hub.WebApi.Transport.GetAllStudents;
+﻿using Prof.Hub.Domain.Aggregates.Student;
+
+namespace Prof.Hub.WebApi.Transport.GetAllStudents;
 
 public record GetAllStudentsResponse(
         IEnumerable<StudentDto> Students
@@ -18,7 +20,7 @@ public record StudentDto(
     bool IsActive
 )
 {
-    public static StudentDto FromEntity(Domain.Entities.Student student)
+    public static StudentDto FromEntity(Student student)
     {
         return new StudentDto(
             student.Id,

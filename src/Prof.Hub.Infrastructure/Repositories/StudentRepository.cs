@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Prof.Hub.Application.Interfaces.Repositories;
-using Prof.Hub.Domain.Entities;
+using Prof.Hub.Domain.Aggregates.Student;
 
 namespace Prof.Hub.Infrastructure.Repositories;
 public class StudentRepository : IStudentRepository

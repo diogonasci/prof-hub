@@ -10,7 +10,8 @@ public record UpdateStudentRequest(
         string Address,
         string City,
         string State,
-        string PostalCode
+        string PostalCode,
+        int ClassHours
     )
 {
     public UpdateStudentInput ToInput()
@@ -24,7 +25,8 @@ public record UpdateStudentRequest(
             Address,
             City,
             State,
-            PostalCode
+            PostalCode,
+            ClassHours
         );
     }
 }

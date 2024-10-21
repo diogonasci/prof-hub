@@ -1,4 +1,4 @@
-﻿namespace Prof.Hub.Application.Results
+﻿namespace Prof.Hub.SharedKernel.Results
 {
     /// <summary>
     /// Uma classe wrapper para uma lista de mensagens de erro e um CorrelationId opcional.

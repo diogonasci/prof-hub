@@ -1,4 +1,4 @@
-﻿namespace Prof.Hub.Application.Results
+﻿namespace Prof.Hub.SharedKernel.Results
 {
     public enum ResultStatus
     {

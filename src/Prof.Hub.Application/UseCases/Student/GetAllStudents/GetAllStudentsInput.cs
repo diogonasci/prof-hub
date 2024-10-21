@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Prof.Hub.Application.Results;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.UseCases.Student.GetAllStudents;
-public record GetAllStudentsInput : IRequest<Result<List<Domain.Entities.Student>>>;
+public record GetAllStudentsInput : IRequest<Result<List<Domain.Aggregates.Student.Student>>>;

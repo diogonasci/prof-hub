@@ -5,13 +5,13 @@ namespace Prof.Hub.WebApi.Transport.CreateStudent
     public record CreateStudentRequest(
         string FirstName,
         string LastName,
-        DateTime DateOfBirth,
         string Email,
         string PhoneNumber,
-        string Address,
+        string Street,
         string City,
         string State,
-        string PostalCode
+        string PostalCode,
+        int ClassHours
     )
     {
         public CreateStudentInput ToInput()
@@ -19,13 +19,13 @@ namespace Prof.Hub.WebApi.Transport.CreateStudent
             return new CreateStudentInput(
                 FirstName,
                 LastName,
-                DateOfBirth,
                 Email,
                 PhoneNumber,
-                Address,
+                Street,
                 City,
                 State,
-                PostalCode
+                PostalCode,
+                ClassHours
             );
         }
     }

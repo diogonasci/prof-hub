@@ -1,4 +1,4 @@
-﻿using Prof.Hub.Domain.Entities;
+﻿using Prof.Hub.Domain.Aggregates.Student;
 
 namespace Prof.Hub.Application.Interfaces.Repositories;
 public interface IStudentRepository

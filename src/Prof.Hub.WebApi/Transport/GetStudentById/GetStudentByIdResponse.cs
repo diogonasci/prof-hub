@@ -1,4 +1,6 @@
-﻿namespace Prof.Hub.WebApi.Transport.GetStudentById;
+﻿using Prof.Hub.Domain.Aggregates.Student;
+
+namespace Prof.Hub.WebApi.Transport.GetStudentById;
 public record GetStudentByIdResponse(
         Guid Id,
         string FirstName,
@@ -13,7 +15,7 @@ public record GetStudentByIdResponse(
         bool IsActive
     )
 {
-    public static GetStudentByIdResponse FromEntity(Domain.Entities.Student student)
+    public static GetStudentByIdResponse FromEntity(Student student)
     {
         return new GetStudentByIdResponse(
             student.Id,
