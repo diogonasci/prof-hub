@@ -1,6 +1,6 @@
 ﻿using Prof.Hub.Application.UseCases.Student.CreateStudent;
 
-namespace Prof.Hub.WebApi.Transport.CreateStudent
+namespace Prof.Hub.WebApi.Endpoints.Student.CreateStudent
 {
     public record CreateStudentRequest(
         string FirstName,

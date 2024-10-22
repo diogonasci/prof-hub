@@ -1,6 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.Student;
-
-namespace Prof.Hub.WebApi.Transport.CreateStudent;
+﻿namespace Prof.Hub.WebApi.Endpoints.Student.CreateStudent;
 
 public record CreateStudentResponse(
     Guid Id,
@@ -14,7 +12,7 @@ public record CreateStudentResponse(
     int ClassHours
 )
 {
-    public static CreateStudentResponse FromEntity(Student student)
+    public static CreateStudentResponse FromEntity(Domain.Aggregates.Student.Student student)
     {
         return new CreateStudentResponse(
             student.Id,

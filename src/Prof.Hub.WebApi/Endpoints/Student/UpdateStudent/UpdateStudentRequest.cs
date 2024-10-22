@@ -1,6 +1,6 @@
 ﻿using Prof.Hub.Application.UseCases.Student.UpdateStudent;
 
-namespace Prof.Hub.WebApi.Transport.UpdateStudent;
+namespace Prof.Hub.WebApi.Endpoints.Student.UpdateStudent;
 public record UpdateStudentRequest(
         Guid Id,
         string FirstName,
