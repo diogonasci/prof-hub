@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Prof.Hub.Application.Interfaces.Repositories;
+using Prof.Hub.Domain.Aggregates.Common;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.SharedKernel.Results;
 

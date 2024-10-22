@@ -1,6 +1,6 @@
 ﻿using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+namespace Prof.Hub.Domain.Aggregates.Common;
 public sealed record PhoneNumber(string Value)
 {
     public static Result<PhoneNumber> Create(string value)
