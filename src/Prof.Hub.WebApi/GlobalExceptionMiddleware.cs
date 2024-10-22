@@ -3,12 +3,12 @@ using System.Text.Json;
 
 namespace Prof.Hub.WebApi
 {
-    public class GlobalExceptionHandlerMiddleware
+    public class GlobalExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
+        private readonly ILogger<GlobalExceptionMiddleware> _logger;
 
-        public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
+        public GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExceptionMiddleware> logger)
         {
             _next = next;
             _logger = logger;

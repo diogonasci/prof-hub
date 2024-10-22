@@ -4,8 +4,7 @@ using Prof.Hub.SharedKernel.Results;
 namespace Prof.Hub.Application.UseCases.Student.UpdateStudent;
 public record UpdateStudentInput(
         Guid Id,
-        string FirstName,
-        string LastName,
+        string Name,
         string Email,
         string PhoneNumber,
         string Street,

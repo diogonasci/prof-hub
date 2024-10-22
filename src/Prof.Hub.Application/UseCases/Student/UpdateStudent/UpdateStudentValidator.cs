@@ -10,13 +10,9 @@ public class UpdateStudentValidator : AbstractValidator<UpdateStudentInput>
             .NotEmpty().WithMessage("O ID é obrigatório.")
             .Must(BeAValidGuid).WithMessage("O ID deve ser um GUID válido.");
 
-        RuleFor(x => x.FirstName)
-            .NotEmpty().WithMessage("O primeiro nome é obrigatório.")
-            .Length(1, 50).WithMessage("O primeiro nome deve ter entre 1 e 50 caracteres.");
-
-        RuleFor(x => x.LastName)
-            .NotEmpty().WithMessage("O sobrenome é obrigatório.")
-            .Length(1, 50).WithMessage("O sobrenome deve ter entre 1 e 50 caracteres.");
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("O nome é obrigatório.")
+            .Length(1, 50).WithMessage("O nome deve ter entre 1 e 50 caracteres.");
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("O e-mail é obrigatório.")

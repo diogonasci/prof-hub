@@ -3,8 +3,7 @@
 namespace Prof.Hub.WebApi.Endpoints.Student.UpdateStudent;
 public record UpdateStudentRequest(
         Guid Id,
-        string FirstName,
-        string LastName,
+        string Name,
         string Email,
         string PhoneNumber,
         string Address,
@@ -18,8 +17,7 @@ public record UpdateStudentRequest(
     {
         return new UpdateStudentInput(
             Id,
-            FirstName,
-            LastName,
+            Name,
             Email,
             PhoneNumber,
             Address,

@@ -3,8 +3,7 @@
 namespace Prof.Hub.WebApi.Endpoints.Student.CreateStudent
 {
     public record CreateStudentRequest(
-        string FirstName,
-        string LastName,
+        string Name,
         string Email,
         string PhoneNumber,
         string Street,
@@ -17,8 +16,7 @@ namespace Prof.Hub.WebApi.Endpoints.Student.CreateStudent
         public CreateStudentInput ToInput()
         {
             return new CreateStudentInput(
-                FirstName,
-                LastName,
+                Name,
                 Email,
                 PhoneNumber,
                 Street,

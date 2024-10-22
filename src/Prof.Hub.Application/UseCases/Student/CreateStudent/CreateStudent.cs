@@ -38,7 +38,7 @@ namespace Prof.Hub.Application.UseCases.Student.CreateStudent
 
         private static Result<(Name, Email, PhoneNumber, Address, ClassHours)> TryCreateValueObjects(CreateStudentInput input)
         {
-            var nameResult = Name.Create($"{input.FirstName} {input.LastName}");
+            var nameResult = Name.Create(input.Name);
             var emailResult = Email.Create(input.Email);
             var phoneResult = PhoneNumber.Create(input.PhoneNumber);
             var addressResult = Address.Create(input.Street, input.City, input.State, input.PostalCode);

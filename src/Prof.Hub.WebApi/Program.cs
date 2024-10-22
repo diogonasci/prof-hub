@@ -46,7 +46,7 @@ if (app.Environment.IsDevelopment())
 app.UseHsts();
 
 app.UseSerilogRequestLogging();
-app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 app.UseSwagger().UseSwaggerUI();
 
