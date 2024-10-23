@@ -8,7 +8,7 @@ public class GetAllStudents : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/v1/students", async (IMediator mediator, CancellationToken ct) =>
+        app.MapGet($"/api/v{ApiVersions.V1}/students", async (IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(new GetAllStudentsInput(), ct);
 

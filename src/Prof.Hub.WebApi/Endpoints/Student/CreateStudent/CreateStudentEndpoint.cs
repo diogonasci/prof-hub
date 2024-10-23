@@ -7,7 +7,7 @@ public class Post : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/v1/students", async (CreateStudentRequest request, IMediator mediator, CancellationToken ct) =>
+        app.MapPost($"/api/v{ApiVersions.V1}/students", async (CreateStudentRequest request, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(request.ToInput(), ct);
 

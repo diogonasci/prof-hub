@@ -8,7 +8,7 @@ public class GetStudentById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/v1/students/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
+        app.MapGet($"/api/v{ApiVersions.V1}/students/{{id:guid}}", async (Guid id, IMediator mediator, CancellationToken ct) =>
         {
             var result = await mediator.Send(new GetStudentByIdInput(id), ct);
 

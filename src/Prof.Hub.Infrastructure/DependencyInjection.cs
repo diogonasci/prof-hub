@@ -1,33 +1,93 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Asp.Versioning;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Prof.Hub.Infrastructure.ApiClients;
-using Prof.Hub.Infrastructure.PostgresSql.Configurations;
-using Prof.Hub.Infrastructure.PostgresSql;
-using Prof.Hub.Application.Interfaces.External;
 using Prof.Hub.Application.Interfaces.Repositories;
+using Prof.Hub.Infrastructure.Outbox;
+using Prof.Hub.Infrastructure.PostgresSql;
 using Prof.Hub.Infrastructure.Repositories;
+using Prof.Hub.SharedKernel;
+using Quartz;
+using Prof.Hub.Infrastructure.Clock;
 
 namespace Prof.Hub.Infrastructure
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructure(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>((serviceProvider, dbContextOptionsBuilder) =>
-            {
-                var dataBaseSettings = serviceProvider.GetService<IOptions<PostgreSqlSettings>>()!.Value;
-                
-                dbContextOptionsBuilder.UseNpgsql(dataBaseSettings.ConnectionString);
-            });
+            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+
+            AddPersistence(services, configuration);
+
+            AddCaching(services, configuration);
+
+            AddHealthChecks(services, configuration);
+
+            AddApiVersioning(services);
+
+            AddBackgroundJobs(services, configuration);
+
+            return services;
+        }
+
+        private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
+        {
+            string connectionString = configuration.GetConnectionString("Database") ??
+                                      throw new ArgumentNullException(nameof(configuration));
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
 
             services.AddScoped<IStudentRepository, StudentRepository>();
 
+            services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+        }
 
-            services.AddScoped<IJokeApiClient, JokeApiClient>();
-            services.AddHttpClient<IJokeApiClient, JokeApiClient>();
+        private static void AddCaching(IServiceCollection services, IConfiguration configuration)
+        {
+            string connectionString = configuration.GetConnectionString("Cache") ??
+                                      throw new ArgumentNullException(nameof(configuration));
 
-            return services;
+            services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
+        }
+
+        private static void AddHealthChecks(IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks()
+                .AddNpgSql(configuration.GetConnectionString("Database")!)
+                .AddRedis(configuration.GetConnectionString("Cache")!)
+                .AddUrlGroup(new Uri(configuration["KeyCloak:BaseUrl"]!), HttpMethod.Get, "keycloak");
+        }
+
+        private static void AddApiVersioning(IServiceCollection services)
+        {
+            services
+                .AddApiVersioning(options =>
+                {
+                    options.DefaultApiVersion = new ApiVersion(1);
+                    options.ReportApiVersions = true;
+                    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+                })
+                .AddMvc()
+                .AddApiExplorer(options =>
+                {
+                    options.GroupNameFormat = "'v'V";
+                    options.SubstituteApiVersionInUrl = true;
+                });
+        }
+
+        private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
+
+            services.AddQuartz();
+
+            services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+
+            services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         }
     }
 }

@@ -7,7 +7,7 @@ public class Put : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/api/v1/students/{id:guid}", async (Guid id, UpdateStudentRequest request, IMediator mediator, CancellationToken ct) =>
+        app.MapPut($"/api/v{ApiVersions.V1}/students/{{id:guid}}", async (Guid id, UpdateStudentRequest request, IMediator mediator, CancellationToken ct) =>
         {
             var updatedRequest = request with { Id = id };
             var result = await mediator.Send(updatedRequest.ToInput(), ct);

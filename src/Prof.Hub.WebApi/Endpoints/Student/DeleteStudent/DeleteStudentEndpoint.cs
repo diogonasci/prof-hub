@@ -8,16 +8,17 @@ public class Delete : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/api/v1/students/{id:guid}", async (Guid id, IMediator mediator, CancellationToken ct) =>
-        {
-            var result = await mediator.Send(new DeleteStudentInput(id), ct);
-
-            return result switch
+        app.MapDelete($"/api/v{ApiVersions.V1}/students/{{id:guid}}",
+            async (Guid id, IMediator mediator, CancellationToken ct) =>
             {
-                { IsSuccess: true } => Results.NoContent(),
-                { Status: ResultStatus.NotFound } => Results.NotFound(result.ValidationErrors),
-                _ => Results.BadRequest()
-            };
-        });
+                var result = await mediator.Send(new DeleteStudentInput(id), ct);
+
+                return result switch
+                {
+                    { IsSuccess: true } => Results.NoContent(),
+                    { Status: ResultStatus.NotFound } => Results.NotFound(result.ValidationErrors),
+                    _ => Results.BadRequest()
+                };
+            });
     }
 }

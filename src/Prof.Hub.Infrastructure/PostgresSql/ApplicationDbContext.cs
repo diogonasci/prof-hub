@@ -1,13 +1,74 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Prof.Hub.Domain.Aggregates.Student;
+﻿using System.Data;
+using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
+using Microsoft.EntityFrameworkCore;
+using Prof.Hub.Infrastructure.Outbox;
+using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Infrastructure.PostgresSql;
-public class ApplicationDbContext : DbContext
+
+public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
-        
+        WriteIndented = false,
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        TypeInfoResolver = new DefaultJsonTypeInfoResolver
+        {
+            Modifiers = { static ti => ti.PolymorphismOptions = new() { TypeDiscriminatorPropertyName = "$type" } }
+        }
+    };
+
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    public ApplicationDbContext(
+        DbContextOptions options,
+        IDateTimeProvider dateTimeProvider)
+        : base(options)
+    {
+        _dateTimeProvider = dateTimeProvider;
     }
 
-    public DbSet<Student> Students { get; set; }
+    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            AddDomainEventsAsOutboxMessages();
+            int result = await base.SaveChangesAsync(cancellationToken);
+            return result;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            throw new ConcurrencyException("Concurrency exception occurred.", ex);
+        }
+    }
+
+    private void AddDomainEventsAsOutboxMessages()
+    {
+        var outboxMessages = ChangeTracker
+            .Entries<Entity>()
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                IReadOnlyList<IDomainEvent> domainEvents = entity.DomainEvents;
+                entity.ClearDomainEvents();
+                return domainEvents;
+            })
+            .Select(domainEvent => new OutboxMessage(
+                Guid.NewGuid(),
+                _dateTimeProvider.UtcNow,
+                domainEvent.GetType().Name,
+                JsonSerializer.Serialize(domainEvent, JsonSerializerOptions)))
+            .ToList();
+
+        AddRange(outboxMessages);
+    }
 }
