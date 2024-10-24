@@ -31,7 +31,7 @@ namespace Prof.Hub.Domain.Aggregates.PrivateLesson
             return Result.Success(newLesson);
         }
 
-        public Result CancelLesson()
+        public Result Cancel()
         {
             if (Status != ClassStatus.Scheduled)
                 return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser canceladas."));

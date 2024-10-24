@@ -7,7 +7,7 @@ namespace Prof.Hub.Domain.Aggregates.GroupLesson
 {
     public class GroupLesson : AuditableEntity
     {
-        private readonly List<Guid> _studentIds = [];
+        private readonly List<Student.Student> _students = [];
 
         public Guid TeacherId { get; private set; }
         public Price Price { get; private set; }
@@ -15,7 +15,7 @@ namespace Prof.Hub.Domain.Aggregates.GroupLesson
         public DateTime EndTime { get; private set; }
         public ClassStatus Status { get; private set; }
 
-        public IReadOnlyList<Guid> StudentIds => _studentIds.AsReadOnly();
+        public IReadOnlyList<Student.Student> Students => _students.AsReadOnly();
 
         private GroupLesson(Guid teacherId, Price price, DateTime startTime, DateTime endTime)
         {
@@ -34,23 +34,6 @@ namespace Prof.Hub.Domain.Aggregates.GroupLesson
 
             var lesson = new GroupLesson(teacherId, price, startTime, endTime);
             return Result.Success(lesson);
-        }
-
-        public Result AddStudent(Guid studentId)
-        {
-            if (_studentIds.Contains(studentId))
-                return Result.Invalid(new ValidationError("O estudante já está matriculado nesta aula."));
-
-            _studentIds.Add(studentId);
-            return Result.Success();
-        }
-
-        public Result RemoveStudent(Guid studentId)
-        {
-            if (!_studentIds.Remove(studentId))
-                return Result.Invalid(new ValidationError("O estudante não está matriculado nesta aula."));
-
-            return Result.Success();
         }
 
         public Result Cancel()

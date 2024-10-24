@@ -8,7 +8,8 @@ namespace Prof.Hub.Domain.Aggregates.Student
 {
     public class Student : AuditableEntity
     {
-        private readonly List<PrivateLesson.PrivateLesson> _scheduledLessons = [];
+        private readonly List<PrivateLesson.PrivateLesson> _privateLessons = [];
+        private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
 
         public Name Name { get; private set; }
         public Email Email { get; private set; }
@@ -17,7 +18,9 @@ namespace Prof.Hub.Domain.Aggregates.Student
         public Parent Parent { get; private set; }
         public ClassHours ClassHours { get; private set; }
 
-        public IReadOnlyList<PrivateLesson.PrivateLesson> ScheduledLessons => _scheduledLessons.AsReadOnly();
+        public IReadOnlyList<PrivateLesson.PrivateLesson> PrivateLessons => _privateLessons.AsReadOnly();
+        public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
+
 
         private Student()
         {
@@ -44,24 +47,54 @@ namespace Prof.Hub.Domain.Aggregates.Student
             ClassHours = ClassHours.Add(hours);
         }
 
-        public Result ScheduleLesson(PrivateLesson.PrivateLesson newLesson)
+        public Result SchedulePrivateLesson(PrivateLesson.PrivateLesson newLesson)
         {
             if (newLesson == null)
-                return Result.Invalid(new ValidationError("A nova aula não pode ser nula."));
+                return Result.Invalid(new ValidationError("A nova aula particular não pode ser nula."));
 
-            _scheduledLessons.Add(newLesson);
+            var hasConflict = _privateLessons.Any(lesson =>
+                lesson.StartTime < newLesson.EndTime && newLesson.StartTime < lesson.EndTime);
+
+            if (hasConflict)
+                return Result.Invalid(new ValidationError("Conflito de horário detectado para aula particular."));
+
+            _privateLessons.Add(newLesson);
             return Result.Success();
         }
 
-        public Result CancelLesson(PrivateLesson.PrivateLesson lessonToCancel)
+        public Result CancelPrivateLesson(PrivateLesson.PrivateLesson lessonToCancel)
         {
             if (lessonToCancel == null)
-                return Result.Invalid(new ValidationError("A aula a ser cancelada não pode ser nula."));
+                return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));
 
-            if (!_scheduledLessons.Remove(lessonToCancel))
-                return Result.Invalid(new ValidationError("A aula não está agendada."));
+            if (!_privateLessons.Remove(lessonToCancel))
+                return Result.Invalid(new ValidationError("A aula particular não está agendada."));
 
             return Result.Success();
         }
+
+        public Result JoinGroupLesson(GroupLesson.GroupLesson lesson)
+        {
+            if (lesson == null)
+                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+
+            if (_groupLessons.Contains(lesson))
+                return Result.Invalid(new ValidationError("O aluno já está matriculado nesta aula em grupo."));
+
+            _groupLessons.Add(lesson);
+            return Result.Success();
+        }
+
+        public Result LeaveGroupLesson(GroupLesson.GroupLesson lesson)
+        {
+            if (lesson == null)
+                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+
+            if (!_groupLessons.Remove(lesson))
+                return Result.Invalid(new ValidationError("O aluno não está nessa aula em grupo."));
+
+            return Result.Success();
+        }
+
     }
 }

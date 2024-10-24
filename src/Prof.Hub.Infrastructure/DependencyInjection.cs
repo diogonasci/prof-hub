@@ -58,8 +58,7 @@ namespace Prof.Hub.Infrastructure
         {
             services.AddHealthChecks()
                 .AddNpgSql(configuration.GetConnectionString("Database")!)
-                .AddRedis(configuration.GetConnectionString("Cache")!)
-                .AddUrlGroup(new Uri(configuration["KeyCloak:BaseUrl"]!), HttpMethod.Get, "keycloak");
+                .AddRedis(configuration.GetConnectionString("Cache")!);
         }
 
         private static void AddApiVersioning(IServiceCollection services)

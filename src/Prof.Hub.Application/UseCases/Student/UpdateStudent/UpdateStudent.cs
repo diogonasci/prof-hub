@@ -32,9 +32,18 @@ internal class UpdateStudent : IRequestHandler<UpdateStudentInput, Result>
             existingStudent.Parent, classHours
         );
 
-        foreach (var lesson in existingStudent.ScheduledLessons)
+        foreach (var lesson in existingStudent.PrivateLessons)
         {
-            updatedStudent.ScheduleLesson(lesson);
+            var result = updatedStudent.SchedulePrivateLesson(lesson);
+            if (!result.IsSuccess)
+                return result;
+        }
+
+        foreach (var lesson in existingStudent.GroupLessons)
+        {
+            var result = updatedStudent.JoinGroupLesson(lesson);
+            if (!result.IsSuccess)
+                return result;
         }
 
         await _studentRepository.UpdateAsync(updatedStudent);

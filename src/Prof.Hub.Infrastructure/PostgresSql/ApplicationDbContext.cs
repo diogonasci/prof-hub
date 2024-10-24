@@ -47,7 +47,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            throw new ConcurrencyException("Concurrency exception occurred.", ex);
+            throw new ConcurrencyException("Ocorreu uma exceção de concorrência.", ex);
         }
     }
 

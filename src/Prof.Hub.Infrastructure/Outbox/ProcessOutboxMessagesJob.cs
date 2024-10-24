@@ -45,7 +45,7 @@ internal sealed class ProcessOutboxMessagesJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        _logger.LogInformation("Beginning to process outbox messages");
+        _logger.LogInformation("Iniciando o processamento das mensagens da outbox");
 
         var dbContext = (ApplicationDbContext)_unitOfWork;
         var transaction = await dbContext.Database.BeginTransactionAsync(context.CancellationToken);
@@ -70,7 +70,7 @@ internal sealed class ProcessOutboxMessagesJob : IJob
                 {
                     _logger.LogError(
                         ex,
-                        "Exception while processing outbox message {MessageId}",
+                        "Exceção ao processar a mensagem da outbox {MessageId}",
                         outboxMessage.Id);
 
                     exception = ex;
@@ -80,11 +80,11 @@ internal sealed class ProcessOutboxMessagesJob : IJob
             }
 
             await transaction.CommitAsync(context.CancellationToken);
-            _logger.LogInformation("Completed processing outbox messages");
+            _logger.LogInformation("Processamento das mensagens da outbox concluído");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to process outbox messages");
+            _logger.LogError(ex, "Falha ao processar as mensagens da outbox");
             await transaction.RollbackAsync(context.CancellationToken);
         }
     }

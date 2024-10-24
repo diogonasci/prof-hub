@@ -7,7 +7,8 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
 {
     public class Teacher : AuditableEntity
     {
-        private readonly List<PrivateLesson.PrivateLesson> _scheduledLessons = [];
+        private readonly List<PrivateLesson.PrivateLesson> _privateLessons = [];
+        private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
 
         public Name Name { get; private set; }
         public Email Email { get; private set; }
@@ -15,15 +16,15 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
         public Address Address { get; private set; }
         public HourlyRate HourlyRate { get; private set; }
 
-        public IReadOnlyList<PrivateLesson.PrivateLesson> ScheduledLessons => _scheduledLessons.AsReadOnly();
+        public IReadOnlyList<PrivateLesson.PrivateLesson> PrivateLessons => _privateLessons.AsReadOnly();
+        public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
 
         private Teacher() { }
 
-        public static Teacher Create(Name name, Email email, PhoneNumber phoneNumber, Address address, HourlyRate hourlyRate)
+        public static Result<Teacher> Create(Name name, Email email, PhoneNumber phoneNumber, Address address, HourlyRate hourlyRate)
         {
             var teacher = new Teacher
             {
-                Id = Guid.NewGuid(),
                 Name = name,
                 Email = email,
                 PhoneNumber = phoneNumber,
@@ -34,31 +35,50 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
             return teacher;
         }
 
-        public Result ScheduleLesson(PrivateLesson.PrivateLesson lesson)
+        public Result AddScheduledPrivateLesson(PrivateLesson.PrivateLesson lesson)
         {
             if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula não pode ser nula."));
+                return Result.Invalid(new ValidationError("A aula particular não pode ser nula."));
 
             if (lesson.TeacherId != Id)
-                return Result.Invalid(new ValidationError("Esta aula não pertence a este professor."));
+                return Result.Invalid(new ValidationError("Esta aula particular não pertence a este professor."));
 
-            _scheduledLessons.Add(lesson);
+            _privateLessons.Add(lesson);
             return Result.Success();
         }
 
-        public Result CancelLesson(PrivateLesson.PrivateLesson lesson)
+        public Result RemoveScheduledPrivateLesson(PrivateLesson.PrivateLesson lesson)
         {
             if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula a ser cancelada não pode ser nula."));
+                return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));
 
-            if (!_scheduledLessons.Remove(lesson))
-                return Result.Invalid(new ValidationError("A aula não está agendada para este professor."));
+            if (!_privateLessons.Remove(lesson))
+                return Result.Invalid(new ValidationError("A aula particular não está agendada para este professor."));
 
-            var result = lesson.CancelLesson();
-            if (!result.IsSuccess)
-                return result;
+            return lesson.Cancel();
+        }
 
+        public Result AddScheduledGroupLesson(GroupLesson.GroupLesson lesson)
+        {
+            if (lesson == null)
+                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+
+            if (lesson.TeacherId != Id)
+                return Result.Invalid(new ValidationError("Esta aula em grupo não pertence a este professor."));
+
+            _groupLessons.Add(lesson);
             return Result.Success();
+        }
+
+        public Result RemoveScheduledGroupLesson(GroupLesson.GroupLesson lesson)
+        {
+            if (lesson == null)
+                return Result.Invalid(new ValidationError("A aula em grupo a ser cancelada não pode ser nula."));
+
+            if (!_groupLessons.Remove(lesson))
+                return Result.Invalid(new ValidationError("A aula em grupo não está agendada para este professor."));
+
+            return lesson.Cancel();
         }
     }
 }
