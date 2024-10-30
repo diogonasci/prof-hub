@@ -7,7 +7,9 @@ using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Infrastructure.PostgresSql;
 
-public sealed class ApplicationDbContext : DbContext, IUnitOfWork
+public sealed class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    IDateTimeProvider dateTimeProvider) : DbContext(options), IUnitOfWork
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
@@ -19,15 +21,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
         }
     };
 
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public ApplicationDbContext(
-        DbContextOptions options,
-        IDateTimeProvider dateTimeProvider)
-        : base(options)
-    {
-        _dateTimeProvider = dateTimeProvider;
-    }
+    private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
 
     public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
 

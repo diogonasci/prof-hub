@@ -18,7 +18,7 @@ namespace Prof.Hub.Infrastructure
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddTransient<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
             AddPersistence(services, configuration);
 

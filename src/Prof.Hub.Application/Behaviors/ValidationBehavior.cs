@@ -18,12 +18,7 @@ namespace Prof.Hub.Application.Behaviors
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var validationResults = await ValidateRequestAsync(request, cancellationToken);
-            if (validationResults is not null)
-            {
-                return HandleValidationFailures(validationResults);
-            }
-
-            return await next();
+            return validationResults is null ? await next() : HandleValidationFailures(validationResults);
         }
 
         private async Task<List<ValidationError>?> ValidateRequestAsync(TRequest request, CancellationToken cancellationToken)
@@ -64,13 +59,11 @@ namespace Prof.Hub.Application.Behaviors
                     return (TResponse)invalidMethod.Invoke(null, new object[] { errors });
                 }
             }
-            else if (typeof(TResponse) == typeof(Result))
-            {
-                return (TResponse)(object)Result.Invalid(errors);
-            }
             else
             {
-                throw new ValidationException(errors.Select(e => new ValidationFailure(e.Identifier, e.ErrorMessage)));
+                return typeof(TResponse) == typeof(Result)
+                    ? (TResponse)(object)Result.Invalid(errors)
+                    : throw new ValidationException(errors.Select(e => new ValidationFailure(e.Identifier, e.ErrorMessage)));
             }
 
             throw new InvalidOperationException("Tipo de resposta inesperado.");
