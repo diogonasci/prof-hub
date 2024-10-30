@@ -1,13 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Prof.Hub.Application.Interfaces.Repositories;
 using Prof.Hub.Domain.Aggregates.Student;
+using Prof.Hub.Infrastructure.PostgresSql;
 
 namespace Prof.Hub.Infrastructure.Repositories;
 public class StudentRepository : IStudentRepository
 {
-    private readonly DbContext _context;
+    private readonly ApplicationDbContext _context;
 
-    public StudentRepository(DbContext context)
+    public StudentRepository(ApplicationDbContext context)
     {
         _context = context;
     }

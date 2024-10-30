@@ -95,11 +95,6 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasForeignKey("StudentId")
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(s => s.GroupLessons)
-            .WithOne()
-            .HasForeignKey("StudentId")
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.Property(s => s.Created)
             .IsRequired()
             .HasColumnName("created");
@@ -117,4 +112,3 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasColumnName("last_modified_by");
     }
 }
-

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.GroupLesson;
+using Prof.Hub.Domain.Aggregates.Student;
 using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
@@ -51,8 +52,27 @@ internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupL
             .HasMaxLength(50)
             .HasColumnName("last_modified_by");
 
+        // Configuração do relacionamento many-to-many
         builder.HasMany(gl => gl.Students)
-            .WithMany()
-            .UsingEntity(j => j.ToTable("group_lesson_students"));
+            .WithMany(s => s.GroupLessons)
+            .UsingEntity<Dictionary<string, object>>(
+                "GroupLessonStudent",
+                j => j
+                    .HasOne<Student>()
+                    .WithMany()
+                    .HasForeignKey("StudentId")
+                    .HasConstraintName("FK_GroupLessonStudent_Student")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne<GroupLesson>()
+                    .WithMany()
+                    .HasForeignKey("GroupLessonId")
+                    .HasConstraintName("FK_GroupLessonStudent_GroupLesson")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.ToTable("group_lesson_students");
+                    j.HasKey("GroupLessonId", "StudentId");
+                });
     }
 }

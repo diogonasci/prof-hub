@@ -7,15 +7,15 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "firstName": "Diogo",
-  "lastName": "Nascimento",
-  "dateOfBirth": "1990-05-03T03:30:25.184Z",
+  "name": "Diogo Nascimento",
   "email": "diogonascii@gmail.com",
   "phoneNumber": "21985043074",
-  "address": "Rua Fábio Luz",
+  "street": "Rua Fábio Luz",
   "city": "Rio de Janeiro",
   "state": "Rio de Janeiro",
-  "postalCode": "20720350"
+  "postalCode": "20720350",
+  "classHours": 20
 }
+
 
 ###

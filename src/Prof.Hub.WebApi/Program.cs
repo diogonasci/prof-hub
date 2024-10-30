@@ -6,6 +6,7 @@ using Prof.Hub.Infrastructure;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
 
@@ -50,7 +53,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.MapEndpoints();
+
 
 app.MapHealthChecks("health", new HealthCheckOptions
 {
