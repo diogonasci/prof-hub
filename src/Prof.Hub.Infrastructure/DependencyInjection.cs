@@ -43,7 +43,7 @@ namespace Prof.Hub.Infrastructure
 
             services.AddScoped<IStudentRepository, StudentRepository>();
 
-            services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+            services.AddScoped<IUnitOfWork, ApplicationDbContext>();
         }
 
         private static void AddCaching(IServiceCollection services, IConfiguration configuration)

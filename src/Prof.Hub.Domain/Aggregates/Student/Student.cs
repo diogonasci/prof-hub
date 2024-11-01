@@ -26,21 +26,51 @@ namespace Prof.Hub.Domain.Aggregates.Student
         {
         }
 
-        public static Student Create(Name name, Email email, PhoneNumber phoneNumber, Address address, Parent parent, ClassHours classHours)
+        public static Result<Student> Create(
+            string name,
+            string email,
+            string phoneNumber,
+            string street,
+            string city,
+            string state,
+            string postalCode,
+            int classHoursValue
+        )
         {
+            var nameResult = Name.Create(name);
+            var emailResult = Email.Create(email);
+            var phoneResult = PhoneNumber.Create(phoneNumber);
+            var addressResult = Address.Create(street, city, state, postalCode);
+            var classHoursResult = ClassHours.Create(classHoursValue);
+
+            if (!nameResult.IsSuccess || !emailResult.IsSuccess || !phoneResult.IsSuccess || !addressResult.IsSuccess ||
+                !classHoursResult.IsSuccess)
+            {
+                var errors = new List<ValidationError>();
+
+                if (nameResult.ValidationErrors.Any()) errors.AddRange(nameResult.ValidationErrors);
+                if (emailResult.ValidationErrors.Any()) errors.AddRange(emailResult.ValidationErrors);
+                if (phoneResult.ValidationErrors.Any()) errors.AddRange(phoneResult.ValidationErrors);
+                if (addressResult.ValidationErrors.Any()) errors.AddRange(addressResult.ValidationErrors);
+                if (classHoursResult.ValidationErrors.Any()) errors.AddRange(classHoursResult.ValidationErrors);
+
+                return Result.Invalid(errors);
+            }
+
             var student = new Student
             {
                 Id = Guid.NewGuid(),
-                Name = name,
-                Email = email,
-                PhoneNumber = phoneNumber,
-                Address = address,
-                Parent = parent,
-                ClassHours = classHours
+                Name = nameResult.Value,
+                Email = emailResult.Value,
+                PhoneNumber = phoneResult.Value,
+                Address = addressResult.Value,
+                Parent = null,
+                ClassHours = classHoursResult.Value
             };
 
-            return student;
+            return Result.Success(student);
         }
+
 
         public void AddClassHours(int hours)
         {
@@ -95,6 +125,5 @@ namespace Prof.Hub.Domain.Aggregates.Student
 
             return Result.Success();
         }
-
     }
 }
