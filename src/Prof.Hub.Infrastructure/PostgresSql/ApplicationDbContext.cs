@@ -17,7 +17,10 @@ public sealed class ApplicationDbContext(
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         TypeInfoResolver = new DefaultJsonTypeInfoResolver
         {
-            Modifiers = { static ti => ti.PolymorphismOptions = new() { TypeDiscriminatorPropertyName = "$type" } }
+            Modifiers =
+            {
+                static ti => ti.PolymorphismOptions = new() { TypeDiscriminatorPropertyName = "$type" }
+            }
         }
     };
 

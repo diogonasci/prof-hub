@@ -20,9 +20,9 @@ namespace Prof.Hub.Infrastructure.ApiClients
         /// Obtém uma piada aleatória do serviço de piadas.
         /// </summary>
         /// <returns>Um objeto JokeDTO representando uma piada, ou null em caso de falha.</returns>
-        public async Task<JokeDTO?> GetRandomJokeAsync()
+        public async Task<JokeDto?> GetRandomJokeAsync()
         {
-            return await _httpClient.GetFromJsonAsync<JokeDTO>("random_joke");
+            return await _httpClient.GetFromJsonAsync<JokeDto>("random_joke");
         }
     }
 }

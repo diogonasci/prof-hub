@@ -11,7 +11,8 @@ services:
       - profhub-db
     ports:
       - "15001:80"
-    network_mode: bridge
+    networks:
+      - profhub-network
 
   profhub-db:
     image: postgres:latest
@@ -24,7 +25,8 @@ services:
       - ./.containers/database:/var/lib/postgresql/data
     ports:
       - "15432:5432"
-    network_mode: bridge
+    networks:
+      - profhub-network
 
   profhub-idp:
     image: quay.io/keycloak/keycloak:latest
@@ -38,7 +40,8 @@ services:
       - ./.files/profhub-realm-export.json:/opt/keycloak/data/import/realm.json
     ports:
       - "18080:8080"
-    network_mode: bridge
+    networks:
+      - profhub-network
 
   profhub-seq:
     image: datalust/seq:latest
@@ -48,7 +51,8 @@ services:
     ports:
       - "15341:5341"
       - "17001:525"
-    network_mode: bridge
+    networks:
+      - profhub-network
 
   profhub-redis:
     image: redis:latest
@@ -56,4 +60,9 @@ services:
     restart: always
     ports:
       - "16379:6379"
-    network_mode: bridge
+    networks:
+      - profhub-network
+
+networks:
+  profhub-network:
+    driver: bridge

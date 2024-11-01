@@ -4,6 +4,6 @@ namespace Prof.Hub.Application.Interfaces.External
 {
     public interface IJokeApiClient
     {
-        Task<JokeDTO?> GetRandomJokeAsync();
+        Task<JokeDto?> GetRandomJokeAsync();
     }
 }

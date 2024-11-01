@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Prof.Hub.Application.Interfaces.Repositories;
-using Prof.Hub.Domain.Aggregates.Common;
-using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.UseCases.Student.CreateStudent
@@ -15,7 +13,8 @@ namespace Prof.Hub.Application.UseCases.Student.CreateStudent
             _studentRepository = studentRepository;
         }
 
-        public async Task<Result<Domain.Aggregates.Student.Student>> Handle(CreateStudentInput input, CancellationToken cancellationToken)
+        public async Task<Result<Domain.Aggregates.Student.Student>> Handle(CreateStudentInput input,
+            CancellationToken cancellationToken)
         {
             var studentResult = Domain.Aggregates.Student.Student.Create(
                 input.Name,

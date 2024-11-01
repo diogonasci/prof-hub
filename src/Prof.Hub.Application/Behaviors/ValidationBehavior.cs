@@ -15,13 +15,15 @@ namespace Prof.Hub.Application.Behaviors
             _validators = validators ?? throw new ArgumentNullException(nameof(validators));
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken)
         {
             var validationResults = await ValidateRequestAsync(request, cancellationToken);
             return validationResults is null ? await next() : HandleValidationFailures(validationResults);
         }
 
-        private async Task<List<ValidationError>?> ValidateRequestAsync(TRequest request, CancellationToken cancellationToken)
+        private async Task<List<ValidationError>?> ValidateRequestAsync(TRequest request,
+            CancellationToken cancellationToken)
         {
             if (!_validators.Any())
                 return null;
@@ -32,7 +34,7 @@ namespace Prof.Hub.Application.Behaviors
             return validationErrors.Count > 0 ? validationErrors : null;
         }
 
-        private List<ValidationError> ExtractErrors(ValidationResult validationResult)
+        private static List<ValidationError> ExtractErrors(ValidationResult validationResult)
         {
             return validationResult.Errors
                 .Where(failure => failure is not null)
@@ -63,7 +65,8 @@ namespace Prof.Hub.Application.Behaviors
             {
                 return typeof(TResponse) == typeof(Result)
                     ? (TResponse)(object)Result.Invalid(errors)
-                    : throw new ValidationException(errors.Select(e => new ValidationFailure(e.Identifier, e.ErrorMessage)));
+                    : throw new ValidationException(errors.Select(e =>
+                        new ValidationFailure(e.Identifier, e.ErrorMessage)));
             }
 
             throw new InvalidOperationException("Tipo de resposta inesperado.");
