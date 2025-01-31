@@ -4,7 +4,7 @@
     <ProjectVersion>2.1</ProjectVersion>
     <DockerTargetOS>Linux</DockerTargetOS>
     <DockerPublishLocally>False</DockerPublishLocally>
-    <ProjectGuid>79c86797-8f79-463d-b05d-6f8e20a8a62c</ProjectGuid>
+    <ProjectGuid>e0fb2ea9-7b8c-469e-aa96-31341933e96a</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>prof.hub.webapi</DockerServiceName>

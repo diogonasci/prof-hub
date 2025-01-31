@@ -13,9 +13,9 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Prof.Hub.WebApi/Prof.Hub.WebApi.csproj", "src/Prof.Hub.WebApi/"]
-COPY ["Prof.Hub.SharedKernel/Prof.Hub.SharedKernel.csproj", "Prof.Hub.SharedKernel/"]
 COPY ["src/Prof.Hub.Application/Prof.Hub.Application.csproj", "src/Prof.Hub.Application/"]
 COPY ["src/Prof.Hub.Domain/Prof.Hub.Domain.csproj", "src/Prof.Hub.Domain/"]
+COPY ["src/Prof.Hub.SharedKernel/Prof.Hub.SharedKernel.csproj", "src/Prof.Hub.SharedKernel/"]
 COPY ["src/Prof.Hub.Infrastructure/Prof.Hub.Infrastructure.csproj", "src/Prof.Hub.Infrastructure/"]
 RUN dotnet restore "./src/Prof.Hub.WebApi/Prof.Hub.WebApi.csproj"
 COPY . .
