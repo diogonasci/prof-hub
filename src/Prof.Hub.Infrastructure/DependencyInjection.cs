@@ -3,11 +3,9 @@ using Asp.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Prof.Hub.Application.Interfaces.Repositories;
-using Prof.Hub.Infrastructure.Outbox;
 using Prof.Hub.Infrastructure.PostgresSql;
 using Prof.Hub.Infrastructure.Repositories;
 using Prof.Hub.SharedKernel;
-using Quartz;
 using Prof.Hub.Infrastructure.Clock;
 
 namespace Prof.Hub.Infrastructure
@@ -27,8 +25,6 @@ namespace Prof.Hub.Infrastructure
             AddHealthChecks(services, configuration);
 
             AddApiVersioning(services);
-
-            AddBackgroundJobs(services, configuration);
 
             return services;
         }
@@ -76,17 +72,6 @@ namespace Prof.Hub.Infrastructure
                     options.GroupNameFormat = "'v'V";
                     options.SubstituteApiVersionInUrl = true;
                 });
-        }
-
-        private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
-        {
-            services.Configure<OutboxOptions>(configuration.GetSection("Outbox"));
-
-            services.AddQuartz();
-
-            services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
-
-            services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System.Data;
-using System.Text.Json;
-using System.Text.Json.Serialization.Metadata;
-using Microsoft.EntityFrameworkCore;
-using Prof.Hub.Infrastructure.Outbox;
+﻿using Microsoft.EntityFrameworkCore;
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Infrastructure.PostgresSql;
@@ -11,22 +7,7 @@ public sealed class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
     IDateTimeProvider dateTimeProvider) : DbContext(options), IUnitOfWork
 {
-    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    {
-        WriteIndented = false,
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        TypeInfoResolver = new DefaultJsonTypeInfoResolver
-        {
-            Modifiers =
-            {
-                static ti => ti.PolymorphismOptions = new() { TypeDiscriminatorPropertyName = "$type" }
-            }
-        }
-    };
-
     private readonly IDateTimeProvider _dateTimeProvider = dateTimeProvider;
-
-    public DbSet<OutboxMessage> OutboxMessages { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,7 +19,6 @@ public sealed class ApplicationDbContext(
     {
         try
         {
-            AddDomainEventsAsOutboxMessages();
             int result = await base.SaveChangesAsync(cancellationToken);
             return result;
         }
@@ -46,26 +26,5 @@ public sealed class ApplicationDbContext(
         {
             throw new ConcurrencyException("Ocorreu uma exceção de concorrência.", ex);
         }
-    }
-
-    private void AddDomainEventsAsOutboxMessages()
-    {
-        var outboxMessages = ChangeTracker
-            .Entries<Entity>()
-            .Select(entry => entry.Entity)
-            .SelectMany(entity =>
-            {
-                IReadOnlyList<IDomainEvent> domainEvents = entity.DomainEvents;
-                entity.ClearDomainEvents();
-                return domainEvents;
-            })
-            .Select(domainEvent => new OutboxMessage(
-                Guid.NewGuid(),
-                _dateTimeProvider.UtcNow,
-                domainEvent.GetType().Name,
-                JsonSerializer.Serialize(domainEvent, JsonSerializerOptions)))
-            .ToList();
-
-        AddRange(outboxMessages);
     }
 }
