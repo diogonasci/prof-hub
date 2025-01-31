@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  prof.hub.webapi:
+    image: ${DOCKER_REGISTRY-}profhubwebapi
+    container_name: Prof.Hub.WebApi
+    build:
+      context: .
+      dockerfile: src/Prof.Hub.WebApi/Dockerfile
+    depends_on:
+      - profhub-db
+    ports:
+      - "15001:80"
+    networks:
+      - profhub-network
+
+  profhub-db:
+    image: postgres:latest
+    container_name: Prof.Hub.Db
+    environment:
+      - POSTGRES_DB=profhub
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.containers/database:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    networks:
+      - profhub-network
+
+  profhub-idp:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: Prof.Hub.Identity
+    command: start-dev --import-realm
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./.containers/identity:/opt/keycloak/data
+      - ./.files/profhub-realm-export.json:/opt/keycloak/data/import/realm.json
+    ports:
+      - "18080:8080"
+    networks:
+      - profhub-network
+
+  profhub-seq:
+    image: datalust/seq:latest
+    container_name: Prof.Hub.Seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - "15341:5341"
+      - "17001:525"
+    networks:
+      - profhub-network
+
+  profhub-redis:
+    image: redis:latest
+    container_name: Prof.Hub.Redis
+    restart: always
+    ports:
+      - "16379:6379"
+    networks:
+      - profhub-network
+
+networks:
+  profhub-network:
+    driver: bridge

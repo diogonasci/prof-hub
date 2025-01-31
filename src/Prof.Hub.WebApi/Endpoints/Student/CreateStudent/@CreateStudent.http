@@ -1,0 +1,21 @@
+@LOCALHOST = http://localhost:5000
+
+
+# Exemplo de criação de estudante
+POST {{LOCALHOST}}/api/v1/students
+Accept: application/json
+Content-Type: application/json
+
+{
+  "name": "Diogo Nascimento",
+  "email": "diogonascii@gmail.com",
+  "phoneNumber": "21985043074",
+  "street": "Rua Fábio Luz",
+  "city": "Rio de Janeiro",
+  "state": "Rio de Janeiro",
+  "postalCode": "20720350",
+  "classHours": 20
+}
+
+
+###

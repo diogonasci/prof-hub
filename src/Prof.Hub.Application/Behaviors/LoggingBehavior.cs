@@ -14,7 +14,8 @@ namespace Prof.Hub.Application.Behaviors
             _logger = logger;
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
 
@@ -27,7 +28,8 @@ namespace Prof.Hub.Application.Behaviors
 
             var response = await next();
 
-            _logger.Information("Concluída a requisição {RequestName} em {ElapsedMilliseconds}ms com resposta {@Response}",
+            _logger.Information(
+                "Concluída a requisição {RequestName} em {ElapsedMilliseconds}ms com resposta {@Response}",
                 requestName, stopwatch.ElapsedMilliseconds, response);
 
             stopwatch.Stop();

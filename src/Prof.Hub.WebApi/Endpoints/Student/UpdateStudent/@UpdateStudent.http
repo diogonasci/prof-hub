@@ -1,0 +1,19 @@
+@LOCALHOST = http://localhost:5000
+
+# Exemplo de atualização de estudante
+PUT {{LOCALHOST}}/api/v1/students
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "firstName": "Diogo",
+  "lastName": "Nascimento Atualizado",
+  "dateOfBirth": "1990-05-03T03:30:25.184Z",
+  "email": "diogonascii@gmail.com",
+  "phoneNumber": "21985043074",
+  "address": "Rua Fábio Luz Atualizada",
+  "city": "Rio de Janeiro",
+  "state": "Rio de Janeiro",
+  "postalCode": "20720350"
+}

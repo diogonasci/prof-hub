@@ -1,42 +1,40 @@
 ﻿using MediatR;
-using Prof.Hub.Application.Interfaces;
-using Prof.Hub.Application.Results;
+using Prof.Hub.Application.Interfaces.Repositories;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.UseCases.Student.CreateStudent
 {
-    internal class CreateStudent : IRequestHandler<CreateStudentInput, Result<Domain.Entities.Student>>
+    internal class CreateStudent : IRequestHandler<CreateStudentInput, Result<Domain.Aggregates.Student.Student>>
     {
-        private readonly IJokeApiClient _jokeApiClient;
+        private readonly IStudentRepository _studentRepository;
 
-        public CreateStudent(IJokeApiClient jokeApiClient)
+        public CreateStudent(IStudentRepository studentRepository)
         {
-            _jokeApiClient = jokeApiClient;
+            _studentRepository = studentRepository;
         }
 
-        public async Task<Result<Domain.Entities.Student>> Handle(CreateStudentInput input, CancellationToken cancellationToken)
+        public async Task<Result<Domain.Aggregates.Student.Student>> Handle(CreateStudentInput input,
+            CancellationToken cancellationToken)
         {
-            if (string.IsNullOrWhiteSpace(input.FirstName))
-            {
-                return Result.Invalid(new ValidationError("Nome deve ser preenchido."));
-            }
+            var studentResult = Domain.Aggregates.Student.Student.Create(
+                input.Name,
+                input.Email,
+                input.PhoneNumber,
+                input.Street,
+                input.City,
+                input.State,
+                input.PostalCode,
+                input.ClassHours
+            );
 
-            if (string.IsNullOrEmpty(input.Email))
-            {
-                return Result.Invalid(new List<ValidationError> {
-                    new() { ErrorMessage = "Email cannot be empty" }
-                });
-            }
+            if (!studentResult.IsSuccess)
+                return Result.Invalid(studentResult.ValidationErrors);
 
-            var jokeResult = await _jokeApiClient.GetRandomJokeAsync();
-            if (jokeResult is null)
-            {
-                return Result.Invalid(new List<ValidationError> {
-                    new() { ErrorMessage = "Failed to fetch a joke." }
-                });
-            }
+            var student = studentResult.Value;
 
-            var student = input.ToStudent();
-            return await Task.FromResult(Result.Success(student));
+            await _studentRepository.AddAsync(student);
+
+            return Result.Created(student, $"/api/v1/students/{student.Id}");
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
-using Prof.Hub.Application.Results;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Application.Behaviors
 {
@@ -15,18 +15,15 @@ namespace Prof.Hub.Application.Behaviors
             _validators = validators ?? throw new ArgumentNullException(nameof(validators));
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+            CancellationToken cancellationToken)
         {
             var validationResults = await ValidateRequestAsync(request, cancellationToken);
-            if (validationResults is not null)
-            {
-                return HandleValidationFailures(validationResults);
-            }
-
-            return await next();
+            return validationResults is null ? await next() : HandleValidationFailures(validationResults);
         }
 
-        private async Task<List<ValidationError>?> ValidateRequestAsync(TRequest request, CancellationToken cancellationToken)
+        private async Task<List<ValidationError>?> ValidateRequestAsync(TRequest request,
+            CancellationToken cancellationToken)
         {
             if (!_validators.Any())
                 return null;
@@ -37,7 +34,7 @@ namespace Prof.Hub.Application.Behaviors
             return validationErrors.Count > 0 ? validationErrors : null;
         }
 
-        private List<ValidationError> ExtractErrors(ValidationResult validationResult)
+        private static List<ValidationError> ExtractErrors(ValidationResult validationResult)
         {
             return validationResult.Errors
                 .Where(failure => failure is not null)
@@ -64,13 +61,12 @@ namespace Prof.Hub.Application.Behaviors
                     return (TResponse)invalidMethod.Invoke(null, new object[] { errors });
                 }
             }
-            else if (typeof(TResponse) == typeof(Result))
-            {
-                return (TResponse)(object)Result.Invalid(errors);
-            }
             else
             {
-                throw new ValidationException(errors.Select(e => new ValidationFailure(e.Identifier, e.ErrorMessage)));
+                return typeof(TResponse) == typeof(Result)
+                    ? (TResponse)(object)Result.Invalid(errors)
+                    : throw new ValidationException(errors.Select(e =>
+                        new ValidationFailure(e.Identifier, e.ErrorMessage)));
             }
 
             throw new InvalidOperationException("Tipo de resposta inesperado.");

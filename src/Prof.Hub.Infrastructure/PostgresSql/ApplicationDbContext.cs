@@ -1,13 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Prof.Hub.Domain.Entities;
+using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Infrastructure.PostgresSql;
-public class ApplicationDbContext : DbContext
+
+public sealed class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options) : DbContext(options), IUnitOfWork
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        base.OnModelCreating(modelBuilder);
     }
 
-    public DbSet<Student> Students { get; set; }
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+            int result = await base.SaveChangesAsync(cancellationToken);
+            return result;
+    }
 }
