@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  prof.hub.webapi:
+    image: ${DOCKER_REGISTRY-}profhubwebapi
+    build:
+      context: .
+      dockerfile: src/Prof.Hub.WebApi/Dockerfile
+    ports:
+      - "8080:80"
+      - "8443:443"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=profhub;User Id=postgres;Password=postgres123
+    networks:
+      - profhub-network
+
+  postgres:
+    image: postgres:latest
+    container_name: profhub-postgres
+    environment:
+      - POSTGRES_DB=profhub
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - profhub-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+networks:
+  profhub-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

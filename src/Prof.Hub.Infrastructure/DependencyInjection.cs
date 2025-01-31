@@ -20,8 +20,6 @@ namespace Prof.Hub.Infrastructure
 
             AddPersistence(services, configuration);
 
-            AddCaching(services, configuration);
-
             AddHealthChecks(services, configuration);
 
             AddApiVersioning(services);
@@ -31,7 +29,7 @@ namespace Prof.Hub.Infrastructure
 
         private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
         {
-            string connectionString = configuration.GetConnectionString("Database") ??
+            string connectionString = configuration.GetConnectionString("DefaultConnection") ??
                                       throw new ArgumentNullException(nameof(configuration));
 
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -42,19 +40,10 @@ namespace Prof.Hub.Infrastructure
             services.AddScoped<IUnitOfWork, ApplicationDbContext>();
         }
 
-        private static void AddCaching(IServiceCollection services, IConfiguration configuration)
-        {
-            string connectionString = configuration.GetConnectionString("Cache") ??
-                                      throw new ArgumentNullException(nameof(configuration));
-
-            services.AddStackExchangeRedisCache(options => options.Configuration = connectionString);
-        }
-
         private static void AddHealthChecks(IServiceCollection services, IConfiguration configuration)
         {
             services.AddHealthChecks()
-                .AddNpgSql(configuration.GetConnectionString("Database")!)
-                .AddRedis(configuration.GetConnectionString("Cache")!);
+                .AddNpgSql(configuration.GetConnectionString("DefaultConnection")!);
         }
 
         private static void AddApiVersioning(IServiceCollection services)
