@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6B08358E-D47
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - SharedKernel", "5 - SharedKernel", "{8A4C3A63-A4E3-46B1-9292-87E2DC401787}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prof.Hub.SharedKernel", "Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj", "{5681D600-12D4-4970-87F8-5123C38BE81C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Prof.Hub.SharedKernel", "src\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj", "{5681D600-12D4-4970-87F8-5123C38BE81C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

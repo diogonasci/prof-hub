@@ -33,6 +33,7 @@
     <ProjectReference Include="..\..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
     <ProjectReference Include="..\Prof.Hub.Application\Prof.Hub.Application.csproj" />
     <ProjectReference Include="..\Prof.Hub.Domain\Prof.Hub.Domain.csproj" />
+    <ProjectReference Include="..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
   </ItemGroup>
 
 </Project>
