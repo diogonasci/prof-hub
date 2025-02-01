@@ -1,23 +1,25 @@
-﻿using System.Collections.Generic;
-using Prof.Hub.Domain.Aggregates.Common;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.Domain.Aggregates.Common;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Student;
-public class Parent : AuditableEntity
+namespace Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+public sealed record StudentProfile
 {
     public Name Name { get; private set; }
     public Email Email { get; private set; }
     public PhoneNumber PhoneNumber { get; private set; }
+    public Grade Grade { get; private set; }
+    public Uri AvatarUrl { get; private set; }
+    public ReferralCode ReferralCode { get; private set; }
 
-    private Parent()
+    private StudentProfile()
     {
     }
 
-    public static Result<Parent> Create(
-        string name,
-        string email,
-        string phoneNumber)
+    public static Result<StudentProfile> Create(
+            string name,
+            string email,
+            string phoneNumber
+        )
     {
         var nameResult = Name.Create(name);
         var emailResult = Email.Create(email);
@@ -34,22 +36,13 @@ public class Parent : AuditableEntity
             return Result.Invalid(errors);
         }
 
-        var parent = new Parent
+        var student = new StudentProfile
         {
-            Id = Guid.NewGuid(),
             Name = nameResult.Value,
             Email = emailResult.Value,
-            PhoneNumber = phoneResult.Value
+            PhoneNumber = phoneResult.Value,
         };
 
-        return Result.Success(parent);
-    }
-
-    public void Update(Name name, Email email, PhoneNumber phoneNumber)
-    {
-        Name = name;
-        Email = email;
-        PhoneNumber = phoneNumber;
+        return Result.Success(student);
     }
 }
-

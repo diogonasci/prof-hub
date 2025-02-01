@@ -4,9 +4,9 @@ using Prof.Hub.Domain.Aggregates.PrivateLesson;
 using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
-internal sealed class PrivateLessonConfiguration : IEntityTypeConfiguration<PrivateLesson>
+internal sealed class PrivateLessonConfiguration : IEntityTypeConfiguration<PrivateClass>
 {
-    public void Configure(EntityTypeBuilder<PrivateLesson> builder)
+    public void Configure(EntityTypeBuilder<PrivateClass> builder)
     {
         builder.ToTable("private_lessons");
 

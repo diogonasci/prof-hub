@@ -8,120 +8,70 @@ namespace Prof.Hub.Domain.Aggregates.Student
 {
     public class Student : AuditableEntity
     {
-        private readonly List<PrivateLesson.PrivateLesson> _privateLessons = [];
-        private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
+        private readonly List<PrivateClass.PrivateClass> _privateClasses = [];
+        private readonly List<GroupClass.GroupClass> _groupClasses = [];
+        private readonly List<EnrollmentHistory> _enrollmentHistory = [];
+        private readonly List<TeacherFavorite> _favoriteTeachers = [];
 
-        public Name Name { get; private set; }
-        public Email Email { get; private set; }
-        public PhoneNumber PhoneNumber { get; private set; }
-        public Address Address { get; private set; }
-        public Parent Parent { get; private set; }
-        public ClassHours ClassHours { get; private set; }
+        public StudentId Id { get; private set; }
+        public StudentProfile Profile { get; private set; }
+        public Balance Balance { get; private set; }
+        public School School { get; private set; }
 
-        public IReadOnlyList<PrivateLesson.PrivateLesson> PrivateLessons => _privateLessons.AsReadOnly();
-        public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
+        public IReadOnlyList<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
+        public IReadOnlyList<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
+        public IReadOnlyList<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
+        public IReadOnlyList<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
 
 
         private Student()
         {
         }
 
+        public record StudentId(string Value)
+        {
+            public static StudentId Create() => new(Guid.NewGuid().ToString());
+        }
+
         public static Result<Student> Create(
             string name,
             string email,
-            string phoneNumber,
-            string street,
-            string city,
-            string state,
-            string postalCode,
-            int classHoursValue
+            string phoneNumber
         )
         {
-            var nameResult = Name.Create(name);
-            var emailResult = Email.Create(email);
-            var phoneResult = PhoneNumber.Create(phoneNumber);
-            var addressResult = Address.Create(street, city, state, postalCode);
-            var classHoursResult = ClassHours.Create(classHoursValue);
+            var profileResult = StudentProfile.Create(name, email, phoneNumber);
 
-            if (!nameResult.IsSuccess || !emailResult.IsSuccess || !phoneResult.IsSuccess || !addressResult.IsSuccess ||
-                !classHoursResult.IsSuccess)
+            if (!profileResult.IsSuccess)
             {
                 var errors = new List<ValidationError>();
 
-                if (nameResult.ValidationErrors.Any()) errors.AddRange(nameResult.ValidationErrors);
-                if (emailResult.ValidationErrors.Any()) errors.AddRange(emailResult.ValidationErrors);
-                if (phoneResult.ValidationErrors.Any()) errors.AddRange(phoneResult.ValidationErrors);
-                if (addressResult.ValidationErrors.Any()) errors.AddRange(addressResult.ValidationErrors);
-                if (classHoursResult.ValidationErrors.Any()) errors.AddRange(classHoursResult.ValidationErrors);
+                if (profileResult.ValidationErrors.Any()) errors.AddRange(profileResult.ValidationErrors);
 
                 return Result.Invalid(errors);
             }
 
             var student = new Student
             {
-                Id = Guid.NewGuid(),
-                Name = nameResult.Value,
-                Email = emailResult.Value,
-                PhoneNumber = phoneResult.Value,
-                Address = addressResult.Value,
-                Parent = null,
-                ClassHours = classHoursResult.Value
+                Id = StudentId.Create(),
+                Profile = profileResult.Value,
             };
 
             return Result.Success(student);
         }
 
-
-        public void AddClassHours(int hours)
+        public void UpdateProfile(StudentProfile profile)
         {
-            ClassHours = ClassHours.Add(hours);
+            Profile = profile;
+            AddDomainEvent(new StudentProfileUpdatedEvent(Id, profile));
         }
 
-        public Result SchedulePrivateLesson(PrivateLesson.PrivateLesson newLesson)
+        public Result<Student> AddToFavorites(TeacherId teacherId)
         {
-            if (newLesson == null)
-                return Result.Invalid(new ValidationError("A nova aula particular não pode ser nula."));
+            if (_favoriteTeachers.Any(f => f.TeacherId == teacherId))
+                return Result.Invalid(new ValidationError("Professor já está nos favoritos."));
 
-            var hasConflict = _privateLessons.Any(lesson =>
-                lesson.StartTime < newLesson.EndTime && newLesson.StartTime < lesson.EndTime);
-
-            if (hasConflict)
-                return Result.Invalid(new ValidationError("Conflito de horário detectado para aula particular."));
-
-            _privateLessons.Add(newLesson);
-            return Result.Success();
-        }
-
-        public Result CancelPrivateLesson(PrivateLesson.PrivateLesson lessonToCancel)
-        {
-            if (lessonToCancel == null)
-                return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));
-
-            if (!_privateLessons.Remove(lessonToCancel))
-                return Result.Invalid(new ValidationError("A aula particular não está agendada."));
-
-            return Result.Success();
-        }
-
-        public Result JoinGroupLesson(GroupLesson.GroupLesson lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
-
-            if (_groupLessons.Contains(lesson))
-                return Result.Invalid(new ValidationError("O aluno já está matriculado nesta aula em grupo."));
-
-            _groupLessons.Add(lesson);
-            return Result.Success();
-        }
-
-        public Result LeaveGroupLesson(GroupLesson.GroupLesson lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
-
-            if (!_groupLessons.Remove(lesson))
-                return Result.Invalid(new ValidationError("O aluno não está nessa aula em grupo."));
+            _favoriteTeachers.Add(new TeacherFavorite(Id, teacherId));
+            AddDomainEvent(new TeacherAddedToFavoritesEvent(Id, teacherId));
 
             return Result.Success();
         }

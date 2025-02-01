@@ -7,7 +7,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
 {
     public class Teacher : AuditableEntity
     {
-        private readonly List<PrivateLesson.PrivateLesson> _privateLessons = [];
+        private readonly List<PrivateLesson.PrivateClass> _privateLessons = [];
         private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
 
         public Name Name { get; private set; }
@@ -16,7 +16,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
         public Address Address { get; private set; }
         public HourlyRate HourlyRate { get; private set; }
 
-        public IReadOnlyList<PrivateLesson.PrivateLesson> PrivateLessons => _privateLessons.AsReadOnly();
+        public IReadOnlyList<PrivateLesson.PrivateClass> PrivateLessons => _privateLessons.AsReadOnly();
         public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
 
         private Teacher() { }
@@ -35,7 +35,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
             return teacher;
         }
 
-        public Result AddScheduledPrivateLesson(PrivateLesson.PrivateLesson lesson)
+        public Result AddScheduledPrivateLesson(PrivateLesson.PrivateClass lesson)
         {
             if (lesson == null)
                 return Result.Invalid(new ValidationError("A aula particular não pode ser nula."));
@@ -47,7 +47,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
             return Result.Success();
         }
 
-        public Result RemoveScheduledPrivateLesson(PrivateLesson.PrivateLesson lesson)
+        public Result RemoveScheduledPrivateLesson(PrivateLesson.PrivateClass lesson)
         {
             if (lesson == null)
                 return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));

@@ -64,7 +64,6 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
                     name => name.Value,
                     value => Name.Create(value).Value)
                 .HasColumnName("parent_name")
-                .IsRequired()
                 .HasMaxLength(100);
 
             parent.Property(p => p.Email)
