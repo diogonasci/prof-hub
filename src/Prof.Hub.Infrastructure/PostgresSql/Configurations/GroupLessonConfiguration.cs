@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Prof.Hub.Domain.Aggregates.GroupLesson;
 using Prof.Hub.Domain.Aggregates.Student;
 using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+using Prof.Hub.Domain.Aggregates.GroupClass;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
-internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupLesson>
+internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupClass>
 {
-    public void Configure(EntityTypeBuilder<GroupLesson> builder)
+    public void Configure(EntityTypeBuilder<GroupClass> builder)
     {
         builder.ToTable("group_lessons");
 
@@ -64,7 +64,7 @@ internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupL
                     .HasConstraintName("FK_GroupLessonStudent_Student")
                     .OnDelete(DeleteBehavior.Cascade),
                 j => j
-                    .HasOne<GroupLesson>()
+                    .HasOne<GroupClass>()
                     .WithMany()
                     .HasForeignKey("GroupLessonId")
                     .HasConstraintName("FK_GroupLessonStudent_GroupLesson")

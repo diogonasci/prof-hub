@@ -1,4 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.Common;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Domain.Aggregates.Student.ValueObjects;

@@ -1,4 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
@@ -32,12 +33,19 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass
             public static PrivateClassId Create() => new(Guid.NewGuid().ToString());
         }
 
-        public static Result<PrivateClass> Create(TeacherId teacherId, StudentId studentId, Subject subject, ClassSchedule schedule, Price price, Uri meetingUrl)
+        public static Result<PrivateClass> Create(
+            TeacherId teacherId,
+            StudentId studentId,
+            Subject subject,
+            DateTime startDate,
+            TimeSpan duration,
+            Price price,
+            Uri meetingUrl)
         {
             var teacherIdResult = TeacherId.Create();
             var studentIdResult = StudentId.Create();
             var subjectResult = Subject.Create();
-            var classScheduleResult = ClassSchedule.Create();
+            var classScheduleResult = ClassSchedule.Create(startDate, duration);
 
             if (!teacherIdResult.IsSuccess || !studentIdResult.IsSuccess || !subjectResult.IsSuccess || !classScheduleResult.IsSuccess)
             {

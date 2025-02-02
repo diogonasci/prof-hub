@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Prof.Hub.Domain.Aggregates.Common;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 

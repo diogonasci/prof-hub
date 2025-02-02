@@ -1,6 +1,6 @@
 ﻿using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Common;
+namespace Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 public sealed record Address(string Street, string City, string State, string PostalCode)
 {
     public static Result<Address> Create(string street, string city, string state, string postalCode)

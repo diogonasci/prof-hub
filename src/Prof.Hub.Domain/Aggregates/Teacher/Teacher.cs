@@ -1,4 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.Common;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
@@ -8,7 +8,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
     public class Teacher : AuditableEntity
     {
         private readonly List<PrivateLesson.PrivateClass> _privateLessons = [];
-        private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
+        private readonly List<GroupClass.GroupClass> _groupLessons = [];
 
         public Name Name { get; private set; }
         public Email Email { get; private set; }
@@ -17,7 +17,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
         public HourlyRate HourlyRate { get; private set; }
 
         public IReadOnlyList<PrivateLesson.PrivateClass> PrivateLessons => _privateLessons.AsReadOnly();
-        public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
+        public IReadOnlyList<GroupClass.GroupClass> GroupLessons => _groupLessons.AsReadOnly();
 
         private Teacher() { }
 
@@ -58,7 +58,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
             return lesson.Cancel();
         }
 
-        public Result AddScheduledGroupLesson(GroupLesson.GroupLesson lesson)
+        public Result AddScheduledGroupLesson(GroupClass.GroupClass lesson)
         {
             if (lesson == null)
                 return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
@@ -70,7 +70,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher
             return Result.Success();
         }
 
-        public Result RemoveScheduledGroupLesson(GroupLesson.GroupLesson lesson)
+        public Result RemoveScheduledGroupLesson(GroupClass.GroupClass lesson)
         {
             if (lesson == null)
                 return Result.Invalid(new ValidationError("A aula em grupo a ser cancelada não pode ser nula."));

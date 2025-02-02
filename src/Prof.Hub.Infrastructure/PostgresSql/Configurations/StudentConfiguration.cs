@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Prof.Hub.Domain.Aggregates.Common;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
