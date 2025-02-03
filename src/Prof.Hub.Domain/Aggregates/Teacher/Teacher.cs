@@ -1,84 +1,140 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
+using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Teacher
+namespace Prof.Hub.Domain.Aggregates.Teacher;
+
+public class Teacher : AuditableEntity, IAggregateRoot
 {
-    public class Teacher : AuditableEntity
+    private readonly List<Qualification> _qualifications = [];
+    private readonly List<TimeSlot> _availability = [];
+    private readonly List<string> _specialties = [];
+
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    public TeacherId Id { get; private set; }
+    public TeacherProfile Profile { get; private set; }
+    public Rating Rating { get; private set; }
+    public TeacherStatus Status { get; private set; }
+    public decimal HourlyRate { get; private set; }
+    public DateTime? LastActiveAt { get; private set; }
+
+    public IReadOnlyList<Qualification> Qualifications => _qualifications.AsReadOnly();
+    public IReadOnlyList<TimeSlot> Availability => _availability.AsReadOnly();
+    public IReadOnlyList<string> Specialties => _specialties.AsReadOnly();
+
+    private Teacher(IDateTimeProvider dateTimeProvider)
     {
-        private readonly List<PrivateLesson.PrivateClass> _privateLessons = [];
-        private readonly List<GroupClass.GroupClass> _groupLessons = [];
+        _dateTimeProvider = dateTimeProvider;
+    }
 
-        public Name Name { get; private set; }
-        public Email Email { get; private set; }
-        public PhoneNumber PhoneNumber { get; private set; }
-        public Address Address { get; private set; }
-        public HourlyRate HourlyRate { get; private set; }
+    public static Result<Teacher> Create(string name, string bio, string avatarUrl, decimal hourlyRate, IDateTimeProvider dateTimeProvider)
+    {
+        var profileResult = TeacherProfile.Create(name, bio, avatarUrl);
 
-        public IReadOnlyList<PrivateLesson.PrivateClass> PrivateLessons => _privateLessons.AsReadOnly();
-        public IReadOnlyList<GroupClass.GroupClass> GroupLessons => _groupLessons.AsReadOnly();
+        var errors = new List<ValidationError>();
 
-        private Teacher() { }
+        if (hourlyRate <= 0)
+            errors.Add(new("Valor da hora aula deve ser maior do que zero."));
 
-        public static Result<Teacher> Create(Name name, Email email, PhoneNumber phoneNumber, Address address, HourlyRate hourlyRate)
+        if (!profileResult.IsSuccess)
         {
-            var teacher = new Teacher
+            if (profileResult.ValidationErrors.Any()) errors.AddRange(profileResult.ValidationErrors);
+
+            return Result.Invalid(errors);
+        }
+
+        var teacher = new Teacher(dateTimeProvider)
+        {
+            Id = TeacherId.Create(),
+            Profile = profileResult.Value,
+            Status = TeacherStatus.Pending,
+            HourlyRate = hourlyRate
+        };
+
+        return teacher;
+    }
+
+    public Result<bool> UpdateProfile(TeacherProfile newProfile)
+    {
+        Profile = newProfile;
+        return Result<bool>.Success(true);
+    }
+
+    public Result<bool> AddQualification(Qualification qualification)
+    {
+        if (_qualifications.Any(q =>
+            q.Title == qualification.Title &&
+            q.Institution == qualification.Institution))
+        {
+            return Result<bool>.Invalid(new List<ValidationError>
             {
-                Name = name,
-                Email = email,
-                PhoneNumber = phoneNumber,
-                Address = address,
-                HourlyRate = hourlyRate
-            };
-
-            return teacher;
+                new("Está qualificação já existe.")
+            });
         }
 
-        public Result AddScheduledPrivateLesson(PrivateLesson.PrivateClass lesson)
+        _qualifications.Add(qualification);
+        return Result<bool>.Success(true);
+    }
+
+    public Result<bool> AddAvailability(TimeSlot timeSlot)
+    {
+        if (_availability.Any(a => a.Overlaps(timeSlot)))
         {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula particular não pode ser nula."));
-
-            if (lesson.TeacherId != Id)
-                return Result.Invalid(new ValidationError("Esta aula particular não pertence a este professor."));
-
-            _privateLessons.Add(lesson);
-            return Result.Success();
+            return Result<bool>.Invalid(new List<ValidationError>
+            {
+                new("Este horário entra em conflito com uma disponibilidade existente.")
+            });
         }
 
-        public Result RemoveScheduledPrivateLesson(PrivateLesson.PrivateClass lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));
+        _availability.Add(timeSlot);
+        return Result<bool>.Success(true);
+    }
 
-            if (!_privateLessons.Remove(lesson))
-                return Result.Invalid(new ValidationError("A aula particular não está agendada para este professor."));
+    public Result<bool> AddSpecialty(string specialty)
+    {
+        if (string.IsNullOrWhiteSpace(specialty))
+            return Result<bool>.Invalid(new List<ValidationError>
+            {
+                new("Especialidade deve ser informada.")
+            });
 
-            return lesson.Cancel();
-        }
+        if (_specialties.Contains(specialty))
+            return Result<bool>.Invalid(new List<ValidationError>
+            {
+                new("Está especialidade já existe.")
+            });
 
-        public Result AddScheduledGroupLesson(GroupClass.GroupClass lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+        _specialties.Add(specialty);
+        return Result<bool>.Success(true);
+    }
 
-            if (lesson.TeacherId != Id)
-                return Result.Invalid(new ValidationError("Esta aula em grupo não pertence a este professor."));
+    public Result<bool> UpdateRating(Rating rating)
+    {
+        Rating = rating;
+        return Result<bool>.Success(true);
+    }
 
-            _groupLessons.Add(lesson);
-            return Result.Success();
-        }
+    public Result<bool> UpdateStatus(TeacherStatus newStatus)
+    {
+        Status = newStatus;
+        if (newStatus == TeacherStatus.Active)
+            LastActiveAt = _dateTimeProvider.UtcNow;
 
-        public Result RemoveScheduledGroupLesson(GroupClass.GroupClass lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo a ser cancelada não pode ser nula."));
+        return Result<bool>.Success(true);
+    }
 
-            if (!_groupLessons.Remove(lesson))
-                return Result.Invalid(new ValidationError("A aula em grupo não está agendada para este professor."));
+    public Result<bool> UpdateHourlyRate(decimal newRate)
+    {
+        if (newRate <= 0)
+            return Result<bool>.Invalid(new List<ValidationError>
+            {
+                new("O valor da hora aula deve ser maior do que zero.")
+            });
 
-            return lesson.Cancel();
-        }
+        HourlyRate = newRate;
+        return Result<bool>.Success(true);
     }
 }
