@@ -1,8 +1,9 @@
-﻿using Prof.Hub.Domain.Enums;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial.ValueObjects;
+using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Common.Entities;
+namespace Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
 public class ClassMaterial : AuditableEntity
 {
     public ClassMaterialId Id { get; private set; }
@@ -14,11 +15,6 @@ public class ClassMaterial : AuditableEntity
 
     private ClassMaterial()
     {
-    }
-
-    public record ClassMaterialId(string Value)
-    {
-        public static ClassMaterialId Create() => new(Guid.NewGuid().ToString());
     }
 
     public static Result<ClassMaterial> Create(

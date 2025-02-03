@@ -1,13 +1,14 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
-using static Prof.Hub.Domain.Aggregates.Student.Student;
 
 namespace Prof.Hub.Domain.Aggregates.PrivateClass
 {
-    public class PrivateClass : AuditableEntity
+    public class PrivateClass : AuditableEntity, IAggregateRoot
     {
         private readonly List<ClassMaterial> _materials = [];
         private readonly List<ClassFeedback> _feedbacks = [];
@@ -26,11 +27,6 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass
 
         private PrivateClass()
         {
-        }
-
-        public record PrivateClassId(string Value)
-        {
-            public static PrivateClassId Create() => new(Guid.NewGuid().ToString());
         }
 
         public static Result<PrivateClass> Create(

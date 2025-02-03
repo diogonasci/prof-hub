@@ -1,15 +1,19 @@
-﻿using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
+using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
+using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
-using static Prof.Hub.Domain.Aggregates.Student.Student;
 
 namespace Prof.Hub.Domain.Aggregates.GroupClass
 {
-    public class GroupClass : AuditableEntity
+    public class GroupClass : AuditableEntity, IAggregateRoot
     {
         private readonly List<ClassMaterial> _materials = [];
-        private readonly List<ClassReview> _reviews = [];
+        private readonly List<ClassFeedback> _feedbacks = [];
 
         public GroupClassId Id { get; private set; }
         public string Title { get; private set; }
@@ -29,11 +33,6 @@ namespace Prof.Hub.Domain.Aggregates.GroupClass
 
         private GroupClass()
         {
-        }
-
-        public record GroupClassId(string Value)
-        {
-            public static GroupClassId Create() => new(Guid.NewGuid().ToString());
         }
 
         public Result EnrollStudent(StudentId studentId)

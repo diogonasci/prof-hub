@@ -1,8 +1,9 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Common.Entities;
+namespace Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
 public class ClassFeedback : AuditableEntity
 {
     public ClassFeedbackId Id { get; private set; }
@@ -14,15 +15,10 @@ public class ClassFeedback : AuditableEntity
     {
     }
 
-    public record ClassFeedbackId(string Value)
-    {
-        public static ClassFeedbackId Create() => new(Guid.NewGuid().ToString());
-    }
-
     public static Result<ClassFeedback> Create(int rating, string comment, IDateTimeProvider dateTimeProvider)
     {
         var ratingResult = Rating.Create(rating);
-        
+
         if (!ratingResult.IsSuccess)
         {
             var errors = new List<ValidationError>();
@@ -35,7 +31,7 @@ public class ClassFeedback : AuditableEntity
         var classFeedback = new ClassFeedback
         {
             Id = ClassFeedbackId.Create(),
-            Rating = rating,
+            Rating = ratingResult.Value,
             Comment = comment,
             Created = dateTimeProvider.UtcNow
         };

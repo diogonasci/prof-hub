@@ -1,12 +1,11 @@
-﻿using Prof.Hub.Domain.Aggregates.Common;
-using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
 
 namespace Prof.Hub.Domain.Aggregates.Student
 {
-    public class Student : AuditableEntity
+    public class Student : AuditableEntity, IAggregateRoot
     {
         private readonly List<PrivateClass.PrivateClass> _privateClasses = [];
         private readonly List<GroupClass.GroupClass> _groupClasses = [];
@@ -26,11 +25,6 @@ namespace Prof.Hub.Domain.Aggregates.Student
 
         private Student()
         {
-        }
-
-        public record StudentId(string Value)
-        {
-            public static StudentId Create() => new(Guid.NewGuid().ToString());
         }
 
         public static Result<Student> Create(
