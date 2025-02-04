@@ -21,7 +21,7 @@ public sealed record TimeSlot
         if (endTime <= startTime)
             errors.Add(new ValidationError("Início do horário não pode ser superior ao fim."));
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         return new TimeSlot(dayOfWeek, startTime, endTime);

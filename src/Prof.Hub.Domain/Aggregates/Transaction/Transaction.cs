@@ -28,7 +28,7 @@ public class Transaction : AuditableEntity, IAggregateRoot
         if (string.IsNullOrWhiteSpace(description))
             errors.Add(new ValidationError("A descrição da transação é obrigatória"));
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         return new Transaction(TransactionId.Create(), amount, type, description);

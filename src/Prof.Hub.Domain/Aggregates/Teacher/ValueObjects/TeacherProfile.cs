@@ -27,7 +27,7 @@ public sealed record TeacherProfile
         if (bio?.Length > 1000)
             errors.Add(new ValidationError("Descrição não pode exceder 1000 caracteres."));
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         return new TeacherProfile(name, bio, avatarUrl);

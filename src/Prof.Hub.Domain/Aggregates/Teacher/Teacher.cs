@@ -42,7 +42,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         if (profileResult.ValidationErrors.Any())
             errors.AddRange(profileResult.ValidationErrors);
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         var teacher = new Teacher(dateTimeProvider)

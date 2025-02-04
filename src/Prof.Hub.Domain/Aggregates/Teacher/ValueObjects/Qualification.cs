@@ -18,7 +18,7 @@ public sealed record Qualification(string Title, string Institution, DateTime Ob
         if (obtainedAt > dateTimeProvider.UtcNow)
             errors.Add(new ValidationError("Data de obtenção não pode estar no futuro."));
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         return new Qualification(title, institution, obtainedAt);

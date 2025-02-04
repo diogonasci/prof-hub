@@ -38,7 +38,7 @@ public class Wallet : AuditableEntity, IAggregateRoot
         if (transaction.Type == TransactionType.Debit && Balance.Amount < transaction.Amount.Amount)
             errors.Add(new ValidationError("Saldo insuficiente para realizar a transação"));
 
-        if (errors.Count != 0)
+        if (errors.Count > 0)
             return Result.Invalid(errors);
 
         _transactions.Add(transaction);
