@@ -1,6 +1,6 @@
 ﻿using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+namespace Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 
 public sealed record Price(decimal Value)
 {
@@ -9,7 +9,7 @@ public sealed record Price(decimal Value)
         if (value <= 0)
             return Result.Invalid(new ValidationError("O preço deve ser maior que zero."));
 
-        return Result.Success(new Price(value));
+        return new Price(value);
     }
 }
 

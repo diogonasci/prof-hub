@@ -19,18 +19,18 @@ public sealed record TeacherProfile
         var errors = new List<ValidationError>();
 
         if (string.IsNullOrWhiteSpace(name))
-            errors.Add(new("Nome deve ser informado."));
+            errors.Add(new ValidationError("Nome deve ser informado."));
 
         if (string.IsNullOrWhiteSpace(bio))
-            errors.Add(new("Descrição deve ser informada."));
+            errors.Add(new ValidationError("Descrição deve ser informada."));
 
         if (bio?.Length > 1000)
-            errors.Add(new("Descrição não pode exceder 1000 caracteres."));
+            errors.Add(new ValidationError("Descrição não pode exceder 1000 caracteres."));
 
-        if (errors.Any())
-            return Result<TeacherProfile>.Invalid(errors);
+        if (errors.Count != 0)
+            return Result.Invalid(errors);
 
-        return Result<TeacherProfile>.Success(new TeacherProfile(name, bio, avatarUrl));
+        return new TeacherProfile(name, bio, avatarUrl);
     }
 
     public Result<TeacherProfile> UpdateBio(string newBio)

@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.ReferralProgram.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel.Results;
 
@@ -10,7 +11,7 @@ public sealed record StudentProfile
     public PhoneNumber PhoneNumber { get; private set; }
     public Grade? Grade { get; private set; }
     public Uri AvatarUrl { get; private set; }
-    public ReferralCode ReferralCode { get; private set; }
+    public ReferralCodeValue ReferralCode { get; private set; }
 
     private StudentProfile()
     {
@@ -29,8 +30,11 @@ public sealed record StudentProfile
         {
             var errors = new List<ValidationError>();
 
-            if (emailResult.ValidationErrors.Any()) errors.AddRange(emailResult.ValidationErrors);
-            if (phoneResult.ValidationErrors.Any()) errors.AddRange(phoneResult.ValidationErrors);
+            if (emailResult.ValidationErrors.Any()) 
+                errors.AddRange(emailResult.ValidationErrors);
+
+            if (phoneResult.ValidationErrors.Any()) 
+                errors.AddRange(phoneResult.ValidationErrors);
 
             return Result.Invalid(errors);
         }
@@ -42,6 +46,6 @@ public sealed record StudentProfile
             PhoneNumber = phoneResult.Value,
         };
 
-        return Result.Success(student);
+        return student;
     }
 }

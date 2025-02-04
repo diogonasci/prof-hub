@@ -8,6 +8,6 @@ public sealed record PhoneNumber(string Value)
         if (string.IsNullOrWhiteSpace(value))
             return Result.Invalid(new ValidationError("O número de telefone não pode ser vazio."));
 
-        return Result.Success(new PhoneNumber(value));
+        return new PhoneNumber(value);
     }
 }

@@ -23,7 +23,8 @@ public class ClassFeedback : AuditableEntity
         {
             var errors = new List<ValidationError>();
 
-            if (ratingResult.ValidationErrors.Any()) errors.AddRange(ratingResult.ValidationErrors);
+            if (ratingResult.ValidationErrors.Any()) 
+                errors.AddRange(ratingResult.ValidationErrors);
 
             return Result.Invalid(errors);
         }
@@ -36,6 +37,6 @@ public class ClassFeedback : AuditableEntity
             Created = dateTimeProvider.UtcNow
         };
 
-        return Result.Success(classFeedback);
+        return classFeedback;
     }
 }

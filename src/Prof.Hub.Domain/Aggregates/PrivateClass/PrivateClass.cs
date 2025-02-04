@@ -1,7 +1,9 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
+using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
-using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
@@ -38,19 +40,18 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass
             Price price,
             Uri meetingUrl)
         {
-            var teacherIdResult = TeacherId.Create();
-            var studentIdResult = StudentId.Create();
             var subjectResult = Subject.Create();
             var classScheduleResult = ClassSchedule.Create(startDate, duration);
 
-            if (!teacherIdResult.IsSuccess || !studentIdResult.IsSuccess || !subjectResult.IsSuccess || !classScheduleResult.IsSuccess)
+            if (!subjectResult.IsSuccess || !classScheduleResult.IsSuccess)
             {
                 var errors = new List<ValidationError>();
 
-                if (teacherIdResult.ValidationErrors.Any()) errors.AddRange(teacherIdResult.ValidationErrors);
-                if (studentIdResult.ValidationErrors.Any()) errors.AddRange(studentIdResult.ValidationErrors);
-                if (subjectResult.ValidationErrors.Any()) errors.AddRange(subjectResult.ValidationErrors);
-                if (classScheduleResult.ValidationErrors.Any()) errors.AddRange(classScheduleResult.ValidationErrors);
+                if (subjectResult.ValidationErrors.Any()) 
+                    errors.AddRange(subjectResult.ValidationErrors);
+
+                if (classScheduleResult.ValidationErrors.Any()) 
+                    errors.AddRange(classScheduleResult.ValidationErrors);
 
                 return Result.Invalid(errors);
             }
@@ -58,13 +59,13 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass
             var privateClass = new PrivateClass
             {
                 Id = PrivateClassId.Create(),
-                TeacherId = teacherIdResult,
-                StudentId = studentIdResult,
+                TeacherId = TeacherId.Create(),
+                StudentId = StudentId.Create(),
                 Subject = subjectResult.Value,
                 Schedule = classScheduleResult.Value
             };
 
-            return Result.Success(privateClass);
+            return privateClass;
         }
 
         public Result Start()
@@ -95,7 +96,7 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass
             if (Status != ClassStatus.Scheduled)
                 return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser canceladas."));
 
-            Status = ClassStatus.Canceled;
+            Status = ClassStatus.Cancelled;
             AddDomainEvent(new ClassCanceledEvent(Id));
 
             return Result.Success();

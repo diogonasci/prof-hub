@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
@@ -39,7 +40,8 @@ namespace Prof.Hub.Domain.Aggregates.Student
             {
                 var errors = new List<ValidationError>();
 
-                if (profileResult.ValidationErrors.Any()) errors.AddRange(profileResult.ValidationErrors);
+                if (profileResult.ValidationErrors.Any()) 
+                    errors.AddRange(profileResult.ValidationErrors);
 
                 return Result.Invalid(errors);
             }
@@ -50,7 +52,7 @@ namespace Prof.Hub.Domain.Aggregates.Student
                 Profile = profileResult.Value,
             };
 
-            return Result.Success(student);
+            return student;
         }
 
         public void UpdateProfile(StudentProfile profile)

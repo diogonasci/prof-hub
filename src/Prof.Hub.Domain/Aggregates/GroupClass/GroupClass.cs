@@ -2,8 +2,9 @@
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
-using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
+using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
@@ -37,11 +38,16 @@ namespace Prof.Hub.Domain.Aggregates.GroupClass
 
         public Result EnrollStudent(StudentId studentId)
         {
+            var errors = new List<ValidationError>();
+
             if (Status != ClassStatus.Published)
-                return Result.Invalid(new ValidationError("A aula não está aberta para inscrições."));
+                errors.Add(new ValidationError("A aula não está aberta para inscrições."));
 
             if (Participants.Count >= ParticipantLimit.Value)
-                return Result.Invalid(new ValidationError("As vagas para está aula esgotaram."));
+                errors.Add(new ValidationError("As vagas para está aula esgotaram."));
+
+            if (errors.Count > 0)
+                return Result.Invalid(errors);
 
             Participants.Add(studentId);
             AddDomainEvent(new StudentEnrolledEvent(Id, studentId));

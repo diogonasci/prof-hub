@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateLesson;
-using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
 internal sealed class PrivateLessonConfiguration : IEntityTypeConfiguration<PrivateClass>

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.Student;
-using Prof.Hub.Domain.Aggregates.PrivateLesson.ValueObjects;
 using Prof.Hub.Domain.Aggregates.GroupClass;
+using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
 internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupClass>

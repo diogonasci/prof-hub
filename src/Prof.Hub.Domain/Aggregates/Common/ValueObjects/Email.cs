@@ -8,7 +8,7 @@ public sealed record Email(string Value)
         if (string.IsNullOrWhiteSpace(value) || !IsValidEmail(value))
             return Result.Invalid(new ValidationError("E-mail inválido."));
 
-        return Result.Success(new Email(value));
+        return new Email(value);
     }
 
     private static bool IsValidEmail(string email)

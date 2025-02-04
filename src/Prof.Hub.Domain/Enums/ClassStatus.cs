@@ -1,10 +1,10 @@
 ﻿namespace Prof.Hub.Domain.Enums;
 public enum ClassStatus
 {
-    Draft,
-    Published,
-    Scheduled,
-    InProgress,
-    Completed,
-    Cancelled
+    Draft = 1,
+    Published = 2,
+    Scheduled = 3,
+    InProgress = 4,
+    Completed = 5,
+    Cancelled = 6
 }

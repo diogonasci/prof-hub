@@ -24,11 +24,16 @@ public class ClassMaterial : AuditableEntity
             MaterialType type,
             bool isAvailableBeforeClass)
     {
+        var errors = new List<ValidationError>();
+
         if (string.IsNullOrWhiteSpace(title))
-            return Result.Invalid(new ValidationError("Título é obrigatório."));
+            errors.Add(new ValidationError("Título é obrigatório."));
 
         if (fileUrl == null)
-            return Result.Invalid(new ValidationError("URL do arquivo é obrigatória."));
+            errors.Add(new ValidationError("URL do arquivo é obrigatória."));
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
 
         var classMaterial = new ClassMaterial
         {
@@ -39,6 +44,6 @@ public class ClassMaterial : AuditableEntity
             IsAvailableBeforeClass = isAvailableBeforeClass
         };
 
-        return Result.Success(classMaterial);
+        return classMaterial;
     }
 }

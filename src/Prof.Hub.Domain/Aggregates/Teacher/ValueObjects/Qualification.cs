@@ -10,16 +10,16 @@ public sealed record Qualification(string Title, string Institution, DateTime Ob
         var errors = new List<ValidationError>();
 
         if (string.IsNullOrWhiteSpace(title))
-            errors.Add(new("Título deve ser informado."));
+            errors.Add(new ValidationError("Título deve ser informado."));
 
         if (string.IsNullOrWhiteSpace(institution))
-            errors.Add(new("Instituição deve ser informada."));
+            errors.Add(new ValidationError("Instituição deve ser informada."));
 
         if (obtainedAt > dateTimeProvider.UtcNow)
-            errors.Add(new("Data de obtenção não pode estar no futuro."));
+            errors.Add(new ValidationError("Data de obtenção não pode estar no futuro."));
 
         if (errors.Count != 0)
-            return Result<Qualification>.Invalid(errors);
+            return Result.Invalid(errors);
 
         return new Qualification(title, institution, obtainedAt);
     }

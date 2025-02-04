@@ -15,12 +15,17 @@ public sealed record ClassSchedule
 
     public static Result<ClassSchedule> Create(DateTime startDate, TimeSpan duration)
     {
+        var errors = new List<ValidationError>();
+
         if (startDate < DateTime.UtcNow)
-            return Result.Invalid(new ValidationError("Data de início deve estar no futuro."));
+            errors.Add(new ValidationError("Data de início deve estar no futuro."));
 
         if (duration < TimeSpan.FromMinutes(60) || duration > TimeSpan.FromHours(4))
-            return Result.Invalid(new ValidationError("A duração da aula não pode ser inferior a 1 hora ou superior a 4 horas."));
+            errors.Add(new ValidationError("A duração da aula não pode ser inferior a 1 hora ou superior a 4 horas."));
 
-        return Result.Success(new ClassSchedule(startDate, duration));
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        return new ClassSchedule(startDate, duration);
     }
 }

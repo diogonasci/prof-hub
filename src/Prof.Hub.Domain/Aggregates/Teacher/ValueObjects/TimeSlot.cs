@@ -16,13 +16,15 @@ public sealed record TimeSlot
 
     public static Result<TimeSlot> Create(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {
-        if (endTime <= startTime)
-            return Result<TimeSlot>.Invalid(new List<ValidationError>
-                {
-                    new("Início do horário não pode ser superior ao fim.")
-                });
+        var errors = new List<ValidationError>();
 
-        return Result<TimeSlot>.Success(new TimeSlot(dayOfWeek, startTime, endTime));
+        if (endTime <= startTime)
+            errors.Add(new ValidationError("Início do horário não pode ser superior ao fim."));
+
+        if (errors.Count != 0)
+            return Result.Invalid(errors);
+
+        return new TimeSlot(dayOfWeek, startTime, endTime);
     }
 
     public bool Overlaps(TimeSlot other)

@@ -37,14 +37,13 @@ public class Teacher : AuditableEntity, IAggregateRoot
         var errors = new List<ValidationError>();
 
         if (hourlyRate <= 0)
-            errors.Add(new("Valor da hora aula deve ser maior do que zero."));
+            errors.Add(new ValidationError("Valor da hora aula deve ser maior do que zero."));
 
-        if (!profileResult.IsSuccess)
-        {
-            if (profileResult.ValidationErrors.Any()) errors.AddRange(profileResult.ValidationErrors);
+        if (profileResult.ValidationErrors.Any())
+            errors.AddRange(profileResult.ValidationErrors);
 
+        if (errors.Count != 0)
             return Result.Invalid(errors);
-        }
 
         var teacher = new Teacher(dateTimeProvider)
         {
@@ -60,7 +59,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
     public Result<bool> UpdateProfile(TeacherProfile newProfile)
     {
         Profile = newProfile;
-        return Result<bool>.Success(true);
+        return true;
     }
 
     public Result<bool> AddQualification(Qualification qualification)
@@ -69,14 +68,15 @@ public class Teacher : AuditableEntity, IAggregateRoot
             q.Title == qualification.Title &&
             q.Institution == qualification.Institution))
         {
-            return Result<bool>.Invalid(new List<ValidationError>
+            return Result.Invalid(new List<ValidationError>
             {
                 new("Está qualificação já existe.")
             });
         }
 
         _qualifications.Add(qualification);
-        return Result<bool>.Success(true);
+
+        return true;
     }
 
     public Result<bool> AddAvailability(TimeSlot timeSlot)

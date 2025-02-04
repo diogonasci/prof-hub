@@ -1,9 +1,9 @@
 ﻿namespace Prof.Hub.Domain.Enums;
 public enum MaterialType
 {
-    ExerciseList,
-    Summary,
-    Presentation,
-    Video,
-    Other
+    ExerciseList = 1,
+    Summary = 2,
+    Presentation = 3,
+    Video = 4,
+    Other = 5
 }

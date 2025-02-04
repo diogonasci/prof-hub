@@ -15,6 +15,6 @@ public sealed record Rating
         if (value < 1 || value > 5)
             return Result.Invalid(new ValidationError("A avaliação deve ser um número entre 1 e 5."));
 
-        return Result.Success(new Rating(value));
+        return new Rating(value);
     }
 }

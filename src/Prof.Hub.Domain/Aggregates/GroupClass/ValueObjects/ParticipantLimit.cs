@@ -15,6 +15,6 @@ public sealed record ParticipantLimit
         if (value < 1 || value > 100)
             return Result.Invalid(new ValidationError("O limite de participantes deve estar entre 1 e 100."));
 
-        return Result.Success(new ParticipantLimit(value));
+        return new ParticipantLimit(value);
     }
 }
