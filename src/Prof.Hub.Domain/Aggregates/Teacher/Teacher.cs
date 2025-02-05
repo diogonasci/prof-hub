@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.Events;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
@@ -9,8 +10,10 @@ namespace Prof.Hub.Domain.Aggregates.Teacher;
 public class Teacher : AuditableEntity, IAggregateRoot
 {
     private readonly List<Qualification> _qualifications = [];
-    private readonly List<TimeSlot> _availability = [];
-    private readonly List<string> _specialties = [];
+    private readonly List<HourlyRate> _rateHistory = [];
+    private readonly List<Specialty> _specialties = [];
+    private const int MAX_SPECIALTIES = 5;
+    private const int MAX_QUALIFICATIONS = 10;
 
     private readonly IDateTimeProvider _dateTimeProvider;
 
@@ -18,29 +21,38 @@ public class Teacher : AuditableEntity, IAggregateRoot
     public TeacherProfile Profile { get; private set; }
     public Rating Rating { get; private set; }
     public TeacherStatus Status { get; private set; }
-    public decimal HourlyRate { get; private set; }
+    public TeacherAvailability Availability { get; private set; }
+    public HourlyRate CurrentRate => _rateHistory.MaxBy(r => r.EffectiveFrom)!;
     public DateTime? LastActiveAt { get; private set; }
 
     public IReadOnlyList<Qualification> Qualifications => _qualifications.AsReadOnly();
-    public IReadOnlyList<TimeSlot> Availability => _availability.AsReadOnly();
-    public IReadOnlyList<string> Specialties => _specialties.AsReadOnly();
+    public IReadOnlyList<HourlyRate> RateHistory => _rateHistory.AsReadOnly();
+    public IReadOnlyList<Specialty> Specialties => _specialties.AsReadOnly();
 
     private Teacher(IDateTimeProvider dateTimeProvider)
     {
         _dateTimeProvider = dateTimeProvider;
+        Rating = Rating.Create();
+        Availability = TeacherAvailability.Create();
     }
 
-    public static Result<Teacher> Create(string name, string bio, string avatarUrl, decimal hourlyRate, IDateTimeProvider dateTimeProvider)
+    public static Result<Teacher> Create(
+        string name,
+        string bio,
+        string avatarUrl,
+        Money hourlyRate,
+        IDateTimeProvider dateTimeProvider)
     {
         var profileResult = TeacherProfile.Create(name, bio, avatarUrl);
+        var rateResult = HourlyRate.Create(hourlyRate, dateTimeProvider.UtcNow);
 
         var errors = new List<ValidationError>();
 
-        if (hourlyRate <= 0)
-            errors.Add(new ValidationError("Valor da hora aula deve ser maior do que zero."));
-
-        if (profileResult.ValidationErrors.Any())
+        if (!profileResult.IsSuccess)
             errors.AddRange(profileResult.ValidationErrors);
+
+        if (!rateResult.IsSuccess)
+            errors.AddRange(rateResult.ValidationErrors);
 
         if (errors.Count > 0)
             return Result.Invalid(errors);
@@ -49,92 +61,138 @@ public class Teacher : AuditableEntity, IAggregateRoot
         {
             Id = TeacherId.Create(),
             Profile = profileResult.Value,
-            Status = TeacherStatus.Pending,
-            HourlyRate = hourlyRate
+            Status = TeacherStatus.Pending
         };
+
+        teacher._rateHistory.Add(rateResult.Value);
+        teacher.AddDomainEvent(new TeacherCreatedEvent(teacher.Id));
 
         return teacher;
     }
 
-    public Result<bool> UpdateProfile(TeacherProfile newProfile)
+    public Result UpdateHourlyRate(Money newRate)
     {
-        Profile = newProfile;
-        return true;
+        var rateResult = HourlyRate.Create(newRate, _dateTimeProvider.UtcNow);
+        if (!rateResult.IsSuccess)
+            return Result.Invalid(rateResult.ValidationErrors);
+
+        if (newRate.Amount < CurrentRate.Value.Amount)
+            return Result.Invalid(new ValidationError("Novo valor não pode ser menor que o atual"));
+
+        _rateHistory.Add(rateResult.Value);
+        AddDomainEvent(new TeacherRateUpdatedEvent(Id, rateResult.Value));
+
+        return Result.Success();
     }
 
-    public Result<bool> AddQualification(Qualification qualification)
+    public Result AddSpecialty(SubjectArea area, string description)
     {
+        if (_specialties.Count >= MAX_SPECIALTIES)
+            return Result.Invalid(new ValidationError($"Máximo de {MAX_SPECIALTIES} especialidades permitido"));
+
+        var specialtyResult = Specialty.Create(area, description);
+        if (!specialtyResult.IsSuccess)
+            return specialtyResult;
+
+        if (_specialties.Any(s => s.Area == area))
+            return Result.Invalid(new ValidationError("Já existe uma especialidade nesta área"));
+
+        _specialties.Add(specialtyResult.Value);
+        AddDomainEvent(new TeacherSpecialtyAddedEvent(Id, specialtyResult.Value));
+
+        return Result.Success();
+    }
+
+    public Result AddQualification(string title, string institution, DateTime obtainedAt)
+    {
+        if (_qualifications.Count >= MAX_QUALIFICATIONS)
+            return Result.Invalid(new ValidationError($"Máximo de {MAX_QUALIFICATIONS} qualificações permitido"));
+
+        var qualificationResult = Qualification.Create(title, institution, obtainedAt, _dateTimeProvider);
+        if (!qualificationResult.IsSuccess)
+            return qualificationResult;
+
         if (_qualifications.Any(q =>
-            q.Title == qualification.Title &&
-            q.Institution == qualification.Institution))
+            q.Title == qualificationResult.Value.Title &&
+            q.Institution == qualificationResult.Value.Institution))
         {
-            return Result.Invalid(new List<ValidationError>
-            {
-                new("Está qualificação já existe.")
-            });
+            return Result.Invalid(new ValidationError("Esta qualificação já existe"));
         }
 
-        _qualifications.Add(qualification);
+        _qualifications.Add(qualificationResult.Value);
+        AddDomainEvent(new TeacherQualificationAddedEvent(Id, qualificationResult.Value));
 
-        return true;
+        return Result.Success();
     }
 
-    public Result<bool> AddAvailability(TimeSlot timeSlot)
+    public Result UpdateStatus(TeacherStatus newStatus)
     {
-        if (_availability.Any(a => a.Overlaps(timeSlot)))
-        {
-            return Result<bool>.Invalid(new List<ValidationError>
-            {
-                new("Este horário entra em conflito com uma disponibilidade existente.")
-            });
-        }
+        if (!IsValidStatusTransition(Status, newStatus))
+            return Result.Invalid(new ValidationError("Transição de status inválida"));
 
-        _availability.Add(timeSlot);
-        return Result<bool>.Success(true);
-    }
+        if (newStatus == TeacherStatus.Active && !MeetsActiveRequirements())
+            return Result.Invalid(new ValidationError("Professor não atende requisitos mínimos para ficar ativo"));
 
-    public Result<bool> AddSpecialty(string specialty)
-    {
-        if (string.IsNullOrWhiteSpace(specialty))
-            return Result<bool>.Invalid(new List<ValidationError>
-            {
-                new("Especialidade deve ser informada.")
-            });
-
-        if (_specialties.Contains(specialty))
-            return Result<bool>.Invalid(new List<ValidationError>
-            {
-                new("Está especialidade já existe.")
-            });
-
-        _specialties.Add(specialty);
-        return Result<bool>.Success(true);
-    }
-
-    public Result<bool> UpdateRating(Rating rating)
-    {
-        Rating = rating;
-        return Result<bool>.Success(true);
-    }
-
-    public Result<bool> UpdateStatus(TeacherStatus newStatus)
-    {
+        var previousStatus = Status;
         Status = newStatus;
+
         if (newStatus == TeacherStatus.Active)
             LastActiveAt = _dateTimeProvider.UtcNow;
 
-        return Result<bool>.Success(true);
+        AddDomainEvent(new TeacherStatusChangedEvent(Id, previousStatus, newStatus));
+        return Result.Success();
     }
 
-    public Result<bool> UpdateHourlyRate(decimal newRate)
+    public Result AddTimeSlot(TimeSlot timeSlot)
     {
-        if (newRate <= 0)
-            return Result<bool>.Invalid(new List<ValidationError>
-            {
-                new("O valor da hora aula deve ser maior do que zero.")
-            });
+        if (Status == TeacherStatus.Inactive || Status == TeacherStatus.Suspended)
+            return Result.Invalid(new ValidationError("Professor inativo não pode adicionar horários"));
 
-        HourlyRate = newRate;
-        return Result<bool>.Success(true);
+        var result = Availability.AddTimeSlot(timeSlot);
+        if (result.IsSuccess)
+            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id));
+
+        return result;
+    }
+
+    public Result RemoveTimeSlot(TimeSlot timeSlot)
+    {
+        var result = Availability.RemoveTimeSlot(timeSlot);
+        if (result.IsSuccess)
+            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id));
+
+        return result;
+    }
+
+    public Result AddRating(Rating rating)
+    {
+        var result = Rating.AddRating(rating);
+        if (result.IsSuccess)
+            AddDomainEvent(new TeacherRatingUpdatedEvent(Id, Rating.AverageScore));
+
+        return result;
+    }
+
+    private bool IsValidStatusTransition(TeacherStatus currentStatus, TeacherStatus newStatus)
+    {
+        return (currentStatus, newStatus) switch
+        {
+            (TeacherStatus.Pending, TeacherStatus.Active) => true,
+            (TeacherStatus.Pending, TeacherStatus.Inactive) => true,
+            (TeacherStatus.Active, TeacherStatus.Suspended) => true,
+            (TeacherStatus.Active, TeacherStatus.Inactive) => true,
+            (TeacherStatus.Suspended, TeacherStatus.Active) => true,
+            (TeacherStatus.Suspended, TeacherStatus.Inactive) => true,
+            (TeacherStatus.Inactive, TeacherStatus.Active) => true,
+            _ => false
+        };
+    }
+
+    private bool MeetsActiveRequirements()
+    {
+        return Profile != null &&
+               _specialties.Any(s => s.IsVerified) &&
+               _qualifications.Any(q => q.IsVerified) &&
+               Availability.HasMinimumAvailability();
     }
 }
