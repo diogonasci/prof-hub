@@ -1,75 +1,179 @@
-﻿using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.Entities;
+using Prof.Hub.Domain.Aggregates.Student.Events;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
 
-namespace Prof.Hub.Domain.Aggregates.Student
+namespace Prof.Hub.Domain.Aggregates.Student;
+public class Student : AuditableEntity, IAggregateRoot
 {
-    public class Student : AuditableEntity, IAggregateRoot
+    private readonly List<PrivateClass.PrivateClass> _privateClasses = [];
+    private readonly List<GroupClass.GroupClass> _groupClasses = [];
+    private readonly List<EnrollmentHistory> _enrollmentHistory = [];
+    private readonly List<TeacherFavorite> _favoriteTeachers = [];
+
+    public StudentId Id { get; private set; }
+    public StudentProfile Profile { get; private set; }
+    public Balance Balance { get; private set; }
+    public School? School { get; private set; }
+
+    public IReadOnlyList<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
+    public IReadOnlyList<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
+    public IReadOnlyList<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
+    public IReadOnlyList<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
+
+    private Student()
     {
-        private readonly List<PrivateClass.PrivateClass> _privateClasses = [];
-        private readonly List<GroupClass.GroupClass> _groupClasses = [];
-        private readonly List<EnrollmentHistory> _enrollmentHistory = [];
-        private readonly List<TeacherFavorite> _favoriteTeachers = [];
+    }
 
-        public StudentId Id { get; private set; }
-        public StudentProfile Profile { get; private set; }
-        public Balance Balance { get; private set; }
-        public School School { get; private set; }
+    public static Result<Student> Create(
+        string name,
+        string email,
+        string phoneNumber,
+        decimal initialBalance = 0,
+        School? school = null)
+    {
+        var profileResult = StudentProfile.Create(name, email, phoneNumber);
+        var balanceResult = Balance.Create(initialBalance);
 
-        public IReadOnlyList<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
-        public IReadOnlyList<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
-        public IReadOnlyList<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
-        public IReadOnlyList<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
+        var errors = new List<ValidationError>();
 
+        if (!profileResult.IsSuccess)
+            errors.AddRange(profileResult.ValidationErrors);
 
-        private Student()
+        if (!balanceResult.IsSuccess)
+            errors.AddRange(balanceResult.ValidationErrors);
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        var student = new Student
         {
-        }
+            Id = StudentId.Create(),
+            Profile = profileResult.Value,
+            Balance = balanceResult.Value,
+            School = school
+        };
 
-        public static Result<Student> Create(
-            string name,
-            string email,
-            string phoneNumber
-        )
-        {
-            var profileResult = StudentProfile.Create(name, email, phoneNumber);
+        return student;
+    }
 
-            if (!profileResult.IsSuccess)
-            {
-                var errors = new List<ValidationError>();
+    public Result UpdateProfile(StudentProfile profile)
+    {
+        Profile = profile;
+        AddDomainEvent(new StudentProfileUpdatedEvent(Id, profile));
 
-                if (profileResult.ValidationErrors.Any()) 
-                    errors.AddRange(profileResult.ValidationErrors);
+        return Result.Success();
+    }
 
-                return Result.Invalid(errors);
-            }
+    public Result UpdateSchool(School school)
+    {
+        School = school;
+        AddDomainEvent(new StudentSchoolUpdatedEvent(Id, school));
 
-            var student = new Student
-            {
-                Id = StudentId.Create(),
-                Profile = profileResult.Value,
-            };
+        return Result.Success();
+    }
 
-            return student;
-        }
+    public Result AddToFavorites(TeacherId teacherId, string? note = null)
+    {
+        if (_favoriteTeachers.Any(f => f.TeacherId == teacherId))
+            return Result.Invalid(new ValidationError("Professor já está nos favoritos."));
 
-        public void UpdateProfile(StudentProfile profile)
-        {
-            Profile = profile;
-            AddDomainEvent(new StudentProfileUpdatedEvent(Id, profile));
-        }
+        var favorite = new TeacherFavorite(Id, teacherId, note);
+        _favoriteTeachers.Add(favorite);
 
-        public Result<Student> AddToFavorites(TeacherId teacherId)
-        {
-            if (_favoriteTeachers.Any(f => f.TeacherId == teacherId))
-                return Result.Invalid(new ValidationError("Professor já está nos favoritos."));
+        return Result.Success();
+    }
 
-            _favoriteTeachers.Add(new TeacherFavorite(Id, teacherId));
-            AddDomainEvent(new TeacherAddedToFavoritesEvent(Id, teacherId));
+    public Result RemoveFromFavorites(TeacherId teacherId)
+    {
+        var favorite = _favoriteTeachers.FirstOrDefault(f => f.TeacherId == teacherId);
+        if (favorite == null)
+            return Result.Invalid(new ValidationError("Professor não está nos favoritos."));
 
-            return Result.Success();
-        }
+        _favoriteTeachers.Remove(favorite);
+        AddDomainEvent(new TeacherRemovedFromFavoritesEvent(Id, teacherId));
+
+        return Result.Success();
+    }
+
+    public Result UpdateFavoriteNote(TeacherId teacherId, string note)
+    {
+        var favorite = _favoriteTeachers.FirstOrDefault(f => f.TeacherId == teacherId);
+        if (favorite == null)
+            return Result.Invalid(new ValidationError("Professor não está nos favoritos."));
+
+        favorite.UpdateNote(note);
+
+        return Result.Success();
+    }
+
+    public Result AddBalance(Money amount)
+    {
+        var result = Balance.Add(amount);
+        if (!result.IsSuccess)
+            return Result.Invalid(result.ValidationErrors);
+
+        Balance = result.Value;
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id, Balance.Amount.Amount));
+
+        return Result.Success();
+    }
+
+    public Result DeductBalance(Money amount)
+    {
+        var result = Balance.Subtract(amount);
+        if (!result.IsSuccess)
+            return Result.Invalid(result.ValidationErrors);
+
+        Balance = result.Value;
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id, Balance.Amount.Amount));
+
+        return Result.Success();
+    }
+
+    public Result AddToEnrollmentHistory(EnrollmentHistory enrollment)
+    {
+        _enrollmentHistory.Add(enrollment);
+
+        return Result.Success();
+    }
+
+    public Result EnrollInPrivateClass(PrivateClass.PrivateClass privateClass)
+    {
+        _privateClasses.Add(privateClass);
+        var enrollment = Entities.EnrollmentHistory.CreateForPrivateClass(Id, privateClass.Id, privateClass.Status);
+        AddToEnrollmentHistory(enrollment);
+
+        return Result.Success();
+    }
+
+    public Result EnrollInGroupClass(GroupClass.GroupClass groupClass)
+    {
+        var errors = new List<ValidationError>();
+
+        if (Balance.Amount < groupClass.Price.Value)
+            errors.Add(new ValidationError("Saldo insuficiente para esta aula."));
+
+        if (_groupClasses.Any(c => c.Schedule.Overlaps(groupClass.Schedule)))
+            errors.Add(new ValidationError("Existe conflito de horário com outra aula."));
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        _groupClasses.Add(groupClass);
+        var enrollment = Entities.EnrollmentHistory.CreateForGroupClass(Id, groupClass.Id, groupClass.Status);
+        AddToEnrollmentHistory(enrollment);
+
+        var deductionResult = DeductBalance(groupClass.Price);
+        if (!deductionResult.IsSuccess)
+            return deductionResult;
+
+        AddDomainEvent(new StudentEnrolledInGroupClassEvent(Id, groupClass.Id));
+
+        return Result.Success();
     }
 }

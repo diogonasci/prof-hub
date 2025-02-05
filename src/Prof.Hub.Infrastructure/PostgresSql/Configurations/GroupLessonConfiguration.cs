@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.Student;
 using Prof.Hub.Domain.Aggregates.GroupClass;
-using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
 internal sealed class GroupLessonConfiguration : IEntityTypeConfiguration<GroupClass>

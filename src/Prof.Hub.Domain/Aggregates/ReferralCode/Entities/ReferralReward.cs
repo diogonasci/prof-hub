@@ -5,7 +5,7 @@ using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.ReferralCode;
+namespace Prof.Hub.Domain.Aggregates.ReferralCode.Entities;
 public class ReferralReward : AuditableEntity
 {
     public ReferralRewardId Id { get; private set; }

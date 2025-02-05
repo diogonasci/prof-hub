@@ -1,7 +1,7 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.Entities;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.GroupClass.Events;
 using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
-using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
@@ -23,6 +23,8 @@ public class GroupClass : ClassBase, IAggregateRoot
     private GroupClass()
     {
     }
+
+    public override string GetId() => Id.Value;
 
     public static Result<GroupClass> Create(
         string title,

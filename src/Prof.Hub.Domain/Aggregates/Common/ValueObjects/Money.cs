@@ -39,8 +39,40 @@ public sealed record Money
     public static Result<Money> operator -(Money a, Money b)
     {
         if (a.Currency != b.Currency)
-            Result.Invalid(new ValidationError("Não é possível subtrair valores em moedas diferentes"));
+            return Result.Invalid(new ValidationError("Não é possível subtrair valores em moedas diferentes"));
 
         return new Money(a.Amount - b.Amount, a.Currency);
+    }
+
+    public static bool operator <(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+            throw new InvalidOperationException("Não é possível comparar valores em moedas diferentes");
+
+        return a.Amount < b.Amount;
+    }
+
+    public static bool operator >(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+            throw new InvalidOperationException("Não é possível comparar valores em moedas diferentes");
+
+        return a.Amount > b.Amount;
+    }
+
+    public static bool operator <=(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+            throw new InvalidOperationException("Não é possível comparar valores em moedas diferentes");
+
+        return a.Amount <= b.Amount;
+    }
+
+    public static bool operator >=(Money a, Money b)
+    {
+        if (a.Currency != b.Currency)
+            throw new InvalidOperationException("Não é possível comparar valores em moedas diferentes");
+
+        return a.Amount >= b.Amount;
     }
 }

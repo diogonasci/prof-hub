@@ -1,6 +1,7 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.Entities;
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.PrivateClass.Events;
 using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
@@ -19,6 +20,8 @@ public class PrivateClass : ClassBase, IAggregateRoot
     private PrivateClass()
     {
     }
+
+    public override string GetId() => Id.Value;
 
     public static Result<PrivateClass> Create(
         TeacherId teacherId,

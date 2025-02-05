@@ -28,4 +28,19 @@ public sealed record ClassSchedule
 
         return new ClassSchedule(startDate, duration);
     }
+
+    public bool Overlaps(ClassSchedule other)
+    {
+        return StartDate < other.EndDate && other.StartDate < EndDate;
+    }
+
+    public bool IsInFuture() => StartDate > DateTime.UtcNow;
+
+    public bool IsOngoing()
+    {
+        var now = DateTime.UtcNow;
+        return now >= StartDate && now <= EndDate;
+    }
+
+    public bool HasEnded() => DateTime.UtcNow > EndDate;
 }

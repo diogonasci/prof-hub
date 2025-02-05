@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.ReferralProgram.Events;
 using Prof.Hub.Domain.Aggregates.ReferralProgram.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.SharedKernel;

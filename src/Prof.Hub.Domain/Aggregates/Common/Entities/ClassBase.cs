@@ -1,5 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
-using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.Common.Events;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
@@ -17,6 +17,8 @@ public abstract class ClassBase : AuditableEntity
     public Price Price { get; protected set; }
     public ClassStatus Status { get; protected set; }
 
+    public abstract string GetId();
+
     public IReadOnlyList<ClassMaterial.ClassMaterial> Materials => _materials.AsReadOnly();
     public IReadOnlyList<ClassFeedback.ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
 
@@ -30,7 +32,7 @@ public abstract class ClassBase : AuditableEntity
             return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser iniciadas."));
 
         Status = ClassStatus.InProgress;
-        AddDomainEvent(new ClassStartedEvent(Id));
+        AddDomainEvent(new ClassStartedEvent(GetId()));
 
         return Result.Success();
     }
@@ -42,7 +44,7 @@ public abstract class ClassBase : AuditableEntity
 
         Status = ClassStatus.Completed;
         _feedbacks.Add(feedback);
-        AddDomainEvent(new ClassCompletedEvent(Id, feedback));
+        AddDomainEvent(new ClassCompletedEvent(GetId(), feedback));
 
         return Result.Success();
     }
@@ -53,7 +55,7 @@ public abstract class ClassBase : AuditableEntity
             return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser canceladas."));
 
         Status = ClassStatus.Cancelled;
-        AddDomainEvent(new ClassCanceledEvent(Id));
+        AddDomainEvent(new ClassCanceledEvent(GetId()));
 
         return Result.Success();
     }
@@ -61,12 +63,12 @@ public abstract class ClassBase : AuditableEntity
     protected void AddMaterial(ClassMaterial.ClassMaterial material)
     {
         _materials.Add(material);
-        AddDomainEvent(new MaterialAddedEvent(Id, material.Id));
+        AddDomainEvent(new MaterialAddedEvent(GetId(), material.Id));
     }
 
     protected void AddFeedback(ClassFeedback.ClassFeedback feedback)
     {
         _feedbacks.Add(feedback);
-        AddDomainEvent(new FeedbackAddedEvent(Id, feedback.Id));
+        AddDomainEvent(new FeedbackAddedEvent(GetId(), feedback.Id));
     }
 }

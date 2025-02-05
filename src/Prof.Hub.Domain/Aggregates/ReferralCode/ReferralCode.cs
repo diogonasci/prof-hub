@@ -1,5 +1,7 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.ReferralCode.Entities;
 using Prof.Hub.Domain.Aggregates.ReferralCode.ValueObjects;
+using Prof.Hub.Domain.Aggregates.ReferralProgram.Events;
 using Prof.Hub.Domain.Aggregates.ReferralProgram.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.SharedKernel;
@@ -66,5 +68,4 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
     {
         return Guid.NewGuid().ToString()[..8].ToUpper();
     }
-}
 }
