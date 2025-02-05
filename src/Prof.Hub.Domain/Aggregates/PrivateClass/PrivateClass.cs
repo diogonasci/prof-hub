@@ -1,5 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
-using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities;
+using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
@@ -8,98 +8,80 @@ using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.PrivateClass
+namespace Prof.Hub.Domain.Aggregates.PrivateClass;
+
+public class PrivateClass : ClassBase, IAggregateRoot
 {
-    public class PrivateClass : AuditableEntity, IAggregateRoot
+    public PrivateClassId Id { get; private set; }
+    public StudentId StudentId { get; private set; }
+    public Uri MeetingUrl { get; private set; }
+
+    private PrivateClass()
     {
-        private readonly List<ClassMaterial> _materials = [];
-        private readonly List<ClassFeedback> _feedbacks = [];
+    }
 
-        public PrivateClassId Id { get; private set; }
-        public TeacherId TeacherId { get; private set; }
-        public StudentId StudentId { get; private set; }
-        public Subject Subject { get; private set; }
-        public ClassSchedule Schedule { get; private set; }
-        public Price Price { get; private set; }
-        public ClassStatus Status { get; private set; }
-        public Uri MeetingUrl { get; private set; }
+    public static Result<PrivateClass> Create(
+        TeacherId teacherId,
+        StudentId studentId,
+        Subject subject,
+        DateTime startDate,
+        TimeSpan duration,
+        Price price,
+        Uri meetingUrl)
+    {
+        var classScheduleResult = ClassSchedule.Create(startDate, duration);
 
-        public IReadOnlyList<ClassMaterial> Materials => _materials.AsReadOnly();
-        public IReadOnlyList<ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
+        if (!classScheduleResult.IsSuccess)
+            return Result.Invalid(classScheduleResult.ValidationErrors);
 
-        private PrivateClass()
+        if (meetingUrl == null)
+            return Result.Invalid(new ValidationError("URL da reunião é obrigatória."));
+
+        var privateClass = new PrivateClass
         {
-        }
+            Id = PrivateClassId.Create(),
+            TeacherId = teacherId,
+            StudentId = studentId,
+            Subject = subject,
+            Schedule = classScheduleResult.Value,
+            Price = price,
+            MeetingUrl = meetingUrl,
+            Status = ClassStatus.Scheduled
+        };
 
-        public static Result<PrivateClass> Create(
-            TeacherId teacherId,
-            StudentId studentId,
-            Subject subject,
-            DateTime startDate,
-            TimeSpan duration,
-            Price price,
-            Uri meetingUrl)
-        {
-            var subjectResult = Subject.Create();
-            var classScheduleResult = ClassSchedule.Create(startDate, duration);
+        return privateClass;
+    }
 
-            if (!subjectResult.IsSuccess || !classScheduleResult.IsSuccess)
-            {
-                var errors = new List<ValidationError>();
+    public override Result Start()
+    {
+        var result = base.Start();
+        if (!result.IsSuccess)
+            return result;
 
-                if (subjectResult.ValidationErrors.Any()) 
-                    errors.AddRange(subjectResult.ValidationErrors);
+        // Lógica adicional específica para aulas particulares
+        AddDomainEvent(new PrivateClassStartedEvent(Id, StudentId));
+        return Result.Success();
+    }
 
-                if (classScheduleResult.ValidationErrors.Any()) 
-                    errors.AddRange(classScheduleResult.ValidationErrors);
+    public override Result Complete(ClassFeedback feedback)
+    {
+        var result = base.Complete(feedback);
+        if (!result.IsSuccess)
+            return result;
 
-                return Result.Invalid(errors);
-            }
+        // Lógica adicional específica para aulas particulares
+        AddDomainEvent(new PrivateClassCompletedEvent(Id, StudentId, feedback));
+        return Result.Success();
+    }
 
-            var privateClass = new PrivateClass
-            {
-                Id = PrivateClassId.Create(),
-                TeacherId = TeacherId.Create(),
-                StudentId = StudentId.Create(),
-                Subject = subjectResult.Value,
-                Schedule = classScheduleResult.Value
-            };
+    public override Result Cancel()
+    {
+        var result = base.Cancel();
+        if (!result.IsSuccess)
+            return result;
 
-            return privateClass;
-        }
-
-        public Result Start()
-        {
-            if (Status != ClassStatus.Scheduled)
-                return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser iniciadas."));
-
-            Status = ClassStatus.InProgress;
-            AddDomainEvent(new ClassStartedEvent(Id));
-
-            return Result.Success();
-        }
-
-        public Result Complete(ClassFeedback feedback)
-        {
-            if (Status != ClassStatus.InProgress)
-                return Result.Invalid(new ValidationError("Somente aulas em andamento podem ser completadas."));
-
-            Status = ClassStatus.Completed;
-            _feedbacks.Add(feedback);
-            AddDomainEvent(new ClassCompletedEvent(Id, feedback));
-
-            return Result.Success();
-        }
-
-        public Result Cancel()
-        {
-            if (Status != ClassStatus.Scheduled)
-                return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser canceladas."));
-
-            Status = ClassStatus.Cancelled;
-            AddDomainEvent(new ClassCanceledEvent(Id));
-
-            return Result.Success();
-        }
+        // Lógica adicional específica para aulas particulares
+        AddDomainEvent(new PrivateClassCanceledEvent(Id, StudentId));
+        return Result.Success();
     }
 }

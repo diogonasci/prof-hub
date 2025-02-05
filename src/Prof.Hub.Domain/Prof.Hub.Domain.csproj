@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\Student\Events\" />
     <Folder Include="Aggregates\Student\Handlers\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Services\" />

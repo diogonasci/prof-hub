@@ -1,5 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
-using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
+﻿using Prof.Hub.Domain.Aggregates.Common.Entities;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
@@ -9,61 +8,89 @@ using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.GroupClass
+namespace Prof.Hub.Domain.Aggregates.GroupClass;
+
+public class GroupClass : ClassBase, IAggregateRoot
 {
-    public class GroupClass : AuditableEntity, IAggregateRoot
+    public GroupClassId Id { get; private set; }
+    public string Title { get; private set; }
+    public string Slug { get; private set; }
+    public Uri ThumbnailUrl { get; private set; }
+    public string Description { get; private set; }
+    public ParticipantLimit ParticipantLimit { get; private set; }
+    public HashSet<StudentId> Participants { get; private set; } = [];
+
+    private GroupClass()
     {
-        private readonly List<ClassMaterial> _materials = [];
-        private readonly List<ClassFeedback> _feedbacks = [];
+    }
 
-        public GroupClassId Id { get; private set; }
-        public string Title { get; private set; }
-        public string Slug { get; private set; }
-        public TeacherId TeacherId { get; private set; }
-        public Subject Subject { get; private set; }
-        public ClassSchedule Schedule { get; private set; }
-        public Price Price { get; private set; }
-        public Uri ThumbnailUrl { get; private set; }
-        public string Description { get; private set; }
-        public ParticipantLimit ParticipantLimit { get; private set; }
-        public HashSet<StudentId> Participants { get; private set; }
-        public ClassStatus Status { get; private set; }
+    public static Result<GroupClass> Create(
+        string title,
+        string slug,
+        TeacherId teacherId,
+        Subject subject,
+        ClassSchedule schedule,
+        Price price,
+        Uri thumbnailUrl,
+        string description,
+        ParticipantLimit participantLimit)
+    {
+        var errors = new List<ValidationError>();
 
-        public IReadOnlyList<ClassMaterial> Materials => _materials.AsReadOnly();
-        public IReadOnlyList<ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
+        if (string.IsNullOrWhiteSpace(title))
+            errors.Add(new ValidationError("Título é obrigatório."));
 
-        private GroupClass()
+        if (string.IsNullOrWhiteSpace(description))
+            errors.Add(new ValidationError("Descrição é obrigatória."));
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        var groupClass = new GroupClass
         {
-        }
+            Id = GroupClassId.Create(),
+            Title = title,
+            Slug = slug,
+            TeacherId = teacherId,
+            Subject = subject,
+            Schedule = schedule,
+            Price = price,
+            ThumbnailUrl = thumbnailUrl,
+            Description = description,
+            ParticipantLimit = participantLimit,
+            Status = ClassStatus.Draft
+        };
 
-        public Result EnrollStudent(StudentId studentId)
-        {
-            var errors = new List<ValidationError>();
+        return groupClass;
+    }
 
-            if (Status != ClassStatus.Published)
-                errors.Add(new ValidationError("A aula não está aberta para inscrições."));
+    public Result EnrollStudent(StudentId studentId)
+    {
+        var errors = new List<ValidationError>();
 
-            if (Participants.Count >= ParticipantLimit.Value)
-                errors.Add(new ValidationError("As vagas para está aula esgotaram."));
+        if (Status != ClassStatus.Published)
+            errors.Add(new ValidationError("A aula não está aberta para inscrições."));
 
-            if (errors.Count > 0)
-                return Result.Invalid(errors);
+        if (Participants.Count >= ParticipantLimit.Value)
+            errors.Add(new ValidationError("As vagas para está aula esgotaram."));
 
-            Participants.Add(studentId);
-            AddDomainEvent(new StudentEnrolledEvent(Id, studentId));
-            
-            return Result.Success();
-        }
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
 
-        public Result Publish()
-        {
-            if (Status != ClassStatus.Draft)
-                return Result.Invalid(new ValidationError("Somente aulas em rascunho podem ser publicadas."));
+        Participants.Add(studentId);
+        AddDomainEvent(new StudentEnrolledEvent(Id, studentId));
 
-            Status = ClassStatus.Published;
-            AddDomainEvent(new ThematicClassPublishedEvent(Id));
+        return Result.Success();
+    }
 
-            return Result.Success();
-        }
+    public Result Publish()
+    {
+        if (Status != ClassStatus.Draft)
+            return Result.Invalid(new ValidationError("Somente aulas em rascunho podem ser publicadas."));
+
+        Status = ClassStatus.Published;
+        AddDomainEvent(new ThematicClassPublishedEvent(Id));
+
+        return Result.Success();
     }
 }
