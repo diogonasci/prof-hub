@@ -1,7 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Payment.ValueObjects;
-using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Payment.Events;
-public record PaymentCreatedEvent(PaymentId PaymentId, StudentId StudentId) : IDomainEvent;
+public record PaymentCreatedEvent(string PaymentId, string StudentId) : IDomainEvent;
 

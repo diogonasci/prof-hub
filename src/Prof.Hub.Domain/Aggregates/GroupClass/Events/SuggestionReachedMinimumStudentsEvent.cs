@@ -1,5 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.GroupClass.Events;
-public record SuggestionReachedMinimumStudentsEvent(GroupClassSuggestionId SuggestionId) : IDomainEvent;
+public record SuggestionReachedMinimumStudentsEvent(string SuggestionId) : IDomainEvent;

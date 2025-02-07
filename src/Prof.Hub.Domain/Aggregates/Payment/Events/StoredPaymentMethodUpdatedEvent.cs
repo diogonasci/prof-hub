@@ -1,7 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Payment.ValueObjects;
-using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Payment.Events;
-public record StoredPaymentMethodUpdatedEvent(PaymentId PaymentId, StudentId StudentId, StoredPaymentMethodId MethodId) : IDomainEvent;
+public record StoredPaymentMethodUpdatedEvent(string PaymentId, string StudentId, string MethodId) : IDomainEvent;
 

@@ -1,6 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Payment.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Payment.Events;
-public record PaymentProcessingEvent(PaymentId PaymentId) : IDomainEvent;
+public record PaymentProcessingEvent(string PaymentId) : IDomainEvent;
 

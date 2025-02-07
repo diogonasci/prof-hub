@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prof.Hub.Domain.Enums;
+﻿using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Domain.Aggregates.Common.ValueObjects;

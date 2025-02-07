@@ -1,5 +1,4 @@
-﻿using Prof.Hub.Domain.Aggregates.ReferralCode;
-using Prof.Hub.SharedKernel.Results;
+﻿using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 public record RewardAmount

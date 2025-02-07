@@ -1,7 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Payment.ValueObjects;
-using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Payment.Events;
-public record BillingAddressRemovedEvent(PaymentId PaymentId, StudentId StudentId, BillingAddressId AddressId) : IDomainEvent;
+public record BillingAddressRemovedEvent(string PaymentId, string StudentId, string AddressId) : IDomainEvent;
 
