@@ -1,5 +1,6 @@
+using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.UserAccount.Events;
 
-public record NotificationPreferencesUpdatedEvent(UserAccountId AccountId, NotificationType Type, bool Enabled) : IDomainEvent; 
+public record NotificationPreferencesUpdatedEvent(string AccountId, NotificationType Type, bool Enabled) : IDomainEvent; 

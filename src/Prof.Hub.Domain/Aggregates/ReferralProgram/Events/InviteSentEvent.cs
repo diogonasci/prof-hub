@@ -1,6 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.ReferralCode.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.ReferralProgram.Events;
-public record InviteSentEvent(ReferralCodeId CodeId, ReferralInviteId InviteId) : IDomainEvent;
+public record InviteSentEvent(string CodeId, string InviteId) : IDomainEvent;
 

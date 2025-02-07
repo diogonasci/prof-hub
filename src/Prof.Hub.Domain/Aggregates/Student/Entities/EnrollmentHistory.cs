@@ -57,12 +57,12 @@ public class EnrollmentHistory : Entity
         Status = ClassStatus.Completed;
         CompletedAt = DateTime.UtcNow;
         Rating = rating;
-        AddDomainEvent(new EnrollmentCompletedEvent(StudentId, ClassId, Rating));
+        AddDomainEvent(new EnrollmentCompletedEvent(StudentId.Value, ClassId, Rating.Value));
     }
 
     public void Cancel()
     {
         Status = ClassStatus.Cancelled;
-        AddDomainEvent(new EnrollmentCanceledEvent(StudentId, ClassId));
+        AddDomainEvent(new EnrollmentCanceledEvent(StudentId.Value, ClassId));
     }
 }

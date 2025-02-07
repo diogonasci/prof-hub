@@ -2,4 +2,4 @@
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Student.Events;
-public record StudentSchoolUpdatedEvent(StudentId StudentId, School School) : IDomainEvent;
+public record StudentSchoolUpdatedEvent(string StudentId, School School) : IDomainEvent;

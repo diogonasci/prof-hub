@@ -52,7 +52,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             Created = DateTime.UtcNow
         };
 
-        account.AddDomainEvent(new UserAccountCreatedEvent(account.Id));
+        account.AddDomainEvent(new UserAccountCreatedEvent(account.Id.Value));
         return account;
     }
 
@@ -65,7 +65,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         Email = newEmail;
         IsEmailVerified = false;
 
-        AddDomainEvent(new UserEmailUpdatedEvent(Id, previousEmail, newEmail));
+        AddDomainEvent(new UserEmailUpdatedEvent(Id.Value, previousEmail.Value, newEmail.Value));
         return Result.Success();
     }
 
@@ -76,7 +76,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         IsPhoneVerified = false;
 
         if (newPhone != null)
-            AddDomainEvent(new UserPhoneUpdatedEvent(Id, previousPhone, newPhone));
+            AddDomainEvent(new UserPhoneUpdatedEvent(Id.Value, previousPhone?.Value, newPhone.Value));
 
         return Result.Success();
     }
@@ -87,7 +87,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Nova senha é obrigatória"));
 
         PasswordHash = newPasswordHash;
-        AddDomainEvent(new UserPasswordUpdatedEvent(Id));
+        AddDomainEvent(new UserPasswordUpdatedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -97,7 +97,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         var previousUrl = AvatarUrl;
         AvatarUrl = newAvatarUrl;
 
-        AddDomainEvent(new UserAvatarUpdatedEvent(Id, previousUrl, newAvatarUrl));
+        AddDomainEvent(new UserAvatarUpdatedEvent(Id.Value, previousUrl, newAvatarUrl));
         return Result.Success();
     }
 
@@ -107,7 +107,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Provedor já está vinculado à conta"));
 
         _loginProviders.Add(provider);
-        AddDomainEvent(new LoginProviderAddedEvent(Id, provider.Type));
+        AddDomainEvent(new LoginProviderAddedEvent(Id.Value, provider.Type));
 
         return Result.Success();
     }
@@ -122,7 +122,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Não é possível remover o único método de login"));
 
         _loginProviders.Remove(provider);
-        AddDomainEvent(new LoginProviderRemovedEvent(Id, type));
+        AddDomainEvent(new LoginProviderRemovedEvent(Id.Value, type));
 
         return Result.Success();
     }
@@ -141,7 +141,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             preference = preference with { IsEnabled = enabled };
         }
 
-        AddDomainEvent(new NotificationPreferencesUpdatedEvent(Id, type, enabled));
+        AddDomainEvent(new NotificationPreferencesUpdatedEvent(Id.Value, type, enabled));
         return Result.Success();
     }
 
@@ -151,7 +151,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Email já está verificado"));
 
         IsEmailVerified = true;
-        AddDomainEvent(new UserEmailVerifiedEvent(Id));
+        AddDomainEvent(new UserEmailVerifiedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -165,7 +165,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Telefone já está verificado"));
 
         IsPhoneVerified = true;
-        AddDomainEvent(new UserPhoneVerifiedEvent(Id));
+        AddDomainEvent(new UserPhoneVerifiedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -179,7 +179,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         DeactivatedAt = DateTime.UtcNow;
         DeactivationReason = reason;
 
-        AddDomainEvent(new UserAccountDeactivatedEvent(Id, reason));
+        AddDomainEvent(new UserAccountDeactivatedEvent(Id.Value, reason));
         return Result.Success();
     }
 
@@ -192,7 +192,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         DeactivatedAt = null;
         DeactivationReason = null;
 
-        AddDomainEvent(new UserAccountReactivatedEvent(Id));
+        AddDomainEvent(new UserAccountReactivatedEvent(Id.Value));
         return Result.Success();
     }
 }

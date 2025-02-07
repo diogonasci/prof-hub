@@ -87,7 +87,7 @@ public class ReferralProgram : AuditableEntity, IAggregateRoot
         if (codeResult.IsSuccess)
         {
             _referralCodes.Add(codeResult.Value);
-            AddDomainEvent(new ReferralCodeGeneratedEvent(Id, codeResult.Value.Id));
+            AddDomainEvent(new ReferralCodeGeneratedEvent(Id.Value, codeResult.Value.Id.Value));
         }
 
         return codeResult;
@@ -107,7 +107,7 @@ public class ReferralProgram : AuditableEntity, IAggregateRoot
         ReferredReward = newReferredReward;
         _rewardHistory.Add(historyResult.Value);
 
-        AddDomainEvent(new ReferralProgramRewardsUpdatedEvent(Id, newReferrerReward, newReferredReward));
+        AddDomainEvent(new ReferralProgramRewardsUpdatedEvent(Id.Value, newReferrerReward.Value, newReferredReward.Value));
 
         return Result.Success();
     }
@@ -127,7 +127,7 @@ public class ReferralProgram : AuditableEntity, IAggregateRoot
                 return result;
         }
 
-        AddDomainEvent(new ReferralProgramDeactivatedEvent(Id));
+        AddDomainEvent(new ReferralProgramDeactivatedEvent(Id.Value));
 
         return Result.Success();
     }

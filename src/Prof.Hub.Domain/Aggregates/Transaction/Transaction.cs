@@ -78,7 +78,7 @@ public class Transaction : AuditableEntity, IAggregateRoot
             description,
             externalReference);
 
-        transaction.AddDomainEvent(new TransactionCreatedEvent(transaction.WalletId, transaction.Id, transaction.Amount));
+        transaction.AddDomainEvent(new TransactionCreatedEvent(transaction.WalletId.Value, transaction.Id.Value, transaction.Amount.Amount));
 
         return transaction;
     }

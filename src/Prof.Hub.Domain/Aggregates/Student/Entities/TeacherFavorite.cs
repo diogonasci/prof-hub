@@ -18,12 +18,12 @@ public class TeacherFavorite : Entity
         AddedAt = DateTime.UtcNow;
         Note = note;
 
-        AddDomainEvent(new TeacherAddedToFavoritesEvent(studentId, teacherId));
+        AddDomainEvent(new TeacherAddedToFavoritesEvent(studentId.Value, teacherId.Value));
     }
 
     public void UpdateNote(string note)
     {
         Note = note;
-        AddDomainEvent(new TeacherFavoriteNoteUpdatedEvent(StudentId, TeacherId, note));
+        AddDomainEvent(new TeacherFavoriteNoteUpdatedEvent(StudentId.Value, TeacherId.Value, note));
     }
 }

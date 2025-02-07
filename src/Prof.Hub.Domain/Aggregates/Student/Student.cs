@@ -64,7 +64,7 @@ public class Student : AuditableEntity, IAggregateRoot
     public Result UpdateProfile(StudentProfile profile)
     {
         Profile = profile;
-        AddDomainEvent(new StudentProfileUpdatedEvent(Id, profile));
+        AddDomainEvent(new StudentProfileUpdatedEvent(Id.Value, profile));
 
         return Result.Success();
     }
@@ -72,7 +72,7 @@ public class Student : AuditableEntity, IAggregateRoot
     public Result UpdateSchool(School school)
     {
         School = school;
-        AddDomainEvent(new StudentSchoolUpdatedEvent(Id, school));
+        AddDomainEvent(new StudentSchoolUpdatedEvent(Id.Value, school));
 
         return Result.Success();
     }
@@ -95,7 +95,7 @@ public class Student : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Professor não está nos favoritos."));
 
         _favoriteTeachers.Remove(favorite);
-        AddDomainEvent(new TeacherRemovedFromFavoritesEvent(Id, teacherId));
+        AddDomainEvent(new TeacherRemovedFromFavoritesEvent(Id.Value, teacherId.Value));
 
         return Result.Success();
     }
@@ -118,7 +118,7 @@ public class Student : AuditableEntity, IAggregateRoot
             return Result.Invalid(result.ValidationErrors);
 
         Balance = result.Value;
-        AddDomainEvent(new StudentBalanceUpdatedEvent(Id, Balance.Amount.Amount));
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id.Value, Balance.Amount.Amount));
 
         return Result.Success();
     }
@@ -130,7 +130,7 @@ public class Student : AuditableEntity, IAggregateRoot
             return Result.Invalid(result.ValidationErrors);
 
         Balance = result.Value;
-        AddDomainEvent(new StudentBalanceUpdatedEvent(Id, Balance.Amount.Amount));
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id.Value, Balance.Amount.Amount));
 
         return Result.Success();
     }
@@ -172,7 +172,7 @@ public class Student : AuditableEntity, IAggregateRoot
         if (!deductionResult.IsSuccess)
             return deductionResult;
 
-        AddDomainEvent(new StudentEnrolledInGroupClassEvent(Id, groupClass.Id));
+        AddDomainEvent(new StudentEnrolledInGroupClassEvent(Id.Value, groupClass.Id.Value));
 
         return Result.Success();
     }

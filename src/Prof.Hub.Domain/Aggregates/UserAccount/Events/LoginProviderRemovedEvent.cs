@@ -1,5 +1,6 @@
+using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.UserAccount.Events;
 
-public record LoginProviderRemovedEvent(UserAccountId AccountId, LoginProviderType ProviderType) : IDomainEvent; 
+public record LoginProviderRemovedEvent(string AccountId, LoginProviderType ProviderType) : IDomainEvent; 

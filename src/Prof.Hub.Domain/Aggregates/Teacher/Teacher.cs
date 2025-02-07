@@ -85,7 +85,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         return Result.Success();
     }
 
-    public Result AddSpecialty(SubjectArea area, string description)
+    public Result<Specialty> AddSpecialty(SubjectArea area, string description)
     {
         if (_specialties.Count >= MAX_SPECIALTIES)
             return Result.Invalid(new ValidationError($"Máximo de {MAX_SPECIALTIES} especialidades permitido"));
@@ -103,7 +103,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         return Result.Success();
     }
 
-    public Result AddQualification(string title, string institution, DateTime obtainedAt)
+    public Result<Qualification> AddQualification(string title, string institution, DateTime obtainedAt)
     {
         if (_qualifications.Count >= MAX_QUALIFICATIONS)
             return Result.Invalid(new ValidationError($"Máximo de {MAX_QUALIFICATIONS} qualificações permitido"));

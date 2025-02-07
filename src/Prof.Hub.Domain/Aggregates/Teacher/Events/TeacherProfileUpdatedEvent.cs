@@ -2,5 +2,5 @@
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Teacher.Events;
-public record TeacherProfileUpdatedEvent(TeacherId TeacherId, TeacherProfile Profile) : IDomainEvent;
+public record TeacherProfileUpdatedEvent(string TeacherId, TeacherProfile Profile) : IDomainEvent;
 
