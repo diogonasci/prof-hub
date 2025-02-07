@@ -18,6 +18,7 @@ public class GroupClass : ClassBase, IAggregateRoot
     private readonly List<GroupDiscount> _discounts = [];
     private readonly List<ParticipantLimitChange> _limitChanges = [];
     private readonly List<ClassRequirement> _requirements = [];
+    private readonly List<SocialShare> _shares = [];
 
     private const int MIN_PARTICIPANTS_TO_START = 3;
     private const int MAX_ENROLLMENTS_PER_STUDENT = 3;
@@ -38,6 +39,7 @@ public class GroupClass : ClassBase, IAggregateRoot
     public IReadOnlyList<GroupDiscount> Discounts => _discounts.AsReadOnly();
     public IReadOnlyList<ParticipantLimitChange> LimitChanges => _limitChanges.AsReadOnly();
     public IReadOnlyList<ClassRequirement> Requirements => _requirements.AsReadOnly();
+    public IReadOnlyList<SocialShare> Shares => _shares.AsReadOnly();
 
     private GroupClass() { }
 
@@ -279,4 +281,40 @@ public class GroupClass : ClassBase, IAggregateRoot
         // Aqui seria necessário injetar um serviço para verificar os requisitos do estudante
         return true;
     }
+    public Result Share(StudentId studentId, SocialNetwork network, Uri shareUrl)
+    {
+        if (Status != ClassStatus.Published)
+            return Result.Invalid(new ValidationError("Apenas aulas publicadas podem ser compartilhadas"));
+
+        var shareResult = SocialShare.Create(studentId, network, shareUrl);
+        if (!shareResult.IsSuccess)
+            return Result.Invalid(shareResult.ValidationErrors);
+
+        _shares.Add(shareResult.Value);
+        AddDomainEvent(new GroupClassSharedEvent(Id, studentId, network));
+
+        return Result.Success();
+    }
+
+    public Uri GenerateSharingLink()
+    {
+        // Na implementação real, isso seria configurado via injeção de dependência
+        var baseUrl = "https://profhub.com.br/classes/";
+        return new Uri($"{baseUrl}{Slug}");
+    }
+
+    public Result<SocialShare> GetLastShareByStudent(StudentId studentId)
+    {
+        var lastShare = _shares
+            .Where(s => s.SharedBy == studentId)
+            .OrderByDescending(s => s.SharedAt)
+            .FirstOrDefault();
+
+        return lastShare != null
+            ? Result.Success(lastShare)
+            : Result.NotFound<SocialShare>();
+    }
+
+    public IEnumerable<SocialShare> GetSharesByNetwork(SocialNetwork network)
+        => _shares.Where(s => s.Network == network).OrderByDescending(s => s.SharedAt);
 }
