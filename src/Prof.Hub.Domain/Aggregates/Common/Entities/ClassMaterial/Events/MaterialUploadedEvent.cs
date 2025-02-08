@@ -1,6 +1,5 @@
-﻿using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial.ValueObjects;
-using Prof.Hub.SharedKernel;
+﻿using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial.Events;
-public record MaterialUploadedEvent(ClassMaterialId MaterialId, string Title) : IDomainEvent;
+public record MaterialUploadedEvent(string MaterialId, string Title) : IDomainEvent;
 

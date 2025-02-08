@@ -2,5 +2,5 @@
 using Prof.Hub.SharedKernel;
 
 namespace Prof.Hub.Domain.Aggregates.Coupon.Events;
-public record CouponCreatedEvent(CouponId CouponId, string Code) : IDomainEvent;
+public record CouponCreatedEvent(string CouponId, string Code) : IDomainEvent;
 

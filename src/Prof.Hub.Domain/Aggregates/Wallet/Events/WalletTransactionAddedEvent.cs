@@ -8,5 +8,5 @@ public record WalletTransactionAddedEvent(
     decimal PreviousBalance,
     decimal NewBalance,
     decimal TransactionAmount,
-    TransactionType TransactionType
+    string TransactionType
 ) : IDomainEvent;

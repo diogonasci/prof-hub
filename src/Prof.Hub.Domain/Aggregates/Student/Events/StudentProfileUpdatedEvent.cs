@@ -7,7 +7,7 @@ public record StudentProfileUpdatedEvent(
     string Name,
     string Email,
     string PhoneNumber,
-    Grade? Grade,
+    string? Grade,
     string? AvatarUrl,
     string ReferralCode
 ) : IDomainEvent;

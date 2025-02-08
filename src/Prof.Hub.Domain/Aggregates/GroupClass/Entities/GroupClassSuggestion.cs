@@ -1,4 +1,6 @@
-﻿using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+﻿using Prof.Hub.Domain.Aggregates.GroupClass.Events;
+using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel;
@@ -64,7 +66,7 @@ public class GroupClassSuggestion : AuditableEntity
             PreferredDuration = preferredDuration
         };
 
-        suggestion.AddDomainEvent(new GroupClassSuggestionCreatedEvent(suggestion.Id, suggestedBy));
+        suggestion.AddDomainEvent(new GroupClassSuggestionCreatedEvent(suggestion.Id.Value, suggestedBy.Value, suggestion.Title, suggestion.Description));
         return suggestion;
     }
 
@@ -79,10 +81,10 @@ public class GroupClassSuggestion : AuditableEntity
         var interest = new StudentInterest(studentId, DateTime.UtcNow);
         _interestedStudents.Add(interest);
 
-        AddDomainEvent(new StudentInterestedInSuggestionEvent(Id, studentId));
+        AddDomainEvent(new StudentInterestedInSuggestionEvent(Id.Value, studentId));
 
         if (_interestedStudents.Count >= MinimumStudents)
-            AddDomainEvent(new SuggestionReachedMinimumStudentsEvent(Id));
+            AddDomainEvent(new SuggestionReachedMinimumStudentsEvent(Id.Value, ));
 
         return Result.Success();
     }
@@ -95,7 +97,7 @@ public class GroupClassSuggestion : AuditableEntity
         AssignedTeacher = teacherId;
         Status = SuggestionStatus.Assigned;
 
-        AddDomainEvent(new TeacherAssignedToSuggestionEvent(Id, teacherId));
+        AddDomainEvent(new TeacherAssignedToSuggestionEvent(Id.Value, teacherId.Value));
         return Result.Success();
     }
 
@@ -105,7 +107,7 @@ public class GroupClassSuggestion : AuditableEntity
             return Result.Invalid(new ValidationError("Professor precisa ser atribuído primeiro"));
 
         Status = SuggestionStatus.Approved;
-        AddDomainEvent(new GroupClassSuggestionApprovedEvent(Id));
+        AddDomainEvent(new GroupClassSuggestionApprovedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -118,7 +120,8 @@ public class GroupClassSuggestion : AuditableEntity
         Status = SuggestionStatus.Rejected;
         RejectionReason = reason;
 
-        AddDomainEvent(new GroupClassSuggestionRejectedEvent(Id, reason));
+        AddDomainEvent(new GroupClassSuggestionRejectedEvent(Id.Value, reason));
+
         return Result.Success();
     }
 }
