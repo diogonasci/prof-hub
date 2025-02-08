@@ -12,6 +12,8 @@ namespace Prof.Hub.Domain.Aggregates.GroupClass;
 
 public class GroupClass : ClassBase, IAggregateRoot
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
+
     private readonly HashSet<StudentId> _participants = [];
     private readonly HashSet<StudentId> _waitingList = [];
     private readonly HashSet<StudentPresence> _presenceList = [];
@@ -41,7 +43,10 @@ public class GroupClass : ClassBase, IAggregateRoot
     public IReadOnlyList<ClassRequirement> Requirements => _requirements.AsReadOnly();
     public IReadOnlyList<SocialShare> Shares => _shares.AsReadOnly();
 
-    private GroupClass() { }
+    private GroupClass(IDateTimeProvider dateTimeProvider)
+    {
+        _dateTimeProvider = dateTimeProvider;
+    }
 
     public override string GetId() => Id.Value;
 
@@ -314,9 +319,10 @@ public class GroupClass : ClassBase, IAggregateRoot
             .OrderByDescending(s => s.SharedAt)
             .FirstOrDefault();
 
-        return lastShare != null
-            ? Result.Success(lastShare)
-            : Result.NotFound<SocialShare>();
+        if (lastShare == null)
+            return Result.Invalid(new ValidationError("Nenhum compartilhamento encontrado para este estudante."));
+
+        return lastShare;
     }
 
     public IEnumerable<SocialShare> GetSharesByNetwork(SocialNetwork network)

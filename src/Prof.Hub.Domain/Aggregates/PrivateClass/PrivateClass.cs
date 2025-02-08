@@ -166,9 +166,12 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (Status != ClassStatus.InProgress)
             return Result.Invalid(new ValidationError("Presença só pode ser registrada em aulas em andamento."));
 
+        var result = RegisterAttendance(StudentId.Value, ParticipantType.Student, joinTime);
+        if (!result.IsSuccess)
+            return result;
+
         StudentPresent = true;
         StudentJoinedAt = joinTime;
-
         AddDomainEvent(new StudentJoinedClassEvent(Id.Value, StudentId.Value, joinTime));
 
         return Result.Success();
@@ -203,34 +206,35 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Start()
+    public override Result Start(IDateTimeProvider dateTimeProvider)
     {
-        var result = base.Start();
+        var result = base.Start(dateTimeProvider);
         if (!result.IsSuccess)
             return result;
 
         AddDomainEvent(new PrivateClassStartedEvent(Id.Value, StudentId.Value));
+
         return Result.Success();
     }
 
-    public override Result CanComplete(IDateTimeProvider dateTimeProvider)
+    protected override Result CanComplete(IDateTimeProvider dateTimeProvider)
     {
         var baseResult = base.CanComplete(dateTimeProvider);
         if (!baseResult.IsSuccess)
             return baseResult;
 
-        if (!HasBothParticipantsPresent())
+        if (!(StudentPresent && TeacherPresent))
             return Result.Invalid(new ValidationError("Professor e aluno devem estar presentes para completar a aula."));
 
         return Result.Success();
     }
 
-    public override Result Complete(ClassFeedback feedback)
+    public override Result Complete(ClassFeedback feedback, IDateTimeProvider dateTimeProvider)
     {
         if (!StudentPresent || !TeacherPresent)
             return Result.Invalid(new ValidationError("Não é possível completar aula sem a presença do professor e aluno."));
 
-        var result = base.Complete(feedback);
+        var result = base.Complete(feedback, dateTimeProvider);
         if (!result.IsSuccess)
             return result;
 
@@ -250,9 +254,9 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Cancel()
+    public override Result Cancel(IDateTimeProvider dateTimeProvider)
     {
-        var result = base.Cancel();
+        var result = base.Cancel(dateTimeProvider);
         if (!result.IsSuccess)
             return result;
 

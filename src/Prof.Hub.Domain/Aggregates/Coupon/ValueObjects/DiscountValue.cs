@@ -4,7 +4,7 @@ using Prof.Hub.SharedKernel.Results;
 namespace Prof.Hub.Domain.Aggregates.Coupon.ValueObjects;
 public abstract record DiscountValue
 {
-    private DiscountValue() { }
+    protected DiscountValue() { }
 
     public static Result<DiscountValue> CreatePercentage(decimal percentage)
     {

@@ -159,7 +159,7 @@ public class Student : AuditableEntity, IAggregateRoot
     public Result EnrollInPrivateClass(PrivateClass.PrivateClass privateClass)
     {
         _privateClasses.Add(privateClass);
-        var enrollment = Entities.EnrollmentHistory.CreateForPrivateClass(Id, privateClass.Id, privateClass.Status);
+        var enrollment = Entities.EnrollmentHistory.CreateForPrivateClass(Id, privateClass.Id, privateClass.GetStatus());
         AddToEnrollmentHistory(enrollment);
 
         return Result.Success();
@@ -179,7 +179,7 @@ public class Student : AuditableEntity, IAggregateRoot
             return Result.Invalid(errors);
 
         _groupClasses.Add(groupClass);
-        var enrollment = Entities.EnrollmentHistory.CreateForGroupClass(Id, groupClass.Id, groupClass.Status);
+        var enrollment = Entities.EnrollmentHistory.CreateForGroupClass(Id, groupClass.Id, groupClass.GetStatus());
         AddToEnrollmentHistory(enrollment);
 
         var deductionResult = DeductBalance(groupClass.Price);
