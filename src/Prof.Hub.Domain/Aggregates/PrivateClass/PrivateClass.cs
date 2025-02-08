@@ -13,6 +13,8 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass;
 
 public class PrivateClass : ClassBase, IAggregateRoot
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
+
     private readonly List<ClassNote> _notes = [];
     private readonly List<ScheduleChange> _scheduleChanges = [];
 
@@ -32,7 +34,10 @@ public class PrivateClass : ClassBase, IAggregateRoot
     public IReadOnlyList<ClassNote> Notes => _notes.AsReadOnly();
     public IReadOnlyList<ScheduleChange> ScheduleChanges => _scheduleChanges.AsReadOnly();
 
-    private PrivateClass() { }
+    private PrivateClass(IDateTimeProvider dateTimeProvider)
+    {
+        _dateTimeProvider = dateTimeProvider;
+    }
 
     public override string GetId() => Id.Value;
 
@@ -109,7 +114,14 @@ public class PrivateClass : ClassBase, IAggregateRoot
 
         _scheduleChanges.Add(change);
 
-        AddDomainEvent(new PrivateClassRescheduledEvent(Id, StudentId, oldSchedule, Schedule));
+        AddDomainEvent(new PrivateClassRescheduledEvent(
+            Id.Value,
+            StudentId.Value,
+            oldSchedule.StartDate,
+            oldSchedule.Duration,
+            Schedule.StartDate,
+            Schedule.Duration
+        ));
 
         return Result.Success();
     }
@@ -144,7 +156,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
 
         _scheduleChanges.Add(change);
 
-        AddDomainEvent(new PrivateClassExtendedEvent(Id, StudentId, additionalTime));
+        AddDomainEvent(new PrivateClassExtendedEvent(Id.Value, StudentId.Value, additionalTime));
 
         return Result.Success();
     }
@@ -157,7 +169,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         StudentPresent = true;
         StudentJoinedAt = joinTime;
 
-        AddDomainEvent(new StudentJoinedClassEvent(Id, StudentId, joinTime));
+        AddDomainEvent(new StudentJoinedClassEvent(Id.Value, StudentId.Value, joinTime));
 
         return Result.Success();
     }
@@ -170,7 +182,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         TeacherPresent = true;
         TeacherJoinedAt = joinTime;
 
-        AddDomainEvent(new TeacherJoinedClassEvent(Id, TeacherId, joinTime));
+        AddDomainEvent(new TeacherJoinedClassEvent(Id.Value, TeacherId.Value, joinTime));
 
         return Result.Success();
     }
@@ -186,7 +198,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
 
         _notes.Add(noteResult.Value);
 
-        AddDomainEvent(new ClassNoteAddedEvent(Id, noteResult.Value.Content));
+        AddDomainEvent(new ClassNoteAddedEvent(Id.Value, noteResult.Value.Content));
 
         return Result.Success();
     }
@@ -197,7 +209,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (!result.IsSuccess)
             return result;
 
-        AddDomainEvent(new PrivateClassStartedEvent(Id, StudentId));
+        AddDomainEvent(new PrivateClassStartedEvent(Id.Value, StudentId.Value));
         return Result.Success();
     }
 
@@ -222,7 +234,19 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (!result.IsSuccess)
             return result;
 
-        AddDomainEvent(new PrivateClassCompletedEvent(Id, StudentId, feedback));
+        AddDomainEvent(new PrivateClassCompletedEvent(
+            Id.Value,
+            StudentId.Value,
+            feedback.OverallRating.Value,
+            feedback.TeachingRating.Value,
+            feedback.MaterialsRating.Value,
+            feedback.TechnicalRating.Value,
+            feedback.TeacherComment,
+            feedback.TechnicalComment,
+            feedback.IsAnonymous,
+            feedback.HadTechnicalIssues
+        ));
+
         return Result.Success();
     }
 
@@ -232,7 +256,8 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (!result.IsSuccess)
             return result;
 
-        AddDomainEvent(new PrivateClassCanceledEvent(Id, StudentId));
+        AddDomainEvent(new PrivateClassCanceledEvent(Id.Value, StudentId.Value));
+
         return Result.Success();
     }
 

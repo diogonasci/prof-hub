@@ -22,7 +22,7 @@ public abstract class ClassBase : AuditableEntity
     public Subject Subject { get; protected set; }
     public ClassSchedule Schedule { get; protected set; }
     public Price Price { get; protected set; }
-    public ClassStatus Status { get; private set; }
+    protected ClassStatus Status { get; private set; }
     public DateTime? StartedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
     public TimeSpan? EffectiveDuration { get; private set; }
@@ -111,7 +111,7 @@ public abstract class ClassBase : AuditableEntity
 
         material.SetAvailability(isAvailableBeforeClass);
         _materials.Add(material);
-        AddDomainEvent(new MaterialAddedEvent(GetId(), material.Id));
+        AddDomainEvent(new MaterialAddedEvent(GetId(), material.Id.Value));
 
         return Result.Success();
     }
@@ -129,7 +129,7 @@ public abstract class ClassBase : AuditableEntity
         return Result.Success();
     }
 
-    protected virtual Result CanStart(IDateTimeProvider dateTimeProvider)
+    public virtual Result CanStart(IDateTimeProvider dateTimeProvider)
     {
         if (Status != ClassStatus.Scheduled)
             return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser iniciadas."));

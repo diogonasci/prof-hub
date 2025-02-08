@@ -53,6 +53,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         };
 
         account.AddDomainEvent(new UserAccountCreatedEvent(account.Id.Value));
+
         return account;
     }
 
@@ -66,6 +67,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         IsEmailVerified = false;
 
         AddDomainEvent(new UserEmailUpdatedEvent(Id.Value, previousEmail.Value, newEmail.Value));
+
         return Result.Success();
     }
 
@@ -87,6 +89,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Nova senha é obrigatória"));
 
         PasswordHash = newPasswordHash;
+
         AddDomainEvent(new UserPasswordUpdatedEvent(Id.Value));
 
         return Result.Success();
@@ -97,7 +100,6 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         var previousUrl = AvatarUrl;
         AvatarUrl = newAvatarUrl;
 
-        AddDomainEvent(new UserAvatarUpdatedEvent(Id.Value, previousUrl, newAvatarUrl));
         return Result.Success();
     }
 
@@ -141,7 +143,6 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             preference = preference with { IsEnabled = enabled };
         }
 
-        AddDomainEvent(new NotificationPreferencesUpdatedEvent(Id.Value, type, enabled));
         return Result.Success();
     }
 
@@ -180,6 +181,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
         DeactivationReason = reason;
 
         AddDomainEvent(new UserAccountDeactivatedEvent(Id.Value, reason));
+
         return Result.Success();
     }
 

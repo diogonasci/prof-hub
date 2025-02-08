@@ -12,7 +12,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
     private readonly List<Qualification> _qualifications = [];
     private readonly List<HourlyRate> _rateHistory = [];
     private readonly List<Specialty> _specialties = [];
-    private const int MAX_SPECIALTIES = 5;
+    private const int MAX_SPECIALTIES = 3;
     private const int MAX_QUALIFICATIONS = 10;
 
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -65,7 +65,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         };
 
         teacher._rateHistory.Add(rateResult.Value);
-        teacher.AddDomainEvent(new TeacherCreatedEvent(teacher.Id));
+        teacher.AddDomainEvent(new TeacherCreatedEvent(teacher.Id.Value));
 
         return teacher;
     }
@@ -80,7 +80,13 @@ public class Teacher : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Novo valor não pode ser menor que o atual"));
 
         _rateHistory.Add(rateResult.Value);
-        AddDomainEvent(new TeacherRateUpdatedEvent(Id, rateResult.Value));
+
+        AddDomainEvent(new TeacherRateUpdatedEvent(
+        Id.Value,
+        rateResult.Value.Value.Amount,
+        rateResult.Value.Value.Currency,
+        _dateTimeProvider.UtcNow
+        ));
 
         return Result.Success();
     }
@@ -98,7 +104,13 @@ public class Teacher : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Já existe uma especialidade nesta área"));
 
         _specialties.Add(specialtyResult.Value);
-        AddDomainEvent(new TeacherSpecialtyAddedEvent(Id, specialtyResult.Value));
+
+        AddDomainEvent(new TeacherSpecialtyAddedEvent(
+        Id.Value,
+        specialtyResult.Value.Area.ToString(),
+        specialtyResult.Value.Description,
+        specialtyResult.Value.IsVerified
+        ));
 
         return Result.Success();
     }
@@ -120,7 +132,6 @@ public class Teacher : AuditableEntity, IAggregateRoot
         }
 
         _qualifications.Add(qualificationResult.Value);
-        AddDomainEvent(new TeacherQualificationAddedEvent(Id, qualificationResult.Value));
 
         return Result.Success();
     }
@@ -139,7 +150,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         if (newStatus == TeacherStatus.Active)
             LastActiveAt = _dateTimeProvider.UtcNow;
 
-        AddDomainEvent(new TeacherStatusChangedEvent(Id, previousStatus, newStatus));
+        AddDomainEvent(new TeacherStatusChangedEvent(Id.Value, previousStatus, newStatus));
         return Result.Success();
     }
 
@@ -150,7 +161,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
 
         var result = Availability.AddTimeSlot(timeSlot);
         if (result.IsSuccess)
-            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id));
+            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id.Value));
 
         return result;
     }
@@ -159,7 +170,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
     {
         var result = Availability.RemoveTimeSlot(timeSlot);
         if (result.IsSuccess)
-            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id));
+            AddDomainEvent(new TeacherAvailabilityUpdatedEvent(Id.Value));
 
         return result;
     }
@@ -168,7 +179,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
     {
         var result = Rating.AddRating(rating);
         if (result.IsSuccess)
-            AddDomainEvent(new TeacherRatingUpdatedEvent(Id, Rating.AverageScore));
+            AddDomainEvent(new TeacherRatingUpdatedEvent(Id.Value, Rating.AverageScore));
 
         return result;
     }

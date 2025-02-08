@@ -86,7 +86,7 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
         _invites.Add(inviteResult.Value);
         LastUsedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new InviteSentEvent(Id, inviteResult.Value.Id));
+        AddDomainEvent(new InviteSentEvent(Id.Value, inviteResult.Value.Id.Value));
 
         return inviteResult;
     }
@@ -97,7 +97,7 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Código já está inativo."));
 
         IsActive = false;
-        AddDomainEvent(new ReferralCodeDeactivatedEvent(Id));
+        AddDomainEvent(new ReferralCodeDeactivatedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -111,7 +111,7 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Não é possível reativar um código expirado."));
 
         IsActive = true;
-        AddDomainEvent(new ReferralCodeReactivatedEvent(Id));
+        AddDomainEvent(new ReferralCodeReactivatedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -127,7 +127,7 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
         var oldExpirationDate = ExpiresAt;
         ExpiresAt = newExpirationDate;
 
-        AddDomainEvent(new ReferralCodeExpirationRenewedEvent(Id, oldExpirationDate, newExpirationDate));
+        AddDomainEvent(new ReferralCodeExpirationRenewedEvent(Id.Value, oldExpirationDate, newExpirationDate));
 
         return Result.Success();
     }

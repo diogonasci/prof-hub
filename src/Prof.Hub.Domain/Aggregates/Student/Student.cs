@@ -64,15 +64,29 @@ public class Student : AuditableEntity, IAggregateRoot
     public Result UpdateProfile(StudentProfile profile)
     {
         Profile = profile;
-        AddDomainEvent(new StudentProfileUpdatedEvent(Id.Value, profile));
-
+        AddDomainEvent(new StudentProfileUpdatedEvent(
+            Id.Value,
+            profile.Name,
+            profile.Email.Value,
+            profile.PhoneNumber.Value,
+            profile.Grade,
+            profile.AvatarUrl?.ToString(),
+            profile.ReferralCode.Value
+        ));
         return Result.Success();
     }
 
     public Result UpdateSchool(School school)
     {
         School = school;
-        AddDomainEvent(new StudentSchoolUpdatedEvent(Id.Value, school));
+
+        AddDomainEvent(new StudentSchoolUpdatedEvent(
+            Id.Value,
+            school.Name,
+            school.City,
+            school.State,
+            school.IsVerified
+        ));
 
         return Result.Success();
     }
