@@ -150,7 +150,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         if (newStatus == TeacherStatus.Active)
             LastActiveAt = _dateTimeProvider.UtcNow;
 
-        AddDomainEvent(new TeacherStatusChangedEvent(Id.Value, previousStatus, newStatus));
+        AddDomainEvent(new TeacherStatusChangedEvent(Id.Value, previousStatus.ToString(), newStatus.ToString()));
         return Result.Success();
     }
 

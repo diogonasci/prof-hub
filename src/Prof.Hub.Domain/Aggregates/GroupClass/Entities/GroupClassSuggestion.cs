@@ -81,10 +81,10 @@ public class GroupClassSuggestion : AuditableEntity
         var interest = new StudentInterest(studentId, DateTime.UtcNow);
         _interestedStudents.Add(interest);
 
-        AddDomainEvent(new StudentInterestedInSuggestionEvent(Id.Value, studentId));
+        AddDomainEvent(new StudentInterestedInSuggestionEvent(Id.Value, studentId.Value));
 
         if (_interestedStudents.Count >= MinimumStudents)
-            AddDomainEvent(new SuggestionReachedMinimumStudentsEvent(Id.Value, ));
+            AddDomainEvent(new SuggestionReachedMinimumStudentsEvent(Id.Value, _interestedStudents.Count));
 
         return Result.Success();
     }
@@ -101,13 +101,13 @@ public class GroupClassSuggestion : AuditableEntity
         return Result.Success();
     }
 
-    public Result Approve()
+    public Result Approve(TeacherId teacherId)
     {
         if (Status != SuggestionStatus.Assigned)
             return Result.Invalid(new ValidationError("Professor precisa ser atribuído primeiro"));
 
         Status = SuggestionStatus.Approved;
-        AddDomainEvent(new GroupClassSuggestionApprovedEvent(Id.Value));
+        AddDomainEvent(new GroupClassSuggestionApprovedEvent(Id.Value, teacherId.Value));
 
         return Result.Success();
     }

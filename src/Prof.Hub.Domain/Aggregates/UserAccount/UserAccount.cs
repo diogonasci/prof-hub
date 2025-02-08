@@ -109,7 +109,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Provedor já está vinculado à conta"));
 
         _loginProviders.Add(provider);
-        AddDomainEvent(new LoginProviderAddedEvent(Id.Value, provider.Type));
+        AddDomainEvent(new LoginProviderAddedEvent(Id.Value, provider.Type.ToString()));
 
         return Result.Success();
     }
@@ -124,7 +124,7 @@ public class UserAccount : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Não é possível remover o único método de login"));
 
         _loginProviders.Remove(provider);
-        AddDomainEvent(new LoginProviderRemovedEvent(Id.Value, type));
+        AddDomainEvent(new LoginProviderRemovedEvent(Id.Value, type.ToString()));
 
         return Result.Success();
     }

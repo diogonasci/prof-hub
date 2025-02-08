@@ -69,7 +69,7 @@ public class Student : AuditableEntity, IAggregateRoot
             profile.Name,
             profile.Email.Value,
             profile.PhoneNumber.Value,
-            profile.Grade,
+            profile.Grade.ToString(),
             profile.AvatarUrl?.ToString(),
             profile.ReferralCode.Value
         ));

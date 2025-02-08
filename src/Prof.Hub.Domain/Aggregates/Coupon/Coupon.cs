@@ -69,7 +69,7 @@ public class Coupon : AuditableEntity, IAggregateRoot
             TotalMaxUses = totalMaxUses
         };
 
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id, coupon.Code));
+        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
         return coupon;
     }
 
@@ -107,7 +107,7 @@ public class Coupon : AuditableEntity, IAggregateRoot
             TotalMaxUses = totalMaxUses
         };
 
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id, coupon.Code));
+        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
         return coupon;
     }
 
@@ -143,7 +143,7 @@ public class Coupon : AuditableEntity, IAggregateRoot
             TotalMaxUses = 1
         };
 
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id, coupon.Code));
+        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
         return coupon;
     }
 
@@ -153,7 +153,7 @@ public class Coupon : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Restrição já existe"));
 
         _restrictions.Add(restriction);
-        AddDomainEvent(new CouponRestrictionAddedEvent(Id, restriction.Type));
+        AddDomainEvent(new CouponRestrictionAddedEvent(Id.Value, restriction.Type.ToString()));
 
         return Result.Success();
     }
@@ -170,10 +170,10 @@ public class Coupon : AuditableEntity, IAggregateRoot
         if (IsFullyUsed())
         {
             Status = CodeStatus.FullyUsed;
-            AddDomainEvent(new CouponFullyUsedEvent(Id));
+            AddDomainEvent(new CouponFullyUsedEvent(Id.Value));
         }
 
-        AddDomainEvent(new CouponUsedEvent(Id, studentId));
+        AddDomainEvent(new CouponUsedEvent(Id.Value, studentId.Value));
         return Result.Success();
     }
 
@@ -188,7 +188,7 @@ public class Coupon : AuditableEntity, IAggregateRoot
 
         IsActive = false;
         Status = CodeStatus.Inactive;
-        AddDomainEvent(new CouponDeactivatedEvent(Id));
+        AddDomainEvent(new CouponDeactivatedEvent(Id.Value));
     }
 
     private Result ValidateUsage(StudentId studentId, Money orderAmount)

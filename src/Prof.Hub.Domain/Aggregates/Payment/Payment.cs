@@ -49,7 +49,7 @@ public class Payment : AuditableEntity, IAggregateRoot
             UsedBillingAddress = billingAddress
         };
 
-        payment.AddDomainEvent(new PaymentCreatedEvent(payment.Id, studentId));
+        payment.AddDomainEvent(new PaymentCreatedEvent(payment.Id.Value, studentId.Value));
         return payment;
     }
 
@@ -63,7 +63,7 @@ public class Payment : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Método de pagamento não informado"));
 
         Status = PaymentStatus.Processing;
-        AddDomainEvent(new PaymentProcessingEvent(Id));
+        AddDomainEvent(new PaymentProcessingEvent(Id.Value));
 
         return Result.Success();
     }
@@ -79,7 +79,7 @@ public class Payment : AuditableEntity, IAggregateRoot
         if (UsedPaymentMethod != null)
             UsedPaymentMethod.RegisterUsage();
 
-        AddDomainEvent(new PaymentCompletedEvent(Id));
+        AddDomainEvent(new PaymentCompletedEvent(Id.Value));
         return Result.Success();
     }
 
@@ -89,7 +89,7 @@ public class Payment : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Pagamento deve estar em processamento para ser marcado como falho"));
 
         Status = PaymentStatus.Failed;
-        AddDomainEvent(new PaymentFailedEvent(Id));
+        AddDomainEvent(new PaymentFailedEvent(Id.Value));
 
         return Result.Success();
     }
@@ -107,7 +107,7 @@ public class Payment : AuditableEntity, IAggregateRoot
         }
 
         _storedPaymentMethods.Add(paymentMethod);
-        AddDomainEvent(new StoredPaymentMethodAddedEvent(Id, StudentId, paymentMethod.Id));
+        AddDomainEvent(new StoredPaymentMethodAddedEvent(Id.Value, StudentId.Value, paymentMethod.Id.Value));
 
         return Result.Success();
     }
@@ -122,7 +122,7 @@ public class Payment : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Não é possível remover o método de pagamento padrão"));
 
         _storedPaymentMethods.Remove(method);
-        AddDomainEvent(new StoredPaymentMethodRemovedEvent(Id, StudentId, methodId));
+        AddDomainEvent(new StoredPaymentMethodRemovedEvent(Id.Value, StudentId.Value, methodId.Value));
 
         return Result.Success();
     }
@@ -140,7 +140,7 @@ public class Payment : AuditableEntity, IAggregateRoot
         }
 
         _billingAddresses.Add(address);
-        AddDomainEvent(new BillingAddressAddedEvent(Id, StudentId, address.Id));
+        AddDomainEvent(new BillingAddressAddedEvent(Id.Value, StudentId.Value, address.Id.Value));
 
         return Result.Success();
     }
@@ -155,7 +155,7 @@ public class Payment : AuditableEntity, IAggregateRoot
             return Result.Invalid(new ValidationError("Não é possível remover o endereço padrão"));
 
         _billingAddresses.Remove(address);
-        AddDomainEvent(new BillingAddressRemovedEvent(Id, StudentId, addressId));
+        AddDomainEvent(new BillingAddressRemovedEvent(Id.Value, StudentId.Value, addressId.Value));
 
         return Result.Success();
     }

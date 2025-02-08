@@ -68,7 +68,9 @@ public abstract class ClassBase : AuditableEntity
 
         _feedbacks.Add(feedback);
         RecordStatusChange(previousStatus, Status, dateTimeProvider.UtcNow);
-        AddDomainEvent(new ClassCompletedEvent(GetId(), feedback));
+        AddDomainEvent(new ClassCompletedEvent(GetId(), feedback.OverallRating.Value, feedback.TeachingRating.Value, feedback.MaterialsRating.Value,
+            feedback.TeachingRating.Value, feedback.TeacherComment, feedback.TechnicalComment, feedback.IsAnonymous, feedback.HadTechnicalIssues,
+            CompletedAt.Value));
 
         return Result.Success();
     }
@@ -96,7 +98,7 @@ public abstract class ClassBase : AuditableEntity
         var attendance = new Attendance(participantId, type, joinTime);
         _attendance.Add(attendance);
 
-        AddDomainEvent(new AttendanceRegisteredEvent(GetId(), participantId, type, joinTime));
+        AddDomainEvent(new AttendanceRegisteredEvent(GetId(), participantId, type.ToString(), joinTime));
 
         return Result.Success();
     }
@@ -124,7 +126,7 @@ public abstract class ClassBase : AuditableEntity
         var issue = new ClassIssue(description, type, dateTimeProvider.UtcNow);
         _issues.Add(issue);
 
-        AddDomainEvent(new ClassIssueReportedEvent(GetId(), issue));
+        AddDomainEvent(new ClassIssueReportedEvent(GetId(), issue.Description, issue.Type.ToString(), issue.ReportedAt));
 
         return Result.Success();
     }

@@ -127,12 +127,12 @@ public class GroupClass : ClassBase, IAggregateRoot
                 return Result.Invalid(new ValidationError("Lista de espera está cheia."));
 
             _waitingList.Add(studentId);
-            AddDomainEvent(new StudentAddedToWaitingListEvent(Id, studentId));
+            AddDomainEvent(new StudentAddedToWaitingListEvent(Id.Value, studentId.Value));
             return Result.Success();
         }
 
         _participants.Add(studentId);
-        AddDomainEvent(new StudentEnrolledEvent(Id, studentId));
+        AddDomainEvent(new StudentEnrolledEvent(Id.Value, studentId.Value));
 
         return Result.Success();
     }
@@ -153,10 +153,10 @@ public class GroupClass : ClassBase, IAggregateRoot
         {
             _waitingList.Remove(nextStudent);
             _participants.Add(nextStudent);
-            AddDomainEvent(new StudentPromotedFromWaitingListEvent(Id, nextStudent));
+            AddDomainEvent(new StudentPromotedFromWaitingListEvent(Id.Value, nextStudent.Value));
         }
 
-        AddDomainEvent(new StudentEnrollmentCanceledEvent(Id, studentId));
+        AddDomainEvent(new StudentEnrollmentCanceledEvent(Id.Value, studentId.Value));
         return Result.Success();
     }
 
@@ -174,10 +174,11 @@ public class GroupClass : ClassBase, IAggregateRoot
             var nextStudent = _waitingList.First();
             _waitingList.Remove(nextStudent);
             _participants.Add(nextStudent);
-            AddDomainEvent(new StudentPromotedFromWaitingListEvent(Id, nextStudent));
+            AddDomainEvent(new StudentPromotedFromWaitingListEvent(Id.Value, nextStudent.Value));
         }
 
-        AddDomainEvent(new ParticipantLimitUpdatedEvent(Id, newLimit));
+        AddDomainEvent(new ParticipantLimitUpdatedEvent(Id.Value, newLimit.Value));
+
         return Result.Success();
     }
 
@@ -188,15 +189,18 @@ public class GroupClass : ClassBase, IAggregateRoot
             return Result.Invalid(discountResult.ValidationErrors);
 
         _discounts.Add(discountResult.Value);
-        AddDomainEvent(new GroupDiscountAddedEvent(Id, discountResult.Value));
+        AddDomainEvent(new GroupDiscountAddedEvent(Id.Value, minParticipants, percentageDiscount));
+
         return Result.Success();
     }
 
     public Result AddRequirement(string description, bool isMandatory)
     {
         var requirement = new ClassRequirement(description, isMandatory);
+
         _requirements.Add(requirement);
-        AddDomainEvent(new ClassRequirementAddedEvent(Id, requirement));
+        AddDomainEvent(new ClassRequirementAddedEvent(Id.Value, description, isMandatory));
+
         return Result.Success();
     }
 
@@ -211,7 +215,7 @@ public class GroupClass : ClassBase, IAggregateRoot
         var presence = new StudentPresence(studentId, presenceTime);
         _presenceList.Add(presence);
 
-        AddDomainEvent(new StudentPresenceRegisteredEvent(Id, studentId, presenceTime));
+        AddDomainEvent(new StudentPresenceRegisteredEvent(Id.Value, studentId.Value, presenceTime));
         return Result.Success();
     }
 
@@ -291,7 +295,7 @@ public class GroupClass : ClassBase, IAggregateRoot
             return Result.Invalid(shareResult.ValidationErrors);
 
         _shares.Add(shareResult.Value);
-        AddDomainEvent(new GroupClassSharedEvent(Id, studentId, network));
+        AddDomainEvent(new GroupClassSharedEvent(Id.Value, studentId.Value, network.ToString()));
 
         return Result.Success();
     }

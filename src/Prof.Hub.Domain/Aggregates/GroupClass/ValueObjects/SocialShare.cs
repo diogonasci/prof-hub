@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Enums;
 using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;

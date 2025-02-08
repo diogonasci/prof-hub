@@ -97,7 +97,7 @@ public class Wallet : AuditableEntity, IAggregateRoot
             previousBalance.Amount,
             Balance.Amount,
             transaction.Amount.Amount,
-            transaction.Type
+            transaction.Type.ToString()
         ));
 
         return Result.Success();
