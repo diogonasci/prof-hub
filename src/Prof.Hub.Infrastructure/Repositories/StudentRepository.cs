@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Prof.Hub.Application.Interfaces.Repositories;
 using Prof.Hub.Domain.Aggregates.Student;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Infrastructure.PostgresSql;
+using Prof.Hub.SharedKernel.Results;
 
 namespace Prof.Hub.Infrastructure.Repositories;
 public class StudentRepository : IStudentRepository
@@ -13,36 +15,66 @@ public class StudentRepository : IStudentRepository
         _context = context;
     }
 
-    public async Task<Student> GetByIdAsync(Guid id)
+    public async Task<Result<Student>> GetByIdAsync(StudentId id, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<Student>().FindAsync(id);
-    }
+        var student = await _context.Set<Student>()
+            .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
 
-    public async Task<List<Student>> GetAllAsync()
-    {
-        return await _context.Set<Student>().ToListAsync();
-    }
+        if (student == null)
+            return Result.NotFound($"Estudante com ID {id.Value} não encontrado.");
 
-    public async Task<Student> AddAsync(Student student)
-    {
-        await _context.Set<Student>().AddAsync(student);
-        await _context.SaveChangesAsync();
         return student;
     }
 
-    public async Task UpdateAsync(Student student)
+    public async Task<Result<Student>> GetByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        _context.Set<Student>().Update(student);
-        await _context.SaveChangesAsync();
+        var student = await _context.Set<Student>()
+            .FirstOrDefaultAsync(s => s.Profile.Email.Value == email, cancellationToken);
+
+        if (student == null)
+            return Result.NotFound($"Estudante com email {email} não encontrado.");
+
+        return student;
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task<bool> ExistsAsync(StudentId id, CancellationToken cancellationToken = default)
     {
-        var student = await GetByIdAsync(id);
-        if (student is not null)
-        {
-            _context.Set<Student>().Remove(student);
-            await _context.SaveChangesAsync();
-        }
+        return await _context.Set<Student>()
+            .AnyAsync(s => s.Id == id, cancellationToken);
+    }
+
+    public async Task<Result<List<Student>>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        var students = await _context.Set<Student>()
+            .ToListAsync(cancellationToken);
+
+        return students;
+    }
+
+    public async Task<Result<List<Student>>> GetByIdsAsync(IEnumerable<StudentId> ids, CancellationToken cancellationToken = default)
+    {
+        var students = await _context.Set<Student>()
+            .Where(s => ids.Contains(s.Id))
+            .ToListAsync(cancellationToken);
+
+        if (!students.Any())
+            return Result.NotFound("Nenhum estudante encontrado com os IDs fornecidos.");
+
+        return students;
+    }
+
+    public async Task AddAsync(Student student, CancellationToken cancellationToken = default)
+    {
+        await _context.Set<Student>().AddAsync(student, cancellationToken);
+    }
+
+    public void Update(Student student)
+    {
+        _context.Set<Student>().Update(student);
+    }
+
+    public void Remove(Student student)
+    {
+        _context.Set<Student>().Remove(student);
     }
 }
