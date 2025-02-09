@@ -72,7 +72,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (errors.Count > 0)
             return Result.Invalid(errors);
 
-        var privateClass = new PrivateClass
+        var privateClass = new PrivateClass(dateTimeProvider)
         {
             Id = PrivateClassId.Create(),
             TeacherId = teacherId,
@@ -81,8 +81,9 @@ public class PrivateClass : ClassBase, IAggregateRoot
             Schedule = classScheduleResult.Value,
             Price = price,
             MeetingUrl = meetingUrl,
-            Status = ClassStatus.Scheduled
         };
+
+        privateClass.SetStatus(ClassStatus.Scheduled);
 
         return privateClass;
     }

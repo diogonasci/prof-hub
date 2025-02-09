@@ -41,6 +41,11 @@ public abstract class ClassBase : AuditableEntity
 
     public ClassStatus GetStatus() => Status;
 
+    protected void SetStatus(ClassStatus status)
+    {
+        Status = status;
+    }
+
     public virtual Result Start(IDateTimeProvider dateTimeProvider)
     {
         var canStartResult = CanStart(dateTimeProvider);

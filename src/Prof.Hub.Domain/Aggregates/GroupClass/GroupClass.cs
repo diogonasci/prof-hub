@@ -43,7 +43,7 @@ public class GroupClass : ClassBase, IAggregateRoot
     public IReadOnlyList<ClassRequirement> Requirements => _requirements.AsReadOnly();
     public IReadOnlyList<SocialShare> Shares => _shares.AsReadOnly();
 
-    private GroupClass(IDateTimeProvider dateTimeProvider)
+    private GroupClass(IDateTimeProvider dateTimeProvider) : base()
     {
         _dateTimeProvider = dateTimeProvider;
     }
@@ -60,6 +60,7 @@ public class GroupClass : ClassBase, IAggregateRoot
         Uri thumbnailUrl,
         string description,
         ParticipantLimit participantLimit,
+        IDateTimeProvider dateTimeProvider,
         bool allowLateEnrollment = false,
         DateTime? enrollmentDeadline = null)
     {
@@ -77,7 +78,7 @@ public class GroupClass : ClassBase, IAggregateRoot
         if (errors.Count > 0)
             return Result.Invalid(errors);
 
-        var groupClass = new GroupClass
+        var groupClass = new GroupClass(dateTimeProvider)
         {
             Id = GroupClassId.Create(),
             Title = title,
@@ -91,8 +92,9 @@ public class GroupClass : ClassBase, IAggregateRoot
             ParticipantLimit = participantLimit,
             AllowLateEnrollment = allowLateEnrollment,
             EnrollmentDeadline = enrollmentDeadline,
-            Status = ClassStatus.Draft
         };
+
+        groupClass.SetStatus(ClassStatus.Draft);
 
         groupClass._limitChanges.Add(
             new ParticipantLimitChange(participantLimit, DateTime.UtcNow, "Criação da aula"));
@@ -224,13 +226,13 @@ public class GroupClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Start()
+    public override Result Start(IDateTimeProvider dateTimeProvider)
     {
         if (_participants.Count < MIN_PARTICIPANTS_TO_START)
             return Result.Invalid(new ValidationError(
                 $"Mínimo de {MIN_PARTICIPANTS_TO_START} participantes necessário para iniciar."));
 
-        var result = base.Start();
+        var result = base.Start(dateTimeProvider);
         if (!result.IsSuccess)
             return result;
 
