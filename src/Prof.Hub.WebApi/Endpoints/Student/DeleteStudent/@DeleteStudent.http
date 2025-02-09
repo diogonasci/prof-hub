@@ -1,5 +1,0 @@
-@LOCALHOST = http://localhost:5000
-
-# Exemplo de deleção de estudante
-DELETE {{LOCALHOST}}/api/v1/students/{id}
-Accept: application/json

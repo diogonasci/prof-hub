@@ -32,12 +32,10 @@ public class Student : AuditableEntity, IAggregateRoot
     public static Result<Student> Create(
         string name,
         string email,
-        string phoneNumber,
-        decimal initialBalance = 0,
-        School? school = null)
+        string phoneNumber)
     {
         var profileResult = StudentProfile.Create(name, email, phoneNumber);
-        var balanceResult = Balance.Create(initialBalance);
+        var balanceResult = Balance.Create(0);
 
         var errors = new List<ValidationError>();
 
@@ -55,7 +53,6 @@ public class Student : AuditableEntity, IAggregateRoot
             Id = StudentId.Create(),
             Profile = profileResult.Value,
             Balance = balanceResult.Value,
-            School = school
         };
 
         return student;

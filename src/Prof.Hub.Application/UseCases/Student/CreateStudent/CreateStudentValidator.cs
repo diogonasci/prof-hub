@@ -1,38 +1,23 @@
 ﻿using FluentValidation;
 
-namespace Prof.Hub.Application.UseCases.Student.CreateStudent
+namespace Prof.Hub.Application.UseCases.Student.CreateStudent;
+
+public class CreateStudentValidator : AbstractValidator<CreateStudentCommand>
 {
-    public class CreateStudentValidator : AbstractValidator<CreateStudentInput>
+    public CreateStudentValidator()
     {
-        public CreateStudentValidator()
-        {
-            RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("O nome é obrigatório.")
-                .Length(1, 50).WithMessage("O nome deve ter entre 1 e 50 caracteres.");
+        RuleFor(x => x.Name)
+            .NotEmpty().WithMessage("Nome é obrigatório")
+            .MaximumLength(100).WithMessage("Nome não pode exceder 100 caracteres");
 
-            RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("O email é obrigatório.")
-                .EmailAddress().WithMessage("Formato de email inválido.");
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email é obrigatório")
+            .EmailAddress().WithMessage("Email inválido")
+            .MaximumLength(256).WithMessage("Email não pode exceder 256 caracteres");
 
-            RuleFor(x => x.PhoneNumber)
-                .NotEmpty().WithMessage("O número de telefone é obrigatório.")
-                .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("O número de telefone deve estar em um formato válido.");
+        RuleFor(x => x.PhoneNumber)
+            .NotEmpty().WithMessage("Telefone é obrigatório")
+            .Matches(@"^\+?[1-9]\d{1,14}$").WithMessage("Telefone em formato inválido");
 
-            RuleFor(x => x.Street)
-                .NotEmpty().WithMessage("O endereço é obrigatório.")
-                .Length(1, 100).WithMessage("O endereço deve ter entre 1 e 100 caracteres.");
-
-            RuleFor(x => x.City)
-                .NotEmpty().WithMessage("A cidade é obrigatória.")
-                .Length(1, 50).WithMessage("A cidade deve ter entre 1 e 50 caracteres.");
-
-            RuleFor(x => x.State)
-                .NotEmpty().WithMessage("O estado é obrigatório.")
-                .Length(2, 50).WithMessage("O estado deve ter entre 2 e 50 caracteres.");
-
-            RuleFor(x => x.PostalCode)
-                .NotEmpty().WithMessage("O código postal é obrigatório.")
-                .Length(5, 10).WithMessage("O código postal deve ter entre 5 e 10 caracteres.");
-        }
     }
 }

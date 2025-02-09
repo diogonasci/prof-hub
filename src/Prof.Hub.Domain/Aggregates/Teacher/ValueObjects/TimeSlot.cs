@@ -6,6 +6,7 @@ public sealed record TimeSlot
     public DayOfWeek DayOfWeek { get; }
     public TimeSpan StartTime { get; }
     public TimeSpan EndTime { get; }
+    public TimeSpan Duration => EndTime - StartTime;
 
     private TimeSlot(DayOfWeek dayOfWeek, TimeSpan startTime, TimeSpan endTime)
     {

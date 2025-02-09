@@ -1,5 +1,0 @@
-@LOCALHOST = http://localhost:5000
-
-# Exemplo de obtenção de todos os estudantes
-GET {{LOCALHOST}}/api/v1/students
-Accept: application/json
