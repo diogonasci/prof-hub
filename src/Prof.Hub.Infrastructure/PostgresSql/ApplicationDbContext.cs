@@ -5,11 +5,11 @@ namespace Prof.Hub.Infrastructure.PostgresSql;
 
 public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 {
-    private readonly IDomainEventPublisher _domainEventPublisher;
+    private readonly IDomainEventPublisher? _domainEventPublisher;
 
     public ApplicationDbContext(
         DbContextOptions<ApplicationDbContext> options,
-        IDomainEventPublisher domainEventPublisher)
+        IDomainEventPublisher? domainEventPublisher = null)
         : base(options)
     {
         _domainEventPublisher = domainEventPublisher;
@@ -31,7 +31,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 
         var result = await base.SaveChangesAsync(cancellationToken);
 
-        if (entities.Count != 0)
+        if (_domainEventPublisher != null && entities.Count != 0)
         {
             await _domainEventPublisher.PublishEventsAsync(entities, cancellationToken);
         }

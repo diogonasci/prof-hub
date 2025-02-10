@@ -8,26 +8,7 @@ internal sealed class ClassFeedbackConfiguration : IEntityTypeConfiguration<Clas
 {
     public void Configure(EntityTypeBuilder<ClassFeedback> builder)
     {
-        // Tabela, chave primária e constraints
-        builder.ToTable(tb =>
-        {
-            tb.HasCheckConstraint(
-                "CK_ClassFeedback_Comments_Length",
-                """
-                (\"TeacherComment\" IS NULL OR LENGTH(\"TeacherComment\") <= 1000) AND 
-                (\"TechnicalComment\" IS NULL OR LENGTH(\"TechnicalComment\") <= 1000)
-                """);
-
-            tb.HasCheckConstraint(
-                "CK_ClassFeedback_Ratings_Range",
-                """
-                \"OverallRating\" BETWEEN 1 AND 5 AND
-                \"TeachingRating\" BETWEEN 1 AND 5 AND
-                \"MaterialsRating\" BETWEEN 1 AND 5 AND
-                \"TechnicalRating\" BETWEEN 1 AND 5
-                """);
-        });
-
+        // Tabela, chave primária
         builder.HasKey(f => f.Id);
 
         // Conversão do Value Object ClassFeedbackId
@@ -94,14 +75,6 @@ internal sealed class ClassFeedbackConfiguration : IEntityTypeConfiguration<Clas
         builder.HasIndex(f => f.Created);
         builder.HasIndex(f => f.IsAnonymous);
         builder.HasIndex(f => f.HadTechnicalIssues);
-
-        // Índice composto para análise de avaliações
-        builder.HasIndex(
-            "OverallRating",
-            "TeachingRating",
-            "MaterialsRating",
-            "TechnicalRating")
-            .HasDatabaseName("IX_ClassFeedback_AllRatings");
     }
 }
 

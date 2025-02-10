@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Coupon;
 using Prof.Hub.Domain.Aggregates.Coupon.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 using Prof.Hub.Domain.Enums;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
+
 internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
 {
     public void Configure(EntityTypeBuilder<Coupon> builder)
@@ -71,7 +73,10 @@ internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
             usage.Property<int>("Id").ValueGeneratedOnAdd();
             usage.HasKey("Id");
 
-            usage.Property(u => u.StudentId.Value)
+            usage.Property(u => u.StudentId)
+                .HasConversion(
+                    id => id.Value,
+                    value => new StudentId(value))
                 .HasColumnName("StudentId")
                 .IsRequired();
 
@@ -95,54 +100,19 @@ internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
             usage.HasIndex(u => u.UsedAt);
         });
 
-        // Restrictions (owned collection)
-        builder.OwnsMany<CouponRestriction>("_restrictions", restriction =>
+        // Configurar CouponRestriction como um tipo owned com discriminador
+        builder.OwnsOne(x => x.Restriction, restrictionBuilder =>
         {
-            restriction.ToTable("CouponRestrictions");
-            restriction.WithOwner().HasForeignKey("CouponId");
-            restriction.Property<int>("Id").ValueGeneratedOnAdd();
-            restriction.HasKey("Id");
-
-            restriction.Property(r => r.Type)
-                .HasConversion<string>()
-                .IsRequired();
-
-            // Minimum Amount
-            restriction.OwnsOne<Money>("MinimumAmount", money =>
-            {
-                money.Property(m => m.Amount)
-                    .HasColumnName("MinimumAmount")
-                    .HasPrecision(18, 2);
-
-                money.Property(m => m.Currency)
-                    .HasColumnName("MinimumAmountCurrency")
-                    .HasMaxLength(3)
-                    .HasDefaultValue("BRL");
-            });
-
-            // Maximum Amount
-            restriction.OwnsOne<Money>("MaximumAmount", money =>
-            {
-                money.Property(m => m.Amount)
-                    .HasColumnName("MaximumAmount")
-                    .HasPrecision(18, 2);
-
-                money.Property(m => m.Currency)
-                    .HasColumnName("MaximumAmountCurrency")
-                    .HasMaxLength(3)
-                    .HasDefaultValue("BRL");
-            });
-
-            restriction.Property<SubjectArea?>("SubjectArea")
-                .HasConversion<string>();
-
-            restriction.Property<string>("TeacherId")
-                .HasMaxLength(36);
-
-            restriction.Property<EducationLevel?>("EducationLevel")
-                .HasConversion<string>();
-
-            restriction.HasIndex(r => r.Type);
+            restrictionBuilder.WithOwner();
+            
+            // Adiciona um discriminador para diferentes tipos de restrição
+            restrictionBuilder.Property<string>("Discriminator")
+                .HasMaxLength(50);
+            
+            // Mapeia os tipos derivados
+            restrictionBuilder.HasDiscriminator<string>("Discriminator")
+                .HasValue<MinimumOrderRestriction>("MinimumOrder")
+                .HasValue<StudentLevelRestriction>("StudentLevel");
         });
 
         // Check Constraints
