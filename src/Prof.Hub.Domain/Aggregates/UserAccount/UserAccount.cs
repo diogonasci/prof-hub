@@ -22,8 +22,8 @@ public class UserAccount : AuditableEntity, IAggregateRoot
     public DateTime? DeactivatedAt { get; private set; }
     public string? DeactivationReason { get; private set; }
 
-    public IReadOnlyList<LoginProvider> LoginProviders => _loginProviders.AsReadOnly();
-    public IReadOnlyList<NotificationPreference> NotificationPreferences => _notificationPreferences.AsReadOnly();
+    public IReadOnlyCollection<LoginProvider> LoginProviders => _loginProviders.AsReadOnly();
+    public IReadOnlyCollection<NotificationPreference> NotificationPreferences => _notificationPreferences.AsReadOnly();
 
     private UserAccount()
     {

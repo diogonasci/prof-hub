@@ -25,9 +25,9 @@ public class Teacher : AuditableEntity, IAggregateRoot
     public HourlyRate CurrentRate => _rateHistory.MaxBy(r => r.EffectiveFrom)!;
     public DateTime? LastActiveAt { get; private set; }
 
-    public IReadOnlyList<Qualification> Qualifications => _qualifications.AsReadOnly();
-    public IReadOnlyList<HourlyRate> RateHistory => _rateHistory.AsReadOnly();
-    public IReadOnlyList<Specialty> Specialties => _specialties.AsReadOnly();
+    public IReadOnlyCollection<Qualification> Qualifications => _qualifications.AsReadOnly();
+    public IReadOnlyCollection<HourlyRate> RateHistory => _rateHistory.AsReadOnly();
+    public IReadOnlyCollection<Specialty> Specialties => _specialties.AsReadOnly();
 
     private Teacher(IDateTimeProvider dateTimeProvider)
     {

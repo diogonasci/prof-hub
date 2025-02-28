@@ -27,11 +27,11 @@ public abstract class ClassBase : AuditableEntity
     public DateTime? CompletedAt { get; private set; }
     public TimeSpan? EffectiveDuration { get; private set; }
 
-    public IReadOnlyList<ClassMaterial.ClassMaterial> Materials => _materials.AsReadOnly();
-    public IReadOnlyList<ClassFeedback.ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
-    public IReadOnlyList<StatusChange> StatusHistory => _statusHistory.AsReadOnly();
-    public IReadOnlyList<ClassIssue> Issues => _issues.AsReadOnly();
-    public IReadOnlyList<Attendance> Attendance => _attendance.AsReadOnly();
+    public IReadOnlyCollection<ClassMaterial.ClassMaterial> Materials => _materials.AsReadOnly();
+    public IReadOnlyCollection<ClassFeedback.ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
+    public IReadOnlyCollection<StatusChange> StatusHistory => _statusHistory.AsReadOnly();
+    public IReadOnlyCollection<ClassIssue> Issues => _issues.AsReadOnly();
+    public IReadOnlyCollection<Attendance> Attendance => _attendance.AsReadOnly();
 
     public abstract string GetId();
 

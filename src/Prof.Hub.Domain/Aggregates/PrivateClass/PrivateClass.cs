@@ -31,8 +31,8 @@ public class PrivateClass : ClassBase, IAggregateRoot
     public DateTime? StudentJoinedAt { get; private set; }
     public DateTime? TeacherJoinedAt { get; private set; }
 
-    public IReadOnlyList<ClassNote> Notes => _notes.AsReadOnly();
-    public IReadOnlyList<ScheduleChange> ScheduleChanges => _scheduleChanges.AsReadOnly();
+    public IReadOnlyCollection<ClassNote> Notes => _notes.AsReadOnly();
+    public IReadOnlyCollection<ScheduleChange> ScheduleChanges => _scheduleChanges.AsReadOnly();
 
     private PrivateClass(IDateTimeProvider dateTimeProvider)
     {

@@ -38,10 +38,10 @@ public class GroupClass : ClassBase, IAggregateRoot
     public IReadOnlySet<StudentId> Participants => _participants;
     public IReadOnlySet<StudentId> WaitingList => _waitingList;
     public IReadOnlySet<StudentPresence> PresenceList => _presenceList;
-    public IReadOnlyList<GroupDiscount> Discounts => _discounts.AsReadOnly();
-    public IReadOnlyList<ParticipantLimitChange> LimitChanges => _limitChanges.AsReadOnly();
-    public IReadOnlyList<ClassRequirement> Requirements => _requirements.AsReadOnly();
-    public IReadOnlyList<SocialShare> Shares => _shares.AsReadOnly();
+    public IReadOnlyCollection<GroupDiscount> Discounts => _discounts.AsReadOnly();
+    public IReadOnlyCollection<ParticipantLimitChange> LimitChanges => _limitChanges.AsReadOnly();
+    public IReadOnlyCollection<ClassRequirement> Requirements => _requirements.AsReadOnly();
+    public IReadOnlyCollection<SocialShare> Shares => _shares.AsReadOnly();
 
     private GroupClass(IDateTimeProvider dateTimeProvider) : base()
     {
