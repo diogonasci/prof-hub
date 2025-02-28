@@ -12,139 +12,36 @@ public class Coupon : AuditableEntity, IAggregateRoot
     private readonly List<CouponUsage> _usageHistory = [];
     private readonly List<CouponRestriction> _restrictions = [];
 
-    public CouponId Id { get; private set; }
-    public string Code { get; private set; }
-    public CouponType Type { get; private set; }
-    public DiscountValue Value { get; private set; }
-    public DateTime ValidFrom { get; private set; }
-    public DateTime ValidUntil { get; private set; }
-    public int? MaxUsesPerStudent { get; private set; }
-    public int? TotalMaxUses { get; private set; }
+    public CouponId Id { get; internal set; }
+    public string Code { get; internal set; }
+    public CouponType Type { get; internal set; }
+    public DiscountValue Value { get; internal set; }
+    public DateTime ValidFrom { get; internal set; }
+    public DateTime ValidUntil { get; internal set; }
+    public int? MaxUsesPerStudent { get; internal set; }
+    public int? TotalMaxUses { get; internal set; }
     public CodeStatus Status { get; private set; }
     public bool IsActive { get; private set; }
 
     public IReadOnlyList<CouponUsage> UsageHistory => _usageHistory.AsReadOnly();
     public IReadOnlyList<CouponRestriction> Restrictions => _restrictions.AsReadOnly();
 
-    private Coupon()
+    internal Coupon()
     {
         IsActive = true;
         Status = CodeStatus.Active;
     }
 
-    public static Result<Coupon> CreatePercentageDiscount(
-        string code,
-        decimal percentageOff,
-        DateTime validFrom,
-        DateTime validUntil,
-        int? maxUsesPerStudent = null,
-        int? totalMaxUses = null)
+    // Método interno para registrar o evento de criação
+    internal void RegisterCreatedEvent()
     {
-        var errors = new List<ValidationError>();
-
-        if (string.IsNullOrWhiteSpace(code))
-            errors.Add(new ValidationError("Código é obrigatório"));
-
-        if (percentageOff <= 0 || percentageOff > 100)
-            errors.Add(new ValidationError("Percentual de desconto deve estar entre 0 e 100"));
-
-        ValidateDates(validFrom, validUntil, errors);
-
-        if (errors.Count > 0)
-            return Result.Invalid(errors);
-
-        var valueResult = DiscountValue.CreatePercentage(percentageOff);
-        if (!valueResult.IsSuccess)
-            return Result.Invalid(valueResult.ValidationErrors);
-
-        var coupon = new Coupon
-        {
-            Id = CouponId.Create(),
-            Code = code.ToUpper(),
-            Type = CouponType.PercentageDiscount,
-            Value = valueResult.Value,
-            ValidFrom = validFrom,
-            ValidUntil = validUntil,
-            MaxUsesPerStudent = maxUsesPerStudent,
-            TotalMaxUses = totalMaxUses
-        };
-
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
-        return coupon;
+        AddDomainEvent(new CouponCreatedEvent(Id.Value, Code));
     }
 
-    public static Result<Coupon> CreateFixedDiscount(
-        string code,
-        Money fixedAmount,
-        DateTime validFrom,
-        DateTime validUntil,
-        int? maxUsesPerStudent = null,
-        int? totalMaxUses = null)
+    // Método interno para registrar o evento de restrição adicionada
+    internal void RegisterRestrictionAddedEvent(CouponRestriction restriction)
     {
-        var errors = new List<ValidationError>();
-
-        if (string.IsNullOrWhiteSpace(code))
-            errors.Add(new ValidationError("Código é obrigatório"));
-
-        ValidateDates(validFrom, validUntil, errors);
-
-        if (errors.Count > 0)
-            return Result.Invalid(errors);
-
-        var valueResult = DiscountValue.CreateFixed(fixedAmount);
-        if (!valueResult.IsSuccess)
-            return Result.Invalid(valueResult.ValidationErrors);
-
-        var coupon = new Coupon
-        {
-            Id = CouponId.Create(),
-            Code = code.ToUpper(),
-            Type = CouponType.FixedDiscount,
-            Value = valueResult.Value,
-            ValidFrom = validFrom,
-            ValidUntil = validUntil,
-            MaxUsesPerStudent = maxUsesPerStudent,
-            TotalMaxUses = totalMaxUses
-        };
-
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
-        return coupon;
-    }
-
-    public static Result<Coupon> CreateGiftCard(
-        string code,
-        Money amount,
-        DateTime validFrom,
-        DateTime validUntil)
-    {
-        var errors = new List<ValidationError>();
-
-        if (string.IsNullOrWhiteSpace(code))
-            errors.Add(new ValidationError("Código é obrigatório"));
-
-        ValidateDates(validFrom, validUntil, errors);
-
-        if (errors.Count > 0)
-            return Result.Invalid(errors);
-
-        var valueResult = DiscountValue.CreateFixed(amount);
-        if (!valueResult.IsSuccess)
-            return Result.Invalid(valueResult.ValidationErrors);
-
-        var coupon = new Coupon
-        {
-            Id = CouponId.Create(),
-            Code = code.ToUpper(),
-            Type = CouponType.GiftCard,
-            Value = valueResult.Value,
-            ValidFrom = validFrom,
-            ValidUntil = validUntil,
-            MaxUsesPerStudent = 1,
-            TotalMaxUses = 1
-        };
-
-        coupon.AddDomainEvent(new CouponCreatedEvent(coupon.Id.Value, coupon.Code));
-        return coupon;
+        AddDomainEvent(new CouponRestrictionAddedEvent(Id.Value, restriction.Type.ToString()));
     }
 
     public Result AddRestriction(CouponRestriction restriction)
@@ -237,14 +134,5 @@ public class Coupon : AuditableEntity, IAggregateRoot
     {
         if (!TotalMaxUses.HasValue) return false;
         return _usageHistory.Count >= TotalMaxUses.Value;
-    }
-
-    private static void ValidateDates(DateTime validFrom, DateTime validUntil, List<ValidationError> errors)
-    {
-        if (validFrom >= validUntil)
-            errors.Add(new ValidationError("Data inicial deve ser anterior à data final"));
-
-        if (validUntil <= DateTime.UtcNow)
-            errors.Add(new ValidationError("Data final deve ser futura"));
     }
 }
