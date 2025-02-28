@@ -5,7 +5,7 @@ namespace Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 
 public sealed record Qualification(string Title, string Institution, DateTime ObtainedAt, bool IsVerified = false)
 {
-    public static Result<Qualification> Create(string title, string institution, DateTime obtainedAt, IDateTimeProvider dateTimeProvider)
+    public static Result<Qualification> Create(string title, string institution, DateTime obtainedAt, DateTime currentTime)
     {
         var errors = new List<ValidationError>();
 
@@ -15,7 +15,7 @@ public sealed record Qualification(string Title, string Institution, DateTime Ob
         if (string.IsNullOrWhiteSpace(institution))
             errors.Add(new ValidationError("Instituição deve ser informada."));
 
-        if (obtainedAt > dateTimeProvider.UtcNow)
+        if (obtainedAt > currentTime)
             errors.Add(new ValidationError("Data de obtenção não pode estar no futuro."));
 
         if (errors.Count > 0)
