@@ -20,13 +20,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
     <ProjectReference Include="..\Prof.Hub.Domain\Prof.Hub.Domain.csproj" />
     <ProjectReference Include="..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Extensions\" />
+    <Folder Include="UseCases\Student\DeleteStudent\" />
+    <Folder Include="UseCases\Student\GetAllStudents\" />
+    <Folder Include="UseCases\Student\GetStudentById\" />
+    <Folder Include="UseCases\Student\UpdateStudent\" />
   </ItemGroup>
 
 </Project>

@@ -32,10 +32,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
     <ProjectReference Include="..\Prof.Hub.Application\Prof.Hub.Application.csproj" />
     <ProjectReference Include="..\Prof.Hub.Infrastructure\Prof.Hub.Infrastructure.csproj" />
     <ProjectReference Include="..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Endpoints\Student\DeleteStudent\" />
+    <Folder Include="Endpoints\Student\GetAllStudents\" />
+    <Folder Include="Endpoints\Student\GetStudentById\" />
+    <Folder Include="Endpoints\Student\UpdateStudent\" />
   </ItemGroup>
 
 </Project>

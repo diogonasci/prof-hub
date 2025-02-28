@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Aggregates\Student\Events\" />
     <Folder Include="Aggregates\Student\Handlers\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
     <ProjectReference Include="..\Prof.Hub.SharedKernel\Prof.Hub.SharedKernel.csproj" />
   </ItemGroup>
 

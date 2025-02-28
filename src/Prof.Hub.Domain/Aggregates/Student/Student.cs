@@ -1,129 +1,190 @@
-﻿using Prof.Hub.Domain.Aggregates.Common;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Student.Entities;
+using Prof.Hub.Domain.Aggregates.Student.Events;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.SharedKernel;
 using Prof.Hub.SharedKernel.Results;
 
 
-namespace Prof.Hub.Domain.Aggregates.Student
+namespace Prof.Hub.Domain.Aggregates.Student;
+public class Student : AuditableEntity, IAggregateRoot
 {
-    public class Student : AuditableEntity
+    private readonly List<PrivateClass.PrivateClass> _privateClasses = [];
+    private readonly List<GroupClass.GroupClass> _groupClasses = [];
+    private readonly List<EnrollmentHistory> _enrollmentHistory = [];
+    private readonly List<TeacherFavorite> _favoriteTeachers = [];
+
+    public StudentId Id { get; private set; }
+    public StudentProfile Profile { get; private set; }
+    public Balance Balance { get; private set; }
+    public School? School { get; private set; }
+
+    public IReadOnlyList<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
+    public IReadOnlyList<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
+    public IReadOnlyList<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
+    public IReadOnlyList<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
+
+    private Student()
     {
-        private readonly List<PrivateLesson.PrivateLesson> _privateLessons = [];
-        private readonly List<GroupLesson.GroupLesson> _groupLessons = [];
+    }
 
-        public Name Name { get; private set; }
-        public Email Email { get; private set; }
-        public PhoneNumber PhoneNumber { get; private set; }
-        public Address Address { get; private set; }
-        public Parent Parent { get; private set; }
-        public ClassHours ClassHours { get; private set; }
+    public static Result<Student> Create(
+        string name,
+        string email,
+        string phoneNumber)
+    {
+        var profileResult = StudentProfile.Create(name, email, phoneNumber);
+        var balanceResult = Balance.Create(0);
 
-        public IReadOnlyList<PrivateLesson.PrivateLesson> PrivateLessons => _privateLessons.AsReadOnly();
-        public IReadOnlyList<GroupLesson.GroupLesson> GroupLessons => _groupLessons.AsReadOnly();
+        var errors = new List<ValidationError>();
 
+        if (!profileResult.IsSuccess)
+            errors.AddRange(profileResult.ValidationErrors);
 
-        private Student()
+        if (!balanceResult.IsSuccess)
+            errors.AddRange(balanceResult.ValidationErrors);
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        var student = new Student
         {
-        }
+            Id = StudentId.Create(),
+            Profile = profileResult.Value,
+            Balance = balanceResult.Value,
+        };
 
-        public static Result<Student> Create(
-            string name,
-            string email,
-            string phoneNumber,
-            string street,
-            string city,
-            string state,
-            string postalCode,
-            int classHoursValue
-        )
-        {
-            var nameResult = Name.Create(name);
-            var emailResult = Email.Create(email);
-            var phoneResult = PhoneNumber.Create(phoneNumber);
-            var addressResult = Address.Create(street, city, state, postalCode);
-            var classHoursResult = ClassHours.Create(classHoursValue);
+        return student;
+    }
 
-            if (!nameResult.IsSuccess || !emailResult.IsSuccess || !phoneResult.IsSuccess || !addressResult.IsSuccess ||
-                !classHoursResult.IsSuccess)
-            {
-                var errors = new List<ValidationError>();
+    public Result UpdateProfile(StudentProfile profile)
+    {
+        Profile = profile;
+        AddDomainEvent(new StudentProfileUpdatedEvent(
+            Id.Value,
+            profile.Name,
+            profile.Email.Value,
+            profile.PhoneNumber.Value,
+            profile.Grade.ToString(),
+            profile.AvatarUrl?.ToString(),
+            profile.ReferralCode.Value
+        ));
+        return Result.Success();
+    }
 
-                if (nameResult.ValidationErrors.Any()) errors.AddRange(nameResult.ValidationErrors);
-                if (emailResult.ValidationErrors.Any()) errors.AddRange(emailResult.ValidationErrors);
-                if (phoneResult.ValidationErrors.Any()) errors.AddRange(phoneResult.ValidationErrors);
-                if (addressResult.ValidationErrors.Any()) errors.AddRange(addressResult.ValidationErrors);
-                if (classHoursResult.ValidationErrors.Any()) errors.AddRange(classHoursResult.ValidationErrors);
+    public Result UpdateSchool(School school)
+    {
+        School = school;
 
-                return Result.Invalid(errors);
-            }
+        AddDomainEvent(new StudentSchoolUpdatedEvent(
+            Id.Value,
+            school.Name,
+            school.City,
+            school.State,
+            school.IsVerified
+        ));
 
-            var student = new Student
-            {
-                Id = Guid.NewGuid(),
-                Name = nameResult.Value,
-                Email = emailResult.Value,
-                PhoneNumber = phoneResult.Value,
-                Address = addressResult.Value,
-                Parent = null,
-                ClassHours = classHoursResult.Value
-            };
+        return Result.Success();
+    }
 
-            return Result.Success(student);
-        }
+    public Result AddToFavorites(TeacherId teacherId, string? note = null)
+    {
+        if (_favoriteTeachers.Any(f => f.TeacherId == teacherId))
+            return Result.Invalid(new ValidationError("Professor já está nos favoritos."));
 
+        var favorite = new TeacherFavorite(Id, teacherId, note);
+        _favoriteTeachers.Add(favorite);
 
-        public void AddClassHours(int hours)
-        {
-            ClassHours = ClassHours.Add(hours);
-        }
+        return Result.Success();
+    }
 
-        public Result SchedulePrivateLesson(PrivateLesson.PrivateLesson newLesson)
-        {
-            if (newLesson == null)
-                return Result.Invalid(new ValidationError("A nova aula particular não pode ser nula."));
+    public Result RemoveFromFavorites(TeacherId teacherId)
+    {
+        var favorite = _favoriteTeachers.FirstOrDefault(f => f.TeacherId == teacherId);
+        if (favorite == null)
+            return Result.Invalid(new ValidationError("Professor não está nos favoritos."));
 
-            var hasConflict = _privateLessons.Any(lesson =>
-                lesson.StartTime < newLesson.EndTime && newLesson.StartTime < lesson.EndTime);
+        _favoriteTeachers.Remove(favorite);
+        AddDomainEvent(new TeacherRemovedFromFavoritesEvent(Id.Value, teacherId.Value));
 
-            if (hasConflict)
-                return Result.Invalid(new ValidationError("Conflito de horário detectado para aula particular."));
+        return Result.Success();
+    }
 
-            _privateLessons.Add(newLesson);
-            return Result.Success();
-        }
+    public Result UpdateFavoriteNote(TeacherId teacherId, string note)
+    {
+        var favorite = _favoriteTeachers.FirstOrDefault(f => f.TeacherId == teacherId);
+        if (favorite == null)
+            return Result.Invalid(new ValidationError("Professor não está nos favoritos."));
 
-        public Result CancelPrivateLesson(PrivateLesson.PrivateLesson lessonToCancel)
-        {
-            if (lessonToCancel == null)
-                return Result.Invalid(new ValidationError("A aula particular a ser cancelada não pode ser nula."));
+        favorite.UpdateNote(note);
 
-            if (!_privateLessons.Remove(lessonToCancel))
-                return Result.Invalid(new ValidationError("A aula particular não está agendada."));
+        return Result.Success();
+    }
 
-            return Result.Success();
-        }
+    public Result AddBalance(Money amount)
+    {
+        var result = Balance.Add(amount);
+        if (!result.IsSuccess)
+            return Result.Invalid(result.ValidationErrors);
 
-        public Result JoinGroupLesson(GroupLesson.GroupLesson lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+        Balance = result.Value;
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id.Value, Balance.Amount.Amount));
 
-            if (_groupLessons.Contains(lesson))
-                return Result.Invalid(new ValidationError("O aluno já está matriculado nesta aula em grupo."));
+        return Result.Success();
+    }
 
-            _groupLessons.Add(lesson);
-            return Result.Success();
-        }
+    public Result DeductBalance(Money amount)
+    {
+        var result = Balance.Subtract(amount);
+        if (!result.IsSuccess)
+            return Result.Invalid(result.ValidationErrors);
 
-        public Result LeaveGroupLesson(GroupLesson.GroupLesson lesson)
-        {
-            if (lesson == null)
-                return Result.Invalid(new ValidationError("A aula em grupo não pode ser nula."));
+        Balance = result.Value;
+        AddDomainEvent(new StudentBalanceUpdatedEvent(Id.Value, Balance.Amount.Amount));
 
-            if (!_groupLessons.Remove(lesson))
-                return Result.Invalid(new ValidationError("O aluno não está nessa aula em grupo."));
+        return Result.Success();
+    }
 
-            return Result.Success();
-        }
+    public Result AddToEnrollmentHistory(EnrollmentHistory enrollment)
+    {
+        _enrollmentHistory.Add(enrollment);
+
+        return Result.Success();
+    }
+
+    public Result EnrollInPrivateClass(PrivateClass.PrivateClass privateClass)
+    {
+        _privateClasses.Add(privateClass);
+        var enrollment = Entities.EnrollmentHistory.CreateForPrivateClass(Id, privateClass.Id, privateClass.GetStatus());
+        AddToEnrollmentHistory(enrollment);
+
+        return Result.Success();
+    }
+
+    public Result EnrollInGroupClass(GroupClass.GroupClass groupClass)
+    {
+        var errors = new List<ValidationError>();
+
+        if (Balance.Amount < groupClass.Price.Value)
+            errors.Add(new ValidationError("Saldo insuficiente para esta aula."));
+
+        if (_groupClasses.Any(c => c.Schedule.Overlaps(groupClass.Schedule)))
+            errors.Add(new ValidationError("Existe conflito de horário com outra aula."));
+
+        if (errors.Count > 0)
+            return Result.Invalid(errors);
+
+        _groupClasses.Add(groupClass);
+        var enrollment = Entities.EnrollmentHistory.CreateForGroupClass(Id, groupClass.Id, groupClass.GetStatus());
+        AddToEnrollmentHistory(enrollment);
+
+        var deductionResult = DeductBalance(groupClass.Price);
+        if (!deductionResult.IsSuccess)
+            return deductionResult;
+
+        AddDomainEvent(new StudentEnrolledInGroupClassEvent(Id.Value, groupClass.Id.Value));
+
+        return Result.Success();
     }
 }

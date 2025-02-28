@@ -1,30 +1,29 @@
-﻿using Prof.Hub.SharedKernel.Results;
+﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.SharedKernel.Results;
 
-namespace Prof.Hub.Domain.Aggregates.Teacher.ValueObjects
+namespace Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
+public sealed record HourlyRate
 {
-    public sealed record HourlyRate(decimal Value)
+    private const decimal MIN_RATE = 20.00m;
+    private const decimal MAX_RATE = 500.00m;
+
+    public Money Value { get; }
+    public DateTime EffectiveFrom { get; }
+
+    private HourlyRate(Money value, DateTime effectiveFrom)
     {
-        public static Result<HourlyRate> Create(decimal value)
-        {
-            if (value <= 0)
-                return Result.Invalid(new ValidationError("O valor da hora deve ser maior que zero."));
+        Value = value;
+        EffectiveFrom = effectiveFrom;
+    }
 
-            return Result.Success(new HourlyRate(value));
-        }
+    public static Result<HourlyRate> Create(Money value, DateTime effectiveFrom)
+    {
+        if (value.Amount < MIN_RATE)
+            return Result.Invalid(new ValidationError($"Valor hora deve ser maior que {MIN_RATE}"));
 
-        public Result<HourlyRate> Increase(decimal amount)
-        {
-            return new HourlyRate(Value + amount);
-        }
+        if (value.Amount > MAX_RATE)
+            return Result.Invalid(new ValidationError($"Valor hora deve ser menor que {MAX_RATE}"));
 
-        public Result<HourlyRate> Decrease(decimal amount)
-        {
-            if (amount >= Value)
-                return Result.Invalid(new ValidationError("A diminuição não pode ser maior ou igual ao valor atual."));
-
-            return new HourlyRate(Value - amount);
-        }
-
-        public override string ToString() => $"R$ {Value:F2}";
+        return new HourlyRate(value, effectiveFrom);
     }
 }
