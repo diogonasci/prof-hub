@@ -13,8 +13,6 @@ namespace Prof.Hub.Domain.Aggregates.PrivateClass;
 
 public class PrivateClass : ClassBase, IAggregateRoot
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
-
     private readonly List<ClassNote> _notes = [];
     private readonly List<ScheduleChange> _scheduleChanges = [];
 
@@ -31,12 +29,11 @@ public class PrivateClass : ClassBase, IAggregateRoot
     public DateTime? StudentJoinedAt { get; private set; }
     public DateTime? TeacherJoinedAt { get; private set; }
 
-    public IReadOnlyList<ClassNote> Notes => _notes.AsReadOnly();
-    public IReadOnlyList<ScheduleChange> ScheduleChanges => _scheduleChanges.AsReadOnly();
+    public IReadOnlyCollection<ClassNote> Notes => _notes.AsReadOnly();
+    public IReadOnlyCollection<ScheduleChange> ScheduleChanges => _scheduleChanges.AsReadOnly();
 
-    private PrivateClass(IDateTimeProvider dateTimeProvider)
+    private PrivateClass()
     {
-        _dateTimeProvider = dateTimeProvider;
     }
 
     public override string GetId() => Id.Value;
@@ -49,14 +46,14 @@ public class PrivateClass : ClassBase, IAggregateRoot
         TimeSpan duration,
         Price price,
         Uri meetingUrl,
-        IDateTimeProvider dateTimeProvider)
+        DateTime currentTime)
     {
         var errors = new List<ValidationError>();
 
         if (teacherId.Value == studentId.Value)
             errors.Add(new ValidationError("Professor e aluno não podem ser a mesma pessoa."));
 
-        if (startDate < dateTimeProvider.UtcNow.AddHours(MIN_HOURS_BEFORE_START))
+        if (startDate < currentTime.AddHours(MIN_HOURS_BEFORE_START))
             errors.Add(new ValidationError($"Aula deve ser agendada com no mínimo {MIN_HOURS_BEFORE_START} horas de antecedência."));
 
         if (duration.TotalHours < MIN_DURATION_HOURS || duration.TotalHours > MAX_DURATION_HOURS)
@@ -72,7 +69,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         if (errors.Count > 0)
             return Result.Invalid(errors);
 
-        var privateClass = new PrivateClass(dateTimeProvider)
+        var privateClass = new PrivateClass()
         {
             Id = PrivateClassId.Create(),
             TeacherId = teacherId,
@@ -88,12 +85,12 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return privateClass;
     }
 
-    public Result Reschedule(DateTime newStartDate, IDateTimeProvider dateTimeProvider, TimeSpan? newDuration = null)
+    public Result Reschedule(DateTime newStartDate, DateTime currentTime, TimeSpan? newDuration = null)
     {
         if (Status != ClassStatus.Scheduled)
             return Result.Invalid(new ValidationError("Apenas aulas agendadas podem ser remarcadas."));
 
-        if (Schedule.StartDate <= dateTimeProvider.UtcNow.AddHours(MIN_HOURS_BEFORE_START))
+        if (Schedule.StartDate <= currentTime.AddHours(MIN_HOURS_BEFORE_START))
             return Result.Invalid(new ValidationError("Não é possível remarcar com menos de 2 horas do início."));
 
         var duration = newDuration ?? Schedule.Duration;
@@ -111,7 +108,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
             oldSchedule.Duration,
             newStartDate,
             duration,
-            dateTimeProvider.UtcNow);
+            currentTime);
 
         _scheduleChanges.Add(change);
 
@@ -127,7 +124,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public Result ExtendDuration(TimeSpan additionalTime, IDateTimeProvider dateTimeProvider)
+    public Result ExtendDuration(TimeSpan additionalTime, DateTime currentTime)
     {
         if (Status != ClassStatus.InProgress)
             return Result.Invalid(new ValidationError("Apenas aulas em andamento podem ser estendidas."));
@@ -153,7 +150,7 @@ public class PrivateClass : ClassBase, IAggregateRoot
             oldSchedule.Duration,
             Schedule.StartDate,
             Schedule.Duration,
-            dateTimeProvider.UtcNow);
+            currentTime);
 
         _scheduleChanges.Add(change);
 
@@ -191,12 +188,12 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public Result AddNote(string content, IDateTimeProvider dateTimeProvider)
+    public Result AddNote(string content, DateTime currentTime)
     {
         if (Status == ClassStatus.Draft || Status == ClassStatus.Cancelled)
             return Result.Invalid(new ValidationError("Não é possível adicionar notas neste estado."));
 
-        var noteResult = ClassNote.Create(content, dateTimeProvider.UtcNow);
+        var noteResult = ClassNote.Create(content, currentTime);
         if (!noteResult.IsSuccess)
             return Result.Invalid(noteResult.ValidationErrors);
 
@@ -207,9 +204,9 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Start(IDateTimeProvider dateTimeProvider)
+    public override Result Start(DateTime currentTime)
     {
-        var result = base.Start(dateTimeProvider);
+        var result = base.Start(currentTime);
         if (!result.IsSuccess)
             return result;
 
@@ -218,9 +215,9 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    protected override Result CanComplete(IDateTimeProvider dateTimeProvider)
+    protected override Result CanComplete()
     {
-        var baseResult = base.CanComplete(dateTimeProvider);
+        var baseResult = base.CanComplete();
         if (!baseResult.IsSuccess)
             return baseResult;
 
@@ -230,12 +227,12 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Complete(ClassFeedback feedback, IDateTimeProvider dateTimeProvider)
+    public override Result Complete(ClassFeedback feedback, DateTime currentTime)
     {
         if (!StudentPresent || !TeacherPresent)
             return Result.Invalid(new ValidationError("Não é possível completar aula sem a presença do professor e aluno."));
 
-        var result = base.Complete(feedback, dateTimeProvider);
+        var result = base.Complete(feedback, currentTime);
         if (!result.IsSuccess)
             return result;
 
@@ -255,9 +252,9 @@ public class PrivateClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Cancel(IDateTimeProvider dateTimeProvider)
+    public override Result Cancel(DateTime currentTime)
     {
-        var result = base.Cancel(dateTimeProvider);
+        var result = base.Cancel(currentTime);
         if (!result.IsSuccess)
             return result;
 

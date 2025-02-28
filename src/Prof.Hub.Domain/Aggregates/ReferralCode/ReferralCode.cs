@@ -22,7 +22,7 @@ public class ReferralCode : AuditableEntity, IAggregateRoot
     public DateTime ExpiresAt { get; private set; }
     public bool IsActive { get; private set; }
     public DateTime? LastUsedAt { get; private set; }
-    public IReadOnlyList<ReferralInvite> Invites => _invites.AsReadOnly();
+    public IReadOnlyCollection<ReferralInvite> Invites => _invites.AsReadOnly();
 
     private ReferralCode()
     {

@@ -15,8 +15,6 @@ public class Teacher : AuditableEntity, IAggregateRoot
     private const int MAX_SPECIALTIES = 3;
     private const int MAX_QUALIFICATIONS = 10;
 
-    private readonly IDateTimeProvider _dateTimeProvider;
-
     public TeacherId Id { get; private set; }
     public TeacherProfile Profile { get; private set; }
     public Rating Rating { get; private set; }
@@ -25,13 +23,12 @@ public class Teacher : AuditableEntity, IAggregateRoot
     public HourlyRate CurrentRate => _rateHistory.MaxBy(r => r.EffectiveFrom)!;
     public DateTime? LastActiveAt { get; private set; }
 
-    public IReadOnlyList<Qualification> Qualifications => _qualifications.AsReadOnly();
-    public IReadOnlyList<HourlyRate> RateHistory => _rateHistory.AsReadOnly();
-    public IReadOnlyList<Specialty> Specialties => _specialties.AsReadOnly();
+    public IReadOnlyCollection<Qualification> Qualifications => _qualifications.AsReadOnly();
+    public IReadOnlyCollection<HourlyRate> RateHistory => _rateHistory.AsReadOnly();
+    public IReadOnlyCollection<Specialty> Specialties => _specialties.AsReadOnly();
 
-    private Teacher(IDateTimeProvider dateTimeProvider)
+    private Teacher()
     {
-        _dateTimeProvider = dateTimeProvider;
         Rating = Rating.Create();
         Availability = TeacherAvailability.Create();
     }
@@ -57,7 +54,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         if (errors.Count > 0)
             return Result.Invalid(errors);
 
-        var teacher = new Teacher(dateTimeProvider)
+        var teacher = new Teacher()
         {
             Id = TeacherId.Create(),
             Profile = profileResult.Value,
@@ -70,9 +67,9 @@ public class Teacher : AuditableEntity, IAggregateRoot
         return teacher;
     }
 
-    public Result UpdateHourlyRate(Money newRate)
+    public Result UpdateHourlyRate(Money newRate, DateTime currentTime)
     {
-        var rateResult = HourlyRate.Create(newRate, _dateTimeProvider.UtcNow);
+        var rateResult = HourlyRate.Create(newRate, currentTime);
         if (!rateResult.IsSuccess)
             return Result.Invalid(rateResult.ValidationErrors);
 
@@ -85,7 +82,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         Id.Value,
         rateResult.Value.Value.Amount,
         rateResult.Value.Value.Currency,
-        _dateTimeProvider.UtcNow
+        currentTime
         ));
 
         return Result.Success();
@@ -115,12 +112,12 @@ public class Teacher : AuditableEntity, IAggregateRoot
         return Result.Success();
     }
 
-    public Result<Qualification> AddQualification(string title, string institution, DateTime obtainedAt)
+    public Result<Qualification> AddQualification(string title, string institution, DateTime obtainedAt, DateTime currentTime)
     {
         if (_qualifications.Count >= MAX_QUALIFICATIONS)
             return Result.Invalid(new ValidationError($"Máximo de {MAX_QUALIFICATIONS} qualificações permitido"));
 
-        var qualificationResult = Qualification.Create(title, institution, obtainedAt, _dateTimeProvider);
+        var qualificationResult = Qualification.Create(title, institution, obtainedAt, currentTime);
         if (!qualificationResult.IsSuccess)
             return qualificationResult;
 
@@ -136,7 +133,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         return Result.Success();
     }
 
-    public Result UpdateStatus(TeacherStatus newStatus)
+    public Result UpdateStatus(TeacherStatus newStatus, DateTime currentTime)
     {
         if (!IsValidStatusTransition(Status, newStatus))
             return Result.Invalid(new ValidationError("Transição de status inválida"));
@@ -148,7 +145,7 @@ public class Teacher : AuditableEntity, IAggregateRoot
         Status = newStatus;
 
         if (newStatus == TeacherStatus.Active)
-            LastActiveAt = _dateTimeProvider.UtcNow;
+            LastActiveAt = currentTime;
 
         AddDomainEvent(new TeacherStatusChangedEvent(Id.Value, previousStatus.ToString(), newStatus.ToString()));
         return Result.Success();

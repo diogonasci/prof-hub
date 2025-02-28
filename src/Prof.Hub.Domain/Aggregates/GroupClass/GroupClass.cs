@@ -12,8 +12,6 @@ namespace Prof.Hub.Domain.Aggregates.GroupClass;
 
 public class GroupClass : ClassBase, IAggregateRoot
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
-
     private readonly HashSet<StudentId> _participants = [];
     private readonly HashSet<StudentId> _waitingList = [];
     private readonly HashSet<StudentPresence> _presenceList = [];
@@ -38,14 +36,13 @@ public class GroupClass : ClassBase, IAggregateRoot
     public IReadOnlySet<StudentId> Participants => _participants;
     public IReadOnlySet<StudentId> WaitingList => _waitingList;
     public IReadOnlySet<StudentPresence> PresenceList => _presenceList;
-    public IReadOnlyList<GroupDiscount> Discounts => _discounts.AsReadOnly();
-    public IReadOnlyList<ParticipantLimitChange> LimitChanges => _limitChanges.AsReadOnly();
-    public IReadOnlyList<ClassRequirement> Requirements => _requirements.AsReadOnly();
-    public IReadOnlyList<SocialShare> Shares => _shares.AsReadOnly();
+    public IReadOnlyCollection<GroupDiscount> Discounts => _discounts.AsReadOnly();
+    public IReadOnlyCollection<ParticipantLimitChange> LimitChanges => _limitChanges.AsReadOnly();
+    public IReadOnlyCollection<ClassRequirement> Requirements => _requirements.AsReadOnly();
+    public IReadOnlyCollection<SocialShare> Shares => _shares.AsReadOnly();
 
-    private GroupClass(IDateTimeProvider dateTimeProvider) : base()
+    private GroupClass() : base()
     {
-        _dateTimeProvider = dateTimeProvider;
     }
 
     public override string GetId() => Id.Value;
@@ -60,7 +57,6 @@ public class GroupClass : ClassBase, IAggregateRoot
         Uri thumbnailUrl,
         string description,
         ParticipantLimit participantLimit,
-        IDateTimeProvider dateTimeProvider,
         bool allowLateEnrollment = false,
         DateTime? enrollmentDeadline = null)
     {
@@ -78,7 +74,7 @@ public class GroupClass : ClassBase, IAggregateRoot
         if (errors.Count > 0)
             return Result.Invalid(errors);
 
-        var groupClass = new GroupClass(dateTimeProvider)
+        var groupClass = new GroupClass()
         {
             Id = GroupClassId.Create(),
             Title = title,
@@ -102,14 +98,14 @@ public class GroupClass : ClassBase, IAggregateRoot
         return groupClass;
     }
 
-    public Result EnrollStudent(StudentId studentId, IDateTimeProvider dateTimeProvider)
+    public Result EnrollStudent(StudentId studentId, DateTime currentTime)
     {
         var errors = new List<ValidationError>();
 
         if (Status != ClassStatus.Published)
             errors.Add(new ValidationError("A aula não está aberta para inscrições."));
 
-        if (IsEnrollmentClosed(dateTimeProvider))
+        if (IsEnrollmentClosed(currentTime))
             errors.Add(new ValidationError("Inscrições encerradas."));
 
         if (HasStarted() && !AllowLateEnrollment)
@@ -226,22 +222,22 @@ public class GroupClass : ClassBase, IAggregateRoot
         return Result.Success();
     }
 
-    public override Result Start(IDateTimeProvider dateTimeProvider)
+    public override Result Start(DateTime currentTime)
     {
         if (_participants.Count < MIN_PARTICIPANTS_TO_START)
             return Result.Invalid(new ValidationError(
                 $"Mínimo de {MIN_PARTICIPANTS_TO_START} participantes necessário para iniciar."));
 
-        var result = base.Start(dateTimeProvider);
+        var result = base.Start(currentTime);
         if (!result.IsSuccess)
             return result;
 
         return Result.Success();
     }
 
-    public override Result CanStart(IDateTimeProvider dateTimeProvider)
+    public override Result CanStart(DateTime currentTime)
     {
-        var baseResult = base.CanStart(dateTimeProvider);
+        var baseResult = base.CanStart(currentTime);
         if (!baseResult.IsSuccess)
             return baseResult;
 
@@ -272,9 +268,9 @@ public class GroupClass : ClassBase, IAggregateRoot
         return discountedPriceResult.IsSuccess ? discountedPriceResult.Value : Price;
     }
 
-    private bool IsEnrollmentClosed(IDateTimeProvider dateTimeProvider)
+    private bool IsEnrollmentClosed(DateTime currentTime)
     {
-        return EnrollmentDeadline.HasValue && dateTimeProvider.UtcNow > EnrollmentDeadline.Value;
+        return EnrollmentDeadline.HasValue && currentTime > EnrollmentDeadline.Value;
     }
 
     private bool HasStarted()

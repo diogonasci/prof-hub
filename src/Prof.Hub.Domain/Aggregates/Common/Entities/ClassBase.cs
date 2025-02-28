@@ -27,11 +27,11 @@ public abstract class ClassBase : AuditableEntity
     public DateTime? CompletedAt { get; private set; }
     public TimeSpan? EffectiveDuration { get; private set; }
 
-    public IReadOnlyList<ClassMaterial.ClassMaterial> Materials => _materials.AsReadOnly();
-    public IReadOnlyList<ClassFeedback.ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
-    public IReadOnlyList<StatusChange> StatusHistory => _statusHistory.AsReadOnly();
-    public IReadOnlyList<ClassIssue> Issues => _issues.AsReadOnly();
-    public IReadOnlyList<Attendance> Attendance => _attendance.AsReadOnly();
+    public IReadOnlyCollection<ClassMaterial.ClassMaterial> Materials => _materials.AsReadOnly();
+    public IReadOnlyCollection<ClassFeedback.ClassFeedback> Feedbacks => _feedbacks.AsReadOnly();
+    public IReadOnlyCollection<StatusChange> StatusHistory => _statusHistory.AsReadOnly();
+    public IReadOnlyCollection<ClassIssue> Issues => _issues.AsReadOnly();
+    public IReadOnlyCollection<Attendance> Attendance => _attendance.AsReadOnly();
 
     public abstract string GetId();
 
@@ -46,35 +46,35 @@ public abstract class ClassBase : AuditableEntity
         Status = status;
     }
 
-    public virtual Result Start(IDateTimeProvider dateTimeProvider)
+    public virtual Result Start(DateTime currentTime)
     {
-        var canStartResult = CanStart(dateTimeProvider);
+        var canStartResult = CanStart(currentTime);
         if (!canStartResult.IsSuccess)
             return canStartResult;
 
         var previousStatus = Status;
         Status = ClassStatus.InProgress;
-        StartedAt = dateTimeProvider.UtcNow;
+        StartedAt = currentTime;
 
-        RecordStatusChange(previousStatus, Status, dateTimeProvider.UtcNow);
+        RecordStatusChange(previousStatus, Status, currentTime);
         AddDomainEvent(new ClassStartedEvent(GetId()));
 
         return Result.Success();
     }
 
-    public virtual Result Complete(ClassFeedback.ClassFeedback feedback, IDateTimeProvider dateTimeProvider)
+    public virtual Result Complete(ClassFeedback.ClassFeedback feedback, DateTime currentTime)
     {
-        var canCompleteResult = CanComplete(dateTimeProvider);
+        var canCompleteResult = CanComplete();
         if (!canCompleteResult.IsSuccess)
             return canCompleteResult;
 
         var previousStatus = Status;
         Status = ClassStatus.Completed;
-        CompletedAt = dateTimeProvider.UtcNow;
+        CompletedAt = currentTime;
         EffectiveDuration = CompletedAt - StartedAt;
 
         _feedbacks.Add(feedback);
-        RecordStatusChange(previousStatus, Status, dateTimeProvider.UtcNow);
+        RecordStatusChange(previousStatus, Status, currentTime);
         AddDomainEvent(new ClassCompletedEvent(GetId(), feedback.OverallRating.Value, feedback.TeachingRating.Value, feedback.MaterialsRating.Value,
             feedback.TeachingRating.Value, feedback.TeacherComment, feedback.TechnicalComment, feedback.IsAnonymous, feedback.HadTechnicalIssues,
             CompletedAt.Value));
@@ -82,16 +82,16 @@ public abstract class ClassBase : AuditableEntity
         return Result.Success();
     }
 
-    public virtual Result Cancel(IDateTimeProvider dateTimeProvider)
+    public virtual Result Cancel(DateTime currentTime)
     {
-        var canCancelResult = CanCancel(dateTimeProvider);
+        var canCancelResult = CanCancel(currentTime);
         if (!canCancelResult.IsSuccess)
             return canCancelResult;
 
         var previousStatus = Status;
         Status = ClassStatus.Cancelled;
 
-        RecordStatusChange(previousStatus, Status, dateTimeProvider.UtcNow);
+        RecordStatusChange(previousStatus, Status, currentTime);
         AddDomainEvent(new ClassCanceledEvent(GetId()));
 
         return Result.Success();
@@ -125,12 +125,12 @@ public abstract class ClassBase : AuditableEntity
         return Result.Success();
     }
 
-    public Result ReportIssue(string description, ClassIssueType type, IDateTimeProvider dateTimeProvider)
+    public Result ReportIssue(string description, ClassIssueType type, DateTime currentTime)
     {
         if (Status != ClassStatus.InProgress)
             return Result.Invalid(new ValidationError("Problemas só podem ser reportados durante a aula."));
 
-        var issue = new ClassIssue(description, type, dateTimeProvider.UtcNow);
+        var issue = new ClassIssue(description, type, currentTime);
         _issues.Add(issue);
 
         AddDomainEvent(new ClassIssueReportedEvent(GetId(), issue.Description, issue.Type.ToString(), issue.ReportedAt));
@@ -138,18 +138,18 @@ public abstract class ClassBase : AuditableEntity
         return Result.Success();
     }
 
-    public virtual Result CanStart(IDateTimeProvider dateTimeProvider)
+    public virtual Result CanStart(DateTime currentTime)
     {
         if (Status != ClassStatus.Scheduled)
             return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser iniciadas."));
 
-        if (Schedule.StartDate <= dateTimeProvider.UtcNow)
+        if (Schedule.StartDate <= currentTime)
             return Result.Invalid(new ValidationError("Aula já passou do horário de início."));
 
         return Result.Success();
     }
 
-    protected virtual Result CanComplete(IDateTimeProvider dateTimeProvider)
+    protected virtual Result CanComplete()
     {
         if (Status != ClassStatus.InProgress)
             return Result.Invalid(new ValidationError("Somente aulas em andamento podem ser completadas."));
@@ -160,12 +160,12 @@ public abstract class ClassBase : AuditableEntity
         return Result.Success();
     }
 
-    protected virtual Result CanCancel(IDateTimeProvider dateTimeProvider)
+    protected virtual Result CanCancel(DateTime currentTime)
     {
         if (Status != ClassStatus.Scheduled)
             return Result.Invalid(new ValidationError("Somente aulas agendadas podem ser canceladas."));
 
-        if (Schedule.StartDate <= dateTimeProvider.UtcNow.AddHours(MIN_HOURS_BEFORE_START))
+        if (Schedule.StartDate <= currentTime.AddHours(MIN_HOURS_BEFORE_START))
             return Result.Invalid(new ValidationError($"Cancelamento deve ser feito com no mínimo {MIN_HOURS_BEFORE_START} horas de antecedência."));
 
         return Result.Success();

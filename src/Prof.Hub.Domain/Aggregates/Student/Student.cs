@@ -20,10 +20,10 @@ public class Student : AuditableEntity, IAggregateRoot
     public Balance Balance { get; private set; }
     public School? School { get; private set; }
 
-    public IReadOnlyList<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
-    public IReadOnlyList<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
-    public IReadOnlyList<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
-    public IReadOnlyList<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
+    public IReadOnlyCollection<PrivateClass.PrivateClass> PrivateClasses => _privateClasses.AsReadOnly();
+    public IReadOnlyCollection<GroupClass.GroupClass> GroupClasses => _groupClasses.AsReadOnly();
+    public IReadOnlyCollection<EnrollmentHistory> EnrollmentHistory => _enrollmentHistory.AsReadOnly();
+    public IReadOnlyCollection<TeacherFavorite> FavoriteTeachers => _favoriteTeachers.AsReadOnly();
 
     private Student()
     {

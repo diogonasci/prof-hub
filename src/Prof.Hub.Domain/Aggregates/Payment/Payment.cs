@@ -25,8 +25,8 @@ public class Payment : AuditableEntity, IAggregateRoot
     public DateTime CreatedAt { get; private set; }
     public DateTime? CompletedAt { get; private set; }
 
-    public IReadOnlyList<StoredPaymentMethod> StoredPaymentMethods => _storedPaymentMethods.AsReadOnly();
-    public IReadOnlyList<BillingAddress> BillingAddresses => _billingAddresses.AsReadOnly();
+    public IReadOnlyCollection<StoredPaymentMethod> StoredPaymentMethods => _storedPaymentMethods.AsReadOnly();
+    public IReadOnlyCollection<BillingAddress> BillingAddresses => _billingAddresses.AsReadOnly();
 
     private Payment()
     {

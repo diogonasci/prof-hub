@@ -22,8 +22,8 @@ public class ReferralProgram : AuditableEntity, IAggregateRoot
     public bool IsActive { get; private set; }
     public Money Currency { get; private set; }
 
-    public IReadOnlyList<ReferralCode.ReferralCode> ReferralCodes => _referralCodes.AsReadOnly();
-    public IReadOnlyList<RewardHistory> RewardHistoryList => _rewardHistory.AsReadOnly();
+    public IReadOnlyCollection<ReferralCode.ReferralCode> ReferralCodes => _referralCodes.AsReadOnly();
+    public IReadOnlyCollection<RewardHistory> RewardHistoryList => _rewardHistory.AsReadOnly();
 
     private ReferralProgram() { }
 

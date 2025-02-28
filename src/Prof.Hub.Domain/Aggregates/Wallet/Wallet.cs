@@ -17,7 +17,7 @@ public class Wallet : AuditableEntity, IAggregateRoot
     public Money? DailyLimit { get; private set; }
     public Money? MonthlyLimit { get; private set; }
     public DateTime? LastTransactionDate { get; private set; }
-    public IReadOnlyList<Transaction.Transaction> Transactions => _transactions.AsReadOnly();
+    public IReadOnlyCollection<Transaction.Transaction> Transactions => _transactions.AsReadOnly();
 
     private Wallet(WalletId id, StudentId studentId, Money balance)
     {
