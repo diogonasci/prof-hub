@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
+using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.GroupClass;
 using Prof.Hub.Domain.Aggregates.GroupClass.ValueObjects;
@@ -148,8 +149,12 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             presence.Property<int>("Id").ValueGeneratedOnAdd();
             presence.HasKey("Id");
 
-            presence.Property(p => p.StudentId.Value)
+            presence.Property(p => p.StudentId)
+                .HasConversion(
+                    id => id.Value,
+                    value => new StudentId(value))
                 .HasColumnName("StudentId");
+
             presence.Property(p => p.PresenceTime);
         });
 
@@ -205,8 +210,12 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             share.Property<int>("Id").ValueGeneratedOnAdd();
             share.HasKey("Id");
 
-            share.Property(s => s.SharedBy.Value)
+            share.Property(s => s.SharedBy)
+                .HasConversion(
+                    id => id.Value,
+                    value => new StudentId(value))
                 .HasColumnName("StudentId");
+
             share.Property(s => s.Network)
                 .HasConversion<string>();
             share.Property(s => s.SharedAt);
@@ -236,9 +245,11 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
         {
             feedback.ToTable("GroupClassFeedbacks");
             feedback.WithOwner().HasForeignKey("GroupClassId");
-            feedback.Property<string>("Id")
-                .HasMaxLength(36)
-                .ValueGeneratedOnAdd();
+            feedback.HasKey(f => f.Id);
+            feedback.Property(f => f.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new ClassFeedbackId(value));
             feedback.HasKey("Id");
 
             feedback.OwnsOne(f => f.OverallRating);

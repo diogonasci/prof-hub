@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
+using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.PrivateClass;
 using Prof.Hub.Domain.Aggregates.PrivateClass.ValueObjects;
@@ -174,9 +175,12 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
         {
             feedback.ToTable("PrivateClassFeedbacks");
             feedback.WithOwner().HasForeignKey("PrivateClassId");
-            feedback.Property<string>("Id")
+            feedback.HasKey(f => f.Id);
+            feedback.Property(f => f.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new ClassFeedbackId(value))
                 .HasMaxLength(36);
-            feedback.HasKey("Id");
 
             feedback.OwnsOne(f => f.OverallRating, rating =>
             {

@@ -11,8 +11,8 @@ internal sealed class CouponRestrictionConfiguration : IEntityTypeConfiguration<
     {
         builder.ToTable("CouponRestrictions");
 
-        builder.HasKey("Id");
         builder.Property<int>("Id").ValueGeneratedOnAdd();
+        builder.HasKey("Id");
 
         builder.Property(r => r.Type)
             .HasConversion<string>()

@@ -154,6 +154,16 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
         // Índices
         builder.HasIndex(t => t.Status);
         builder.HasIndex(t => t.LastActiveAt);
-        builder.HasIndex("Profile.Name");
+
+        builder.OwnsOne(t => t.Profile, profile =>
+        {
+            profile.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            profile.HasIndex("Name");
+
+        });
+
     }
 }

@@ -5,7 +5,7 @@ public sealed record ReferralCodeValue
 {
     public string Value { get; }
 
-    private ReferralCodeValue(string value) => Value = value;
+    public ReferralCodeValue(string value) => Value = value;
 
     public static Result<ReferralCodeValue> Create(string value)
     {

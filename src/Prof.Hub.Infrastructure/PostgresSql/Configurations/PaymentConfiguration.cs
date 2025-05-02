@@ -171,13 +171,9 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasIndex(p => p.CreatedAt);
         builder.HasIndex(p => p.CompletedAt);
 
-        // Configuração adicional para relacionamentos com UsedPaymentMethod e UsedBillingAddress
-        builder.HasOne<StoredPaymentMethod>()
-            .WithMany()
-            .HasForeignKey("UsedPaymentMethodId");
 
-        builder.HasOne<BillingAddress>()
-            .WithMany()
-            .HasForeignKey("UsedBillingAddressId");
+
+        builder.Property<string>("UsedPaymentMethodId");
+        builder.Property<string>("UsedBillingAddressId");
     }
 }

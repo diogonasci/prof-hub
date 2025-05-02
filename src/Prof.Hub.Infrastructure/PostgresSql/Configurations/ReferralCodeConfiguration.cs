@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.ReferralCode;
 using Prof.Hub.Domain.Aggregates.ReferralCode.Entities;
 using Prof.Hub.Domain.Aggregates.ReferralCode.ValueObjects;
 using Prof.Hub.Domain.Aggregates.ReferralProgram;
+using Prof.Hub.Domain.Aggregates.ReferralProgram.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
@@ -29,13 +31,12 @@ internal sealed class ReferralCodeConfiguration : IEntityTypeConfiguration<Refer
             .IsRequired();
 
         // Code (owned ReferralCodeValue)
-        builder.OwnsOne(r => r.Code, code =>
-        {
-            code.Property(c => c.Value)
-                .HasColumnName("Code")
-                .HasMaxLength(8)
-                .IsRequired();
-        });
+        builder.Property(r => r.Code)
+            .HasConversion(
+                code => code.Value,
+                value => new ReferralCodeValue(value))
+            .HasMaxLength(50)
+            .IsRequired();
 
         // Propriedades básicas
         builder.Property(r => r.ExpiresAt)
@@ -65,13 +66,13 @@ internal sealed class ReferralCodeConfiguration : IEntityTypeConfiguration<Refer
                 .IsRequired();
 
             // ReferredEmail
-            invite.OwnsOne(i => i.ReferredEmail, email =>
-            {
-                email.Property(e => e.Value)
-                    .HasColumnName("ReferredEmail")
-                    .HasMaxLength(256)
-                    .IsRequired();
-            });
+            invite.Property(i => i.ReferredEmail)
+                .HasConversion(
+                    email => email.Value,
+                    value => new Email(value))
+                .HasColumnName("ReferredEmail")
+                .HasMaxLength(256)
+                .IsRequired();
 
             // Status
             invite.Property(i => i.Status)
@@ -142,11 +143,6 @@ internal sealed class ReferralCodeConfiguration : IEntityTypeConfiguration<Refer
             invite.HasIndex(i => i.CompletedAt);
             invite.HasIndex(i => i.ReferredEmail);
         });
-
-        // Check Constraints
-        builder.ToTable(tb => tb.HasCheckConstraint(
-            "CK_ReferralCode_ExpiresAt_Future",
-            "\"ExpiresAt\" > CURRENT_TIMESTAMP"));
 
         // Propriedades de auditoria
         builder.Property(r => r.Created);

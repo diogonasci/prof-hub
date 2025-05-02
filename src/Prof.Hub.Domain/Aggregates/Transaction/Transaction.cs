@@ -1,4 +1,5 @@
 ﻿using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Transaction.Entities;
 using Prof.Hub.Domain.Aggregates.Transaction.Events;
 using Prof.Hub.Domain.Aggregates.Transaction.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Wallet.ValueObjects;
@@ -11,6 +12,8 @@ public class Transaction : AuditableEntity, IAggregateRoot
 {
     private const int MAX_DESCRIPTION_LENGTH = 200;
 
+    private readonly List<TransactionDetail> _details = [];
+
     public TransactionId Id { get; private set; }
     public WalletId WalletId { get; private set; }
     public Money Amount { get; private set; }
@@ -18,6 +21,8 @@ public class Transaction : AuditableEntity, IAggregateRoot
     public TransactionSource Source { get; private set; }
     public string Description { get; private set; }
     public string? ExternalReference { get; private set; }
+
+    public IReadOnlyCollection<TransactionDetail> Details => _details.AsReadOnly();
 
     private Transaction(
         TransactionId id,

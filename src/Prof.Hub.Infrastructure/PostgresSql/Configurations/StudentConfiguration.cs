@@ -164,8 +164,7 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             favorite.HasIndex(f => f.AddedAt);
 
             // Restrição única para evitar duplicatas
-            favorite.HasIndex(f => new { f.TeacherId, StudentId = EF.Property<string>(f, "StudentId") })
-                .IsUnique();
+            favorite.HasIndex("TeacherId", "StudentId").IsUnique();
         });
 
         // Propriedades de auditoria
@@ -177,8 +176,39 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             .HasMaxLength(100);
 
         // Índices
-        builder.HasIndex("Profile.Email").IsUnique();
-        builder.HasIndex("Profile.PhoneNumber");
-        builder.HasIndex("Profile.Grade");
+        builder.OwnsOne(s => s.Profile, profile =>
+        {
+            profile.Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            profile.OwnsOne(p => p.Email, email =>
+            {
+                email.Property(e => e.Value)
+                    .HasColumnName("Email")
+                    .IsRequired()
+                    .HasMaxLength(256);
+
+                email.HasIndex("Value").IsUnique();
+            });
+
+            profile.OwnsOne(p => p.PhoneNumber, phone =>
+            {
+                phone.Property(p => p.Value)
+                    .HasColumnName("PhoneNumber")
+                    .HasMaxLength(20);
+
+                phone.HasIndex("Value");
+            });
+
+            builder.OwnsOne(s => s.Profile, profile =>
+            {
+                profile.Property(p => p.Grade)
+                    .HasColumnName("Grade")
+                    .HasConversion<string>();
+
+                profile.HasIndex("Grade");
+            });
+        });
     }
 }
