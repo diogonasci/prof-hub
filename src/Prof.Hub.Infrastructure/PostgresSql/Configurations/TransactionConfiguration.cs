@@ -61,8 +61,12 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
         {
             detail.ToTable("TransactionDetails");
             detail.WithOwner().HasForeignKey("TransactionId");
-            detail.Property<int>("Id").ValueGeneratedOnAdd();
-            detail.HasKey("Id");
+            detail.HasKey(d => d.Id);
+
+            detail.Property(d => d.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new TransactionDetailId(value));
 
             detail.Property(d => d.Id)
                 .HasConversion(
@@ -103,8 +107,12 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
         {
             receipt.ToTable("TransactionReceipts");
             receipt.WithOwner().HasForeignKey("TransactionId");
-            receipt.Property<int>("Id").ValueGeneratedOnAdd();
-            receipt.HasKey("Id");
+            receipt.HasKey(r => r.Id);
+
+            receipt.Property(r => r.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new ReceiptId(value));
 
             receipt.Property(r => r.Id)
                 .HasConversion(
@@ -170,8 +178,13 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
         {
             history.ToTable("TransactionStatusHistory");
             history.WithOwner().HasForeignKey("TransactionId");
-            history.Property<int>("Id").ValueGeneratedOnAdd();
-            history.HasKey("Id");
+
+            history.HasKey(h => h.Id);
+
+            history.Property(h => h.Id)
+                .HasConversion(
+                    id => id.Value,
+                    value => new TransactionStatusHistoryId(value));
 
             history.Property(h => h.Id)
                 .HasConversion(

@@ -81,8 +81,7 @@ internal sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAc
             provider.Property(p => p.ConnectedAt);
 
             // Índice único para evitar duplicatas do mesmo provedor
-            provider.HasIndex(p => new { p.Type, UserAccountId = EF.Property<string>(p, "UserAccountId") })
-                .IsUnique();
+            provider.HasIndex("Type", "UserAccountId").IsUnique();
         });
 
         // NotificationPreferences (owned collection)
@@ -100,8 +99,7 @@ internal sealed class UserAccountConfiguration : IEntityTypeConfiguration<UserAc
                 .HasDefaultValue(true);
 
             // Índice único para evitar duplicatas do mesmo tipo
-            pref.HasIndex(p => new { p.Type, UserAccountId = EF.Property<string>(p, "UserAccountId") })
-                .IsUnique();
+            pref.HasIndex("Type", "UserAccountId").IsUnique();
         });
 
         // Propriedades de auditoria

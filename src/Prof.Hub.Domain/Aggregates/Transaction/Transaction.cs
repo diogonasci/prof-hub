@@ -13,6 +13,8 @@ public class Transaction : AuditableEntity, IAggregateRoot
     private const int MAX_DESCRIPTION_LENGTH = 200;
 
     private readonly List<TransactionDetail> _details = [];
+    private readonly List<TransactionReceipt> _receipts = [];
+    private readonly List<TransactionStatusHistory> _statusHistory = [];
 
     public TransactionId Id { get; private set; }
     public WalletId WalletId { get; private set; }
@@ -23,6 +25,8 @@ public class Transaction : AuditableEntity, IAggregateRoot
     public string? ExternalReference { get; private set; }
 
     public IReadOnlyCollection<TransactionDetail> Details => _details.AsReadOnly();
+    public IReadOnlyCollection<TransactionReceipt> Receipts => _receipts.AsReadOnly();
+    public IReadOnlyCollection<TransactionStatusHistory> StatusHistory => _statusHistory.AsReadOnly();
 
     private Transaction(
         TransactionId id,
@@ -103,5 +107,13 @@ public class Transaction : AuditableEntity, IAggregateRoot
     private static bool RequiresExternalReference(TransactionSource source)
     {
         return source == TransactionSource.ClassPayment || source == TransactionSource.ClassRefund;
+    }
+
+    public void AddReceipt(TransactionReceipt receipt)
+    {
+        if (receipt == null)
+            throw new ArgumentNullException(nameof(receipt));
+
+        _receipts.Add(receipt);
     }
 }
