@@ -65,6 +65,9 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
                     .HasConversion<string>();
                 timeSlot.Property(ts => ts.StartTime);
                 timeSlot.Property(ts => ts.EndTime);
+
+                // Índices
+                timeSlot.HasIndex(ts => ts.DayOfWeek);
             });
         });
 
@@ -87,6 +90,10 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             qualification.Property(q => q.ObtainedAt);
             qualification.Property(q => q.IsVerified)
                 .HasDefaultValue(false);
+
+            // Índices
+            qualification.HasIndex(q => q.Institution);
+            qualification.HasIndex(q => q.IsVerified);
         });
 
         // Specialties (owned collection)
@@ -104,6 +111,10 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
                 .HasMaxLength(200);
             specialty.Property(s => s.IsVerified)
                 .HasDefaultValue(false);
+
+            // Índices
+            specialty.HasIndex(s => s.Area);
+            specialty.HasIndex(s => s.IsVerified);
         });
 
         // RateHistory (owned collection)
@@ -127,6 +138,9 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
             });
 
             rate.Property(r => r.EffectiveFrom);
+
+            // Índices
+            rate.HasIndex(r => r.EffectiveFrom);
         });
 
         // Propriedades de auditoria
@@ -136,5 +150,10 @@ internal sealed class TeacherConfiguration : IEntityTypeConfiguration<Teacher>
         builder.Property(t => t.LastModified);
         builder.Property(t => t.LastModifiedBy)
             .HasMaxLength(100);
+
+        // Índices
+        builder.HasIndex(t => t.Status);
+        builder.HasIndex(t => t.LastActiveAt);
+        builder.HasIndex("Profile.Name");
     }
 }

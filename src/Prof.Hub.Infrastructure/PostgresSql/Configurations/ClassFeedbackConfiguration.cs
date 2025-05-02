@@ -4,6 +4,7 @@ using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback;
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassFeedback.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
+
 internal sealed class ClassFeedbackConfiguration : IEntityTypeConfiguration<ClassFeedback>
 {
     public void Configure(EntityTypeBuilder<ClassFeedback> builder)

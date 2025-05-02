@@ -9,15 +9,6 @@ internal sealed class WalletConfiguration : IEntityTypeConfiguration<Wallet>
 {
     public void Configure(EntityTypeBuilder<Wallet> builder)
     {
-        builder.ToTable("Wallets", tb =>
-        {
-            tb.HasCheckConstraint("CK_Wallet_Balance_NonNegative", "\"Balance\" >= 0");
-            tb.HasCheckConstraint("CK_Wallet_DailyLimit_Positive", "\"DailyLimit\" > 0 OR \"DailyLimit\" IS NULL");
-            tb.HasCheckConstraint("CK_Wallet_MonthlyLimit_Positive", "\"MonthlyLimit\" > 0 OR \"MonthlyLimit\" IS NULL");
-            tb.HasCheckConstraint("CK_Wallet_MonthlyLimit_GreaterThanDaily",
-                "\"MonthlyLimit\" > \"DailyLimit\" OR \"MonthlyLimit\" IS NULL OR \"DailyLimit\" IS NULL");
-        });
-
         builder.HasKey(w => w.Id);
 
         // Conversão do Value Object WalletId

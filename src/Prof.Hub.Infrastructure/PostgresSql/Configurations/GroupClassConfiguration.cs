@@ -9,6 +9,7 @@ using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 using Prof.Hub.Domain.Enums;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
+
 internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupClass>
 {
     public void Configure(EntityTypeBuilder<GroupClass> builder)
@@ -50,12 +51,12 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
         builder.Property(g => g.AllowLateEnrollment);
         builder.Property(g => g.EnrollmentDeadline);
 
-        // Status configuration using shadow property
+        // Configuração de status usando propriedade shadow
         builder.Property<ClassStatus>("_status")
             .HasColumnName("Status")
             .HasConversion<string>();
 
-        // ParticipantLimit (owned entity)
+        // ParticipantLimit (entidade owned)
         builder.OwnsOne(g => g.ParticipantLimit, limit =>
         {
             limit.Property(l => l.Value)
@@ -63,7 +64,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .IsRequired();
         });
 
-        // Subject (owned entity)
+        // Subject (entidade owned)
         builder.OwnsOne(g => g.Subject, subject =>
         {
             subject.Property(s => s.Name)
@@ -89,7 +90,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                     v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
         });
 
-        // Schedule (owned entity)
+        // Schedule (entidade owned)
         builder.OwnsOne(g => g.Schedule, schedule =>
         {
             schedule.Property(s => s.StartDate)
@@ -99,7 +100,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasColumnName("Duration");
         });
 
-        // Price (owned entity)
+        // Price (entidade owned)
         builder.OwnsOne(g => g.Price, price =>
         {
             price.OwnsOne(p => p.Value, money =>
@@ -115,7 +116,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             });
         });
 
-        // Participants (private collection)
+        // Participants (coleção privada)
         builder.OwnsMany<StudentId>("_participants", participant =>
         {
             participant.ToTable("GroupClassParticipants");
@@ -127,7 +128,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasColumnName("StudentId");
         });
 
-        // WaitingList (private collection)
+        // WaitingList (coleção privada)
         builder.OwnsMany<StudentId>("_waitingList", waiting =>
         {
             waiting.ToTable("GroupClassWaitingList");
@@ -139,7 +140,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasColumnName("StudentId");
         });
 
-        // PresenceList (private collection)
+        // PresenceList (coleção privada)
         builder.OwnsMany<StudentPresence>("_presenceList", presence =>
         {
             presence.ToTable("GroupClassPresence");
@@ -152,7 +153,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             presence.Property(p => p.PresenceTime);
         });
 
-        // Discounts (private collection)
+        // Discounts (coleção privada)
         builder.OwnsMany<GroupDiscount>("_discounts", discount =>
         {
             discount.ToTable("GroupClassDiscounts");
@@ -165,7 +166,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasPrecision(5, 2);
         });
 
-        // LimitChanges (private collection)
+        // LimitChanges (coleção privada)
         builder.OwnsMany<ParticipantLimitChange>("_limitChanges", change =>
         {
             change.ToTable("GroupClassLimitChanges");
@@ -183,7 +184,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasMaxLength(500);
         });
 
-        // Requirements (private collection)
+        // Requirements (coleção privada)
         builder.OwnsMany<ClassRequirement>("_requirements", req =>
         {
             req.ToTable("GroupClassRequirements");
@@ -196,7 +197,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             req.Property(r => r.IsMandatory);
         });
 
-        // Shares (private collection)
+        // Shares (coleção privada)
         builder.OwnsMany<SocialShare>("_shares", share =>
         {
             share.ToTable("GroupClassShares");
@@ -215,7 +216,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                     value => new Uri(value));
         });
 
-        // StatusHistory (inherited from ClassBase)
+        // StatusHistory (herdado de ClassBase)
         builder.OwnsMany<StatusChange>("_statusHistory", status =>
         {
             status.ToTable("GroupClassStatusHistory");
@@ -230,7 +231,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             status.Property(s => s.ChangedAt);
         });
 
-        // ClassFeedback (inherited from ClassBase)
+        // ClassFeedback (herdado de ClassBase)
         builder.OwnsMany<ClassFeedback>("_feedbacks", feedback =>
         {
             feedback.ToTable("GroupClassFeedbacks");
@@ -253,7 +254,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             feedback.Property(f => f.HadTechnicalIssues);
         });
 
-        // ClassIssues (inherited from ClassBase)
+        // ClassIssues (herdado de ClassBase)
         builder.OwnsMany<ClassIssue>("_issues", issue =>
         {
             issue.ToTable("GroupClassIssues");
@@ -272,7 +273,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
                 .HasMaxLength(500);
         });
 
-        // Attendance (inherited from ClassBase)
+        // Attendance (herdado de ClassBase)
         builder.OwnsMany<Attendance>("_attendance", attendance =>
         {
             attendance.ToTable("GroupClassAttendance");
@@ -286,13 +287,13 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
             attendance.Property(a => a.JoinTime);
         });
 
-        // Materials (inherited from ClassBase)
+        // Materials (herdado de ClassBase)
         builder.HasMany("_materials")
             .WithOne()
             .HasForeignKey("GroupClassId")
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Audit properties
+        // Propriedades de auditoria
         builder.Property(g => g.Created);
         builder.Property(g => g.CreatedBy)
             .HasMaxLength(100);
@@ -300,7 +301,7 @@ internal sealed class GroupClassConfiguration : IEntityTypeConfiguration<GroupCl
         builder.Property(g => g.LastModifiedBy)
             .HasMaxLength(100);
 
-        // Indexes
+        // Índices
         builder.HasIndex(g => g.TeacherId);
         builder.HasIndex(g => g.Slug).IsUnique();
         builder.HasIndex("_status").HasDatabaseName("IX_GroupClasses_Status");

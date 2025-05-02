@@ -10,11 +10,6 @@ internal sealed class TransactionConfiguration : IEntityTypeConfiguration<Transa
 {
     public void Configure(EntityTypeBuilder<Transaction> builder)
     {
-        builder.ToTable("Transactions", tb =>
-        {
-            tb.HasCheckConstraint("CK_Transaction_Amount_Positive", "\"Amount\" > 0");
-        });
-
         builder.HasKey(t => t.Id);
 
         // Conversão do Value Object TransactionId

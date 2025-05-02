@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Prof.Hub.Domain.Aggregates.Common.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Coupon;
 using Prof.Hub.Domain.Aggregates.Coupon.ValueObjects;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
-using Prof.Hub.Domain.Enums;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
 
@@ -31,7 +29,7 @@ internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
             .HasConversion<string>()
             .IsRequired();
 
-        // DiscountValue (owned)
+        // DiscountValue (complex property)
         builder.ComplexProperty<DiscountValue>("Value", value =>
         {
             value.Property<decimal>("Percentage")
@@ -65,7 +63,7 @@ internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
         builder.Property(c => c.IsActive)
             .HasDefaultValue(true);
 
-        // UsageHistory (owned collection)
+        // UsageHistory (coleção owned)
         builder.OwnsMany<CouponUsage>("_usageHistory", usage =>
         {
             usage.ToTable("CouponUsageHistory");
@@ -96,51 +94,9 @@ internal sealed class CouponConfiguration : IEntityTypeConfiguration<Coupon>
             usage.Property(u => u.UsedAt)
                 .IsRequired();
 
+            // Índices
             usage.HasIndex(u => u.StudentId);
             usage.HasIndex(u => u.UsedAt);
-        });
-
-        // Configurar CouponRestriction como um tipo owned com discriminador
-        builder.OwnsOne(x => x.Restriction, restrictionBuilder =>
-        {
-            restrictionBuilder.WithOwner();
-            
-            // Adiciona um discriminador para diferentes tipos de restrição
-            restrictionBuilder.Property<string>("Discriminator")
-                .HasMaxLength(50);
-            
-            // Mapeia os tipos derivados
-            restrictionBuilder.HasDiscriminator<string>("Discriminator")
-                .HasValue<MinimumOrderRestriction>("MinimumOrder")
-                .HasValue<StudentLevelRestriction>("StudentLevel");
-        });
-
-        // Check Constraints
-        builder.ToTable(tb =>
-        {
-            tb.HasCheckConstraint(
-                "CK_Coupon_ValidDates",
-                "\"ValidUntil\" > \"ValidFrom\"");
-
-            tb.HasCheckConstraint(
-                "CK_Coupon_MaxUses_Positive",
-                "\"TotalMaxUses\" IS NULL OR \"TotalMaxUses\" > 0");
-
-            tb.HasCheckConstraint(
-                "CK_Coupon_MaxUsesPerStudent_Positive",
-                "\"MaxUsesPerStudent\" IS NULL OR \"MaxUsesPerStudent\" > 0");
-
-            tb.HasCheckConstraint(
-                "CK_Coupon_DiscountValues",
-                """
-                CASE 
-                    WHEN "Type" = 'PercentageDiscount' THEN 
-                        "DiscountPercentage" > 0 AND "DiscountPercentage" <= 100
-                    WHEN "Type" IN ('FixedDiscount', 'GiftCard') THEN 
-                        "DiscountAmount" > 0
-                    ELSE FALSE
-                END
-                """);
         });
 
         // Propriedades de auditoria

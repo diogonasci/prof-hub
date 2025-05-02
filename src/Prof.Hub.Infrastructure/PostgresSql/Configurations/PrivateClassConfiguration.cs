@@ -123,6 +123,9 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
                 .HasMaxLength(1000);
 
             note.Property(n => n.CreatedAt);
+
+            // Índices
+            note.HasIndex(n => n.CreatedAt);
         });
 
         // ScheduleChanges (owned collection)
@@ -133,11 +136,19 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
             change.Property<int>("Id").ValueGeneratedOnAdd();
             change.HasKey("Id");
 
+            change.Property(c => c.ClassId)
+                .HasConversion(
+                    id => id.Value,
+                    value => new PrivateClassId(value));
+
             change.Property(c => c.OldStartDate);
             change.Property(c => c.OldDuration);
             change.Property(c => c.NewStartDate);
             change.Property(c => c.NewDuration);
             change.Property(c => c.ChangedAt);
+
+            // Índices
+            change.HasIndex(c => c.ChangedAt);
         });
 
         // StatusHistory (inherited from ClassBase)
@@ -153,6 +164,9 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
             status.Property(s => s.NewStatus)
                 .HasConversion<string>();
             status.Property(s => s.ChangedAt);
+
+            // Índices
+            status.HasIndex(s => s.ChangedAt);
         });
 
         // ClassFeedback (inherited from ClassBase)
@@ -161,14 +175,32 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
             feedback.ToTable("PrivateClassFeedbacks");
             feedback.WithOwner().HasForeignKey("PrivateClassId");
             feedback.Property<string>("Id")
-                .HasMaxLength(36)
-                .ValueGeneratedOnAdd();
+                .HasMaxLength(36);
             feedback.HasKey("Id");
 
-            feedback.OwnsOne(f => f.OverallRating);
-            feedback.OwnsOne(f => f.TeachingRating);
-            feedback.OwnsOne(f => f.MaterialsRating);
-            feedback.OwnsOne(f => f.TechnicalRating);
+            feedback.OwnsOne(f => f.OverallRating, rating =>
+            {
+                rating.Property(r => r.Value)
+                    .HasColumnName("OverallRating");
+            });
+
+            feedback.OwnsOne(f => f.TeachingRating, rating =>
+            {
+                rating.Property(r => r.Value)
+                    .HasColumnName("TeachingRating");
+            });
+
+            feedback.OwnsOne(f => f.MaterialsRating, rating =>
+            {
+                rating.Property(r => r.Value)
+                    .HasColumnName("MaterialsRating");
+            });
+
+            feedback.OwnsOne(f => f.TechnicalRating, rating =>
+            {
+                rating.Property(r => r.Value)
+                    .HasColumnName("TechnicalRating");
+            });
 
             feedback.Property(f => f.TeacherComment)
                 .HasMaxLength(1000);
@@ -176,6 +208,10 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
                 .HasMaxLength(1000);
             feedback.Property(f => f.IsAnonymous);
             feedback.Property(f => f.HadTechnicalIssues);
+
+            // Índices
+            feedback.HasIndex(f => f.IsAnonymous);
+            feedback.HasIndex(f => f.HadTechnicalIssues);
         });
 
         // ClassIssues (inherited from ClassBase)
@@ -193,7 +229,13 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
             issue.Property(i => i.ReportedAt);
             issue.Property(i => i.IsResolved);
             issue.Property(i => i.ResolvedAt);
-            issue.Property(i => i.ResolutionNotes);
+            issue.Property(i => i.ResolutionNotes)
+                .HasMaxLength(500);
+
+            // Índices
+            issue.HasIndex(i => i.Type);
+            issue.HasIndex(i => i.ReportedAt);
+            issue.HasIndex(i => i.IsResolved);
         });
 
         // Attendance (inherited from ClassBase)
@@ -208,6 +250,10 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
             attendance.Property(a => a.Type)
                 .HasConversion<string>();
             attendance.Property(a => a.JoinTime);
+
+            // Índices
+            attendance.HasIndex(a => a.ParticipantId);
+            attendance.HasIndex(a => a.JoinTime);
         });
 
         // Materials (inherited from ClassBase)
@@ -229,5 +275,6 @@ internal sealed class PrivateClassConfiguration : IEntityTypeConfiguration<Priva
         builder.HasIndex(p => p.StudentId);
         builder.HasIndex("_status").HasDatabaseName("IX_PrivateClasses_Status");
         builder.HasIndex(p => p.StartedAt);
+        builder.HasIndex(p => p.CompletedAt);
     }
 }

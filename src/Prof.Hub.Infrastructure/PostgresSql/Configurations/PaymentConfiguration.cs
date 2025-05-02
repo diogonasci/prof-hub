@@ -10,26 +10,6 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
-        // Tabela, chave primária e constraints
-        builder.ToTable(tb =>
-        {
-            tb.HasCheckConstraint(
-                "CK_Payment_Amount_Positive",
-                "\"Amount\" > 0");
-
-            tb.HasCheckConstraint(
-                "CK_Payment_CompletedAt_Valid",
-                "\"CompletedAt\" IS NULL OR \"CompletedAt\" >= \"CreatedAt\"");
-
-            tb.HasCheckConstraint(
-                "CK_Payment_DefaultPaymentMethod",
-                "NOT EXISTS (SELECT 1 FROM \"StoredPaymentMethods\" WHERE \"PaymentId\" = \"Id\" GROUP BY \"PaymentId\" HAVING SUM(CASE WHEN \"IsDefault\" THEN 1 ELSE 0 END) > 1)");
-
-            tb.HasCheckConstraint(
-                "CK_Payment_DefaultBillingAddress",
-                "NOT EXISTS (SELECT 1 FROM \"BillingAddresses\" WHERE \"PaymentId\" = \"Id\" GROUP BY \"PaymentId\" HAVING SUM(CASE WHEN \"IsDefault\" THEN 1 ELSE 0 END) > 1)");
-        });
-
         builder.HasKey(p => p.Id);
 
         // Conversão do Value Object PaymentId

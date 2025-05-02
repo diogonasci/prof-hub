@@ -4,6 +4,7 @@ using Prof.Hub.Domain.Aggregates.GroupClass;
 using Prof.Hub.Domain.Aggregates.PrivateClass;
 using Prof.Hub.Domain.Aggregates.Student;
 using Prof.Hub.Domain.Aggregates.Student.ValueObjects;
+using Prof.Hub.Domain.Aggregates.Teacher.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
 internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
@@ -43,12 +44,20 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             });
 
             profile.Property(p => p.Grade)
-                .HasColumnName("Grade");
+                .HasColumnName("Grade")
+                .HasConversion<string>();
 
             profile.Property(p => p.AvatarUrl)
                 .HasConversion(
                     url => url != null ? url.ToString() : null,
                     value => value != null ? new Uri(value) : null);
+
+            profile.OwnsOne(p => p.ReferralCode, code =>
+            {
+                code.Property(c => c.Value)
+                    .HasColumnName("ReferralCode")
+                    .HasMaxLength(20);
+            });
         });
 
         // School (owned entity)
@@ -105,10 +114,18 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
             history.Property<Guid>("Id");
             history.HasKey("Id");
 
-            history.Property(h => h.ClassId);
-            history.Property(h => h.ClassType);
-            history.Property(h => h.Status);
-            history.Property(h => h.EnrolledAt);
+            history.Property(h => h.ClassId)
+                .HasMaxLength(36);
+
+            history.Property(h => h.ClassType)
+                .HasMaxLength(20);
+
+            history.Property(h => h.Status)
+                .HasConversion<string>();
+
+            history.Property(h => h.EnrolledAt)
+                .IsRequired();
+
             history.Property(h => h.CompletedAt);
 
             history.OwnsOne(h => h.Rating, rating =>
@@ -116,6 +133,10 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
                 rating.Property(r => r.Value)
                     .HasColumnName("Rating");
             });
+
+            // Índices
+            history.HasIndex(h => h.ClassId);
+            history.HasIndex(h => h.EnrolledAt);
         });
 
         // Collection de TeacherFavorite
@@ -123,16 +144,28 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         {
             favorite.ToTable("StudentFavoriteTeachers");
             favorite.WithOwner().HasForeignKey("StudentId");
+            favorite.Property<int>("Id").ValueGeneratedOnAdd();
+            favorite.HasKey("Id");
 
-            favorite.OwnsOne(f => f.TeacherId, teacherId =>
-            {
-                teacherId.Property(t => t.Value)
-                    .HasColumnName("TeacherId");
-            });
+            favorite.Property(f => f.TeacherId)
+                .HasConversion(
+                    id => id.Value,
+                    value => new TeacherId(value))
+                .IsRequired();
 
-            favorite.Property(f => f.AddedAt);
+            favorite.Property(f => f.AddedAt)
+                .IsRequired();
+
             favorite.Property(f => f.Note)
                 .HasMaxLength(500);
+
+            // Índices
+            favorite.HasIndex(f => f.TeacherId);
+            favorite.HasIndex(f => f.AddedAt);
+
+            // Restrição única para evitar duplicatas
+            favorite.HasIndex(f => new { f.TeacherId, StudentId = EF.Property<string>(f, "StudentId") })
+                .IsUnique();
         });
 
         // Propriedades de auditoria
@@ -142,5 +175,10 @@ internal sealed class StudentConfiguration : IEntityTypeConfiguration<Student>
         builder.Property(s => s.LastModified);
         builder.Property(s => s.LastModifiedBy)
             .HasMaxLength(100);
+
+        // Índices
+        builder.HasIndex("Profile.Email").IsUnique();
+        builder.HasIndex("Profile.PhoneNumber");
+        builder.HasIndex("Profile.Grade");
     }
 }

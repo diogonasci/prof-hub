@@ -4,6 +4,7 @@ using Prof.Hub.Domain.Aggregates.Coupon.ValueObjects;
 using Prof.Hub.Domain.Enums;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
+
 internal sealed class CouponRestrictionConfiguration : IEntityTypeConfiguration<CouponRestriction>
 {
     public void Configure(EntityTypeBuilder<CouponRestriction> builder)

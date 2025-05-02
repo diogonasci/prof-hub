@@ -4,26 +4,11 @@ using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial;
 using Prof.Hub.Domain.Aggregates.Common.Entities.ClassMaterial.ValueObjects;
 
 namespace Prof.Hub.Infrastructure.PostgresSql.Configurations;
+
 internal sealed class ClassMaterialConfiguration : IEntityTypeConfiguration<ClassMaterial>
 {
     public void Configure(EntityTypeBuilder<ClassMaterial> builder)
     {
-        // Tabela, chave primária e constraints
-        builder.ToTable(tb =>
-        {
-            tb.HasCheckConstraint(
-                "CK_ClassMaterial_Title_Length",
-                "LENGTH(\"Title\") <= 100");
-
-            tb.HasCheckConstraint(
-                "CK_ClassMaterial_Description_Length",
-                "LENGTH(\"Description\") <= 500");
-
-            tb.HasCheckConstraint(
-                "CK_ClassMaterial_FileSize",
-                "\"FileSizeInBytes\" <= 104857600"); // 100MB
-        });
-
         builder.HasKey(m => m.Id);
 
         // Conversão do Value Object ClassMaterialId
@@ -61,7 +46,7 @@ internal sealed class ClassMaterialConfiguration : IEntityTypeConfiguration<Clas
             .HasMaxLength(50)
             .IsRequired();
 
-        // Versions (owned collection)
+        // Versions (coleção owned)
         builder.OwnsMany<MaterialVersion>("_versions", version =>
         {
             version.ToTable("ClassMaterialVersions");
@@ -96,7 +81,7 @@ internal sealed class ClassMaterialConfiguration : IEntityTypeConfiguration<Clas
             version.HasIndex(v => v.CreatedAt);
         });
 
-        // Accesses (owned collection)
+        // Accesses (coleção owned)
         builder.OwnsMany<MaterialAccess>("_accesses", access =>
         {
             access.ToTable("ClassMaterialAccesses");
